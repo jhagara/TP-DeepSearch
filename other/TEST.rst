@@ -27,7 +27,7 @@ Pull request si myslím, sa najlepšie rieši cez stránku.
 
 .. image:: images/pull_req.png
 
-Vidíte base <-> compare (kam <-> odkial), treba napísať čo znázorňuje ten pull request (berie automaticky posledný commit message, môže byť aj to ak je to výstižné) a assigned to určite mňa.
+Vidíte base <-> compare (kam <-> odkial), treba napísať čo znázorňuje ten pull request (berie automaticky posledný commit message, môže byť aj to ak je to výstižné) a assignees to určite mňa.
 
 V prípade ďalších otázok mail/slack/fyzicky.
 
