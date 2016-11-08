@@ -17,6 +17,10 @@ Funkcionalitu môžete aj definovať pomocou prepínačov (--help -> meno, dátu
 
 Snažte sa dodržovať PEP8 a základné pravidlá commit messageov (i keď sa to dá vytvoriť všetko na jeden commit - i don't judge, len aby ste si to osvojili)
 
+POZOR: Uvedomil som si, že argumenty v nekonzolovom prostredí, môžu byť problém, akceptujem teda lokálne definovaného stringu alebo načítaného textového súboru. Ak by ste sa chceli sa snažiť rozbehať argumenty pozrite si dokumentácie a posty na stackoverflowe, nemám s tým skúsenosti. Link_.
+
+.. _Link: http://stackoverflow.com/questions/33102272/pycharm-and-sys-argv-arguments
+
 ==========
 Quick help
 ==========
