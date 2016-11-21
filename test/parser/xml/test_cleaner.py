@@ -1,16 +1,17 @@
+import re
 import unittest
 from lxml import etree
-from cleaner import Cleaner
-import re
+from parser.xml.cleaner import Cleaner
 
 
-class CleanerTest(unittest.TestCase):
+class TestCleaner(unittest.TestCase):
     def test_clean_output_format_success(self):
         original_xml = """
             <document version="1.0" producer="FineReader 8.0"
                     xmlns="http://www.abbyy.com/FineReader_xml/FineReader6-schema-v1.xml"
                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                    xsi:schemaLocation="http://www.abbyy.com/FineReader_xml/FineReader6-schema-v1.xml http://www.abbyy.com/FineReader_xml/FineReader6-schema-v1.xml"
+                    xsi:schemaLocation="http://www.abbyy.com/FineReader_xml/FineReader6-schema-v1.xml
+                    http://www.abbyy.com/FineReader_xml/FineReader6-schema-v1.xml"
                     pagesCount="8" mainLanguage="Slovak" languages="Slovak,Czech,EnglishUnitedStates">
                 <page width="3455" height="4871" resolution="400" originalCoords="true">
                     <block blockType="Text" l="180" t="98" r="566" b="164">
