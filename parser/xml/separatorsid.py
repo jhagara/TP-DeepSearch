@@ -24,7 +24,7 @@ class SeparatorId(object):
                         if current_block_top - prev_block_bottom > 10:
                             new_hr = etree.Element('block')
                             new_hr.text = ""
-                            new_hr.attrib['blockType'] = 'Text'
+                            new_hr.attrib['blockType'] = 'hr'
                             new_hr.attrib['l'] = node.attrib['l']
                             new_hr.attrib['t'] = str(prev_block_bottom + 1)
                             new_hr.attrib['r'] = node.attrib['r']
@@ -40,7 +40,7 @@ class SeparatorId(object):
 
                             new_hr = etree.Element('block')
                             new_hr.text = ""
-                            new_hr.attrib['blockType'] = 'Text'
+                            new_hr.attrib['blockType'] = 'Hr'
                             new_hr.attrib['l'] = node.attrib['l']
                             new_hr.attrib['t'] = str(prev_block_bottom + 1)
                             new_hr.attrib['r'] = node.attrib['r']

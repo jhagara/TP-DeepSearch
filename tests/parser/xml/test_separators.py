@@ -37,7 +37,7 @@ class TestSeparator(unittest.TestCase):
                         </block>
                         <block blockType="Text" l="180" t="300" r="566" b="400">
                         </block>
-                     <block blockType="Hr" l="180" t="171" r="566" b="199" type="Separator"></block><block blockType="Hr" l="180" t="251" r="566" b="299" type="Separator"></block></page>
+                     <block blockType="Hr" l="180" t="171" r="566" b="199" type="Separator"> </block><block blockType="Hr" l="180" t="251" r="566" b="299" type="Separator"> </block></page>
                 </document>
                 """
 
