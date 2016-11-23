@@ -1,7 +1,8 @@
 import re
 import unittest
 from lxml import etree
-from separatorsid.separatorsid import SeparatorId
+from parser.xml.separatorsid import SeparatorId
+
 
 class TestSeparator(unittest.TestCase):
     def test_clean_output_format_success(self):
