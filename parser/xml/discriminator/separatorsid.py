@@ -8,31 +8,33 @@ class SeparatorId(object):
     #main method for identifing separators
     @classmethod
     def discriminant_separators(cls, parsed_xml):
-
-        prev_block_bottom = -1
+        gap = 10
+        prev_par_bottom = -1
+        i = 0
 
         for node in parsed_xml.xpath('//*[local-name() = \'block\']'):
-            if prev_block_bottom == -1:
-                prev_block_bottom = int(node.attrib['b'])
             if node.attrib['blockType'] != 'Text':
                 node = cls.__change_blocktype(node)
-                prev_block_bottom = -1
+                prev_par_bottom = -1
             else:
-                current_block_top = int(node.attrib['t'])
+                paragraphs = node.xpath('.//*[local-name() = \'par\']')
+                for parag in paragraphs:
 
-                if 'type' not in node.attrib or node.attrib['type'] != 'Headline':
+                    if prev_par_bottom == -1:
+                        prev_par_bottom = int(parag.attrib['b'])
+                    current_par_top = int(parag.attrib['t'])
 
-                    if current_block_top - prev_block_bottom > 10:
+                    if parag.attrib['type'] != 'Heading':
 
-                        node.getparent().append(
-                        cls.__create_new_horizontal_line(node,
-                        prev_block_bottom + 1,
-                        current_block_top - 1))
-                        prev_block_bottom = int(node.attrib['b'])
+                        if current_par_top - prev_par_bottom > gap:
+
+                            node.getparent().append(cls.__create_new_horizontal_line(parag, prev_par_bottom + 1,current_par_top - 1))
+                            prev_par_bottom = int(parag.attrib['b'])
+
+                        else:
+                            prev_par_bottom = int(parag.attrib['b'])
                     else:
-                        prev_block_bottom = int(node.attrib['b'])
-                else:
-                    prev_block_bottom = -1
+                        prev_par_bottom = -1
 
 
         return parsed_xml
@@ -44,6 +46,7 @@ class SeparatorId(object):
 
         return node
 
+    #create new block for horizontal line
     @classmethod
     def __create_new_horizontal_line(cls,node,top,bottom):
         new_hr = etree.Element('block')
