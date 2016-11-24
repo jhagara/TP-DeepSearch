@@ -40,65 +40,65 @@ class Header(object):
         return tree.getroot()
 
     def assign_cost(self, data, xmlfile):
-        xpath = data["marc21"][0]["path"]
-        words = xmlfile.xpath(xpath)
+        local_path = data["marc21"][0]["path"]
+        words = xmlfile.xpath(local_path)
         result = ''
         for word in words:
             result = result + str(word)
         return result 
 
     def assign_address(self, data, xmlfile):
-        xpath = data["marc21"][1]["path"]
-        words = xmlfile.xpath(xpath)
+        local_path = data["marc21"][1]["path"]
+        words = xmlfile.xpath(local_path)
         result = ''
         for word in words:
             result = result + str(word)
         return result 
 
     def assign_date_location(self, data, xmlfile):
-        xpath = data["marc21"][2]["path"]
-        words = xmlfile.xpath(xpath)
+        local_path = data["marc21"][2]["path"]
+        words = xmlfile.xpath(local_path)
         result = ''
         for word in words:
             result = result + str(word)
         return result 
 
     def assign_annual_set(self, data, xmlfile):
-        xpath = data["marc21"][3]["path"]
-        words = xmlfile.xpath(xpath)
+        local_path = data["marc21"][3]["path"]
+        words = xmlfile.xpath(local_path)
         result = ''
         for word in words:
             result = result + str(word)
         return result 
 
     def assign_subscribtion(self, data, xmlfile):
-        xpath = data["marc21"][4]["path"]
-        words = xmlfile.xpath(xpath)
+        local_path = data["marc21"][4]["path"]
+        words = xmlfile.xpath(local_path)
         result = ''
         for word in words:
             result = result + str(word)
         return result 
 
     def assign_founder(self, data, xmlfile):
-        xpath = data["marc21"][5]["path"]
-        words = xmlfile.xpath(xpath)
+        local_path = data["marc21"][5]["path"]
+        words = xmlfile.xpath(local_path)
         result = ''
         for word in words:
             result = result + str(word)
         return result 
         
     def assign_number(self, data, xmlfile):
-        xpath = data["marc21"][6]["path"]
-        words = xmlfile.xpath(xpath)
+        local_path = data["marc21"][6]["path"]
+        words = xmlfile.xpath(local_path)
         result = ''
         for word in words:
             result = result + str(word)
         return result 
 
-    def assign_values(self, conffile, xmlfile):
+    def assign_values(self, conffile, xml):
         data = self.read_from_json(conffile)
-        xml = self.read_from_xml(xmlfile)
-        xml = Cleaner.clean(xml)
+        # xml = self.read_from_xml(xmlfile)
+        # xml = Cleaner.clean(xml)
         self.cost = self.assign_cost(data, xml)
         self.address = self.assign_address(data, xml)
         self.date_location = self.assign_date_location(data, xml)
