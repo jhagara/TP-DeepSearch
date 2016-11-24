@@ -1,14 +1,10 @@
 import json
-import sys
-import argparse
-import ast
 
-from parser.xml.cleaner import Cleaner
 from lxml import etree
 
 
 class Header(object):
-    
+
     def __init__(self):
         self.cost = ''
         self.address = ''
@@ -18,6 +14,7 @@ class Header(object):
         self.founder = ''
         self.number = ''
 
+    # reading of JSON configuration file which defines paths
     def read_from_json(self, readfile):
         with open(readfile, 'r') as f:
             try:
@@ -26,6 +23,7 @@ class Header(object):
                 print('Error! Unable to read file!')
                 return {}
 
+    # saving of JSON configartion file
     def write_to_json(self, data, writefile):
         with open(writefile, 'w') as f:
             try:
@@ -33,19 +31,24 @@ class Header(object):
             except ValueError:
                 print('Error! Non-valid write file!')
 
-    #just for help
+    # just for help
     def read_from_xml(self, xmlfile):
         parser = etree.XMLParser(remove_blank_text=True)
         tree = etree.parse(xmlfile, parser)
         return tree.getroot()
 
+    """
+    assigments of all elements based on path
+    the number of block is defined in basic
+    structure of configuration file
+    """
     def assign_cost(self, data, xmlfile):
         local_path = data["marc21"][0]["path"]
         words = xmlfile.xpath(local_path)
         result = ''
         for word in words:
             result = result + str(word)
-        return result 
+        return result
 
     def assign_address(self, data, xmlfile):
         local_path = data["marc21"][1]["path"]
@@ -53,7 +56,7 @@ class Header(object):
         result = ''
         for word in words:
             result = result + str(word)
-        return result 
+        return result
 
     def assign_date_location(self, data, xmlfile):
         local_path = data["marc21"][2]["path"]
@@ -61,7 +64,7 @@ class Header(object):
         result = ''
         for word in words:
             result = result + str(word)
-        return result 
+        return result
 
     def assign_annual_set(self, data, xmlfile):
         local_path = data["marc21"][3]["path"]
@@ -69,7 +72,7 @@ class Header(object):
         result = ''
         for word in words:
             result = result + str(word)
-        return result 
+        return result
 
     def assign_subscribtion(self, data, xmlfile):
         local_path = data["marc21"][4]["path"]
@@ -77,7 +80,7 @@ class Header(object):
         result = ''
         for word in words:
             result = result + str(word)
-        return result 
+        return result
 
     def assign_founder(self, data, xmlfile):
         local_path = data["marc21"][5]["path"]
@@ -85,16 +88,20 @@ class Header(object):
         result = ''
         for word in words:
             result = result + str(word)
-        return result 
-        
+        return result
+
     def assign_number(self, data, xmlfile):
         local_path = data["marc21"][6]["path"]
         words = xmlfile.xpath(local_path)
         result = ''
         for word in words:
             result = result + str(word)
-        return result 
+        return result
 
+    # main function - load configuration file from JSON
+    # assign all elements data based by path in separate functions
+    # read configuration file PATH to .json file
+    # xml as already cleared object from module Cleaner
     def assign_values(self, conffile, xml):
         data = self.read_from_json(conffile)
         # xml = self.read_from_xml(xmlfile)
