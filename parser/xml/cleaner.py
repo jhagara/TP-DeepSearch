@@ -39,6 +39,10 @@ class Cleaner(object):
         for region in parsed_xml.xpath('//region'):
             region.getparent().remove(region)
 
+        # add coordinates to param
+        for par in parsed_xml.xpath('//par'):
+            cls.__set_par_coordinates(par)
+
         return parsed_xml
 
     # PRIVATE methods
@@ -88,3 +92,14 @@ class Cleaner(object):
         formatting.text = re.sub('[^\040-\176]', '', formatting.text)
 
         return formatting
+
+    # add coordinates to par element, get most left, right, top and bottom from all lines in par element
+    @classmethod
+    def __set_par_coordinates(self, par):
+        par.attrib['l'] = par.xpath('(./line/@l[not(. > //@l)])[1]')[0]
+        par.attrib['t'] = par.xpath('(./line/@t[not(. > //@t)])[1]')[0]
+        par.attrib['r'] = par.xpath('(./line/@r[not(. < //@r)])[1]')[0]
+        par.attrib['b'] = par.xpath('(./line/@b[not(. < //@b)])[1]')[0]
+
+
+
