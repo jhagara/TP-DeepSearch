@@ -1,6 +1,7 @@
 import json
 import unittest
 import os
+import re
 from lxml import etree
 from parser.xml.source_header import SourceHeader
 from parser.xml.cleaner import Cleaner
@@ -8,12 +9,17 @@ from parser.xml.cleaner import Cleaner
 
 class TestSourceHeader(unittest.TestCase):
     def test_clean_output_format_success(self):
-        data = self.read_from_json(os.path.dirname(os.path.abspath(__file__)) + "/conffile.json")
-        original_xml = etree.parse(os.path.dirname(os.path.abspath(__file__)) + "/page_header.xml")
+        data = self.read_from_json(os.path.dirname(os.path.abspath(__file__)) + "/page_header_conf_example.json")
+        original_xml = etree.parse(os.path.dirname(os.path.abspath(__file__)) + "/page_header_example.xml")
+        desired_xml = etree.parse(os.path.dirname(os.path.abspath(__file__)) + "/page_header_after_parse_example.xml")
         original_xml = Cleaner.clean(original_xml)
+        desired_xml = Cleaner.clean(desired_xml)
 
         actual_xml, header = SourceHeader.get_source_header(original_xml, data)
-        self.assert_
+        self.assertEqual(header['marc21'][0]['value'], 'Cena 80 h?l.')
+
+        self.assertEqual(re.sub('[^\040-\176]| ', '', etree.tostring(desired_xml).decode('utf-8')),
+                         re.sub('[^\040-\176]| ', '', etree.tostring(actual_xml).decode('utf-8')))
 
     # reading of JSON configuration file which defines paths
     def read_from_json(self, readfile):
