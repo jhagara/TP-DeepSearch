@@ -1,6 +1,6 @@
 import unittest
 from lxml import etree
-from parser.xml.discriminator._heading import _Heading
+from parser.xml.discriminator.heading import _Heading
 import re
 
 
