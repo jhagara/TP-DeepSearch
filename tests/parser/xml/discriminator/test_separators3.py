@@ -1,7 +1,7 @@
 import re
 import unittest
 from lxml import etree
-from separatorsid.discriminator.separatorsid import SeparatorId
+from parser.xml.discriminator.separatorsid import SeparatorId
 
 #test for several pages separator
 class TestSeparator(unittest.TestCase):

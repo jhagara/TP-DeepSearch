@@ -248,7 +248,3 @@ class FulltextTest(unittest.TestCase):
         desired_xml = etree.fromstring(desired_xml)
         self.assertEqual(re.sub('[^\040-\176]| ', '', etree.tostring(desired_xml).decode('utf-8')),
                          re.sub('[^\040-\176]| ', '', etree.tostring(actual_xml).decode('utf-8')))
-
-
-h = FulltextTest()
-h.test_fulltext_success()

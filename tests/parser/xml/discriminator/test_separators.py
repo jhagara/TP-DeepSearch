@@ -1,7 +1,7 @@
 import re
 import unittest
 from lxml import etree
-from separatorsid.discriminator.separatorsid import SeparatorId
+from parser.xml.discriminator.separatorsid import SeparatorId
 
 #test for identifying separators when fulltexts and headlines  identified
 class TestSeparator(unittest.TestCase):
