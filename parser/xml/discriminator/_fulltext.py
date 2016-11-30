@@ -40,8 +40,8 @@ class _Fulltext(object):
         # calculating median
         if counter != 0:
             if counter % 2 == 0:
-                a = font_sizes[int(counter / 2)]
-                b = font_sizes[int((counter / 2) - 1)]
+                a = font_sizes[int(round(counter / 2))]
+                b = font_sizes[int(round((counter / 2) - 1))]
                 median = (a + b) / 2
             else:
                 median = font_sizes[counter / 2]
