@@ -26,9 +26,12 @@ class Preprocessor(object):
                     r = int(node.attrib['r']) + ERROR
                     t = int(node.attrib['t'])
 
-                    # De Morgan's law - check intersection - (StartA <= EndB)  and  (EndA >= StartB)
+                    # De Morgan's law - check intersection
+                    # (StartA <= EndB)  and  (EndA >= StartB)
                     # find all matching blocks
-                    query = "block[@l <= " + str(r) + " and @r >= " + str(l) + " and @b <= " + str(t) + "]"
+                    query = "block[@l <= " + str(r) + \
+                            " and @r >= " + str(l) + \
+                            " and @b <= " + str(t) + "]"
                     results = page.xpath(query)
                     cls.__manage_group(page, node, results)
                 else:
@@ -39,11 +42,16 @@ class Preprocessor(object):
                         r = int(par.attrib['r']) + ERROR
                         t = int(par.attrib['t'])
 
-                        # De Morgan's law - check intersection - (StartA <= EndB)  and  (EndA >= StartB)
+                        # De Morgan's law - check intersection
+                        # (StartA <= EndB)  and  (EndA >= StartB)
                         # find all matching blocks and paragraphs
-                        query = "block[@type =\"separator\" and @l <= " + str(r) + " and @r >= " + str(l) +\
-                                " and @b <= " + str(t) + "] | block/par[@l <= " + str(r) + " and @r >= " + str(l) +\
-                                " and @b <= " + str(t) + "]"
+                        query = "block[@type ='separator' and @l <= " +\
+                                str(r) + " and @r >= " +\
+                                str(l) + " and @b <= " +\
+                                str(t) + "] | block/par[@l <= " +\
+                                str(r) + " and @r >= " +\
+                                str(l) + " and @b <= " +\
+                                str(t) + "]"
                         results = page.xpath(query)
                         cls.__manage_group(page, par, results)
         # delete all unused block
@@ -156,8 +164,10 @@ class Preprocessor(object):
     # method for determining whether node is part of existing group
     @classmethod
     def __in_group(cls, page, node):
-        query = "group/" + node.tag + "[@type = \"" + node.attrib['type'] + "\" and @r = " + node.attrib['r'] + " and" \
-                " @b = " + node.attrib['b'] + " and @l = " + node.attrib['l'] + " and @t = " + node.attrib['t'] + "]"
+        query = "group/" + node.tag + "[@type = '" + node.attrib['type'] +\
+                "' and @r = " + node.attrib['r'] + " and @b = " + \
+                node.attrib['b'] + " and @l = " + node.attrib['l'] +\
+                " and @t = " + node.attrib['t'] + "]"
         result = page.xpath(query)
 
         return result
