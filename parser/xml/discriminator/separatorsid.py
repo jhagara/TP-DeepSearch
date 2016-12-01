@@ -20,8 +20,8 @@ class SeparatorId(object):
                 node = cls.__change_blocktype(node)
 
         # iterate through all par elements in pages
-        # find all neerest elements according to actual par element
-        # neerest_many is RESULT - list of all neerest found elements
+        # find all nearest elements according to actual par element
+        # nearest_many is RESULT - list of all nearest found elements
         for page in parsed_xml.xpath("/document/page"):
             for par in page.xpath("block/par"):
                 os = int(int(par.attrib['l']) + (
@@ -38,14 +38,14 @@ class SeparatorId(object):
 
                 results = page.xpath(query)
                 if len(results) != 0:
-                    neerest = cls.get_neerest(results)
+                    nearest = cls.get_nearest(results)
 
-                    # neerest_many is RESULT
-                    neerest_many = cls.get_relative_neerest(neerest, results)
+                    # nearest_many is RESULT
+                    nearest_many = cls.get_relative_nearest(nearest, results)
 
                     # check if horizontal line is needed
-                    for neer in neerest_many:
-                        new_line=cls.__check_if_line_needed(par,neer,parsed_xml)
+                    for near in nearest_many:
+                        new_line=cls.__check_if_line_needed(par,near,parsed_xml)
                         if new_line is not None:
                             page.append(new_line)
 
@@ -72,9 +72,9 @@ class SeparatorId(object):
 
         return new_hr
 
-    # get one neerest element
+    # get one nearest element
     @classmethod
-    def get_neerest(cls,results):
+    def get_nearest(cls,results):
         maximum = -1
         for result in results:
             val = int(result.attrib['b'])
@@ -84,10 +84,10 @@ class SeparatorId(object):
 
         return max_elem
 
-    # get all neerest elements with usage of ERROR value
+    # get all nearest elements with usage of ERROR value
     @classmethod
-    def get_relative_neerest(cls,neerest, results):
-        b_max = int(neerest.attrib['b'])
+    def get_relative_nearest(cls,nearest, results):
+        b_max = int(nearest.attrib['b'])
         b_min = b_max - ERROR
         relative = []
         for result in results:
@@ -108,4 +108,3 @@ class SeparatorId(object):
                                              upper.attrib['l'])
 
         return new_line
-
