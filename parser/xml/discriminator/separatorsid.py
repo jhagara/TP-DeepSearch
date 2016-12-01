@@ -92,8 +92,9 @@ class SeparatorId(object):
         relative = []
         for result in results:
             b = int(result.attrib['b'])
-            if b >= b_min and b <= b_max:
-                relative.append(result)
+            if nearest.attrib['type'] == 'text':
+                if b >= b_min and b <= b_max:
+                    relative.append(result)
 
         return relative
 
