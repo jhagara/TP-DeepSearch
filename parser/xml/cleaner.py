@@ -93,13 +93,33 @@ class Cleaner(object):
 
         return formatting
 
-    # add coordinates to par element, get most left, right, top and bottom from all lines in par element
+    # add coordinates to par element, get most left, right,
+    # top and bottom from all lines in par element
     @classmethod
-    def __set_par_coordinates(self, par):
-        par.attrib['l'] = par.xpath('(./line/@l[not(. > //@l)])[1]')[0]
-        par.attrib['t'] = par.xpath('(./line/@t[not(. > //@t)])[1]')[0]
-        par.attrib['r'] = par.xpath('(./line/@r[not(. < //@r)])[1]')[0]
-        par.attrib['b'] = par.xpath('(./line/@b[not(. < //@b)])[1]')[0]
+    def __set_par_coordinates(cls, par):
+        par.attrib['l'] = cls.__get_min_coord(par, 'l')
+        par.attrib['t'] = cls.__get_min_coord(par, 't')
+        par.attrib['r'] = cls.__get_max_coord(par, 'r')
+        par.attrib['b'] = cls.__get_max_coord(par, 'b')
 
+    # get attribute - coordinate, biggest from line
+    @classmethod
+    def __get_max_coord(cls, par, attr):
+        maximum = -1
+        for line in par.xpath("line"):
+            val = int(line.attrib[attr])
+            if val > maximum:
+                maximum = val
 
+        return str(maximum)
 
+    # get attribute - coordinate, smallest or smallest from line
+    @classmethod
+    def __get_min_coord(cls, par, attr):
+        min = 100000
+        for line in par.xpath("line"):
+            val = int(line.attrib[attr])
+            if val < min:
+                min = val
+
+        return str(min)
