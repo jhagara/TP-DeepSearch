@@ -3,7 +3,6 @@ import unittest
 from lxml import etree
 from parser.xml.discriminator.separatorsid import SeparatorId
 
-
 #test for identifying separators when fulltexts and headlines  identified
 class TestSeparator(unittest.TestCase):
     def test_clean_output_format_success(self):
