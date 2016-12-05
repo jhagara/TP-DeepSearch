@@ -49,7 +49,7 @@ class Assembler(object):
 
     @classmethod
     def __chainable_equal_heading(cls, current_group):
-        """2A, equal width of current_group and neerest heading above
+        """2A, equal width of current_group and nearest heading above
 
         :param current_group:lxml.etree._Element
         :return: found heading as group element or None
@@ -73,11 +73,20 @@ class Assembler(object):
 
     @classmethod
     def __chainable_left_alone(cls, current_group):
-        """2Di, group is ALONE and its location is in left column
+        #2Di, group is ALONE and its location is in left column
+        position = cls._find_column_position(current_group)
+        if position == 'left':
+            nearest_above = cls.__find_nearest_above(current_group)
+            if nearest_above is None or nearest_above.attrib['type']=='separator':
+                parent_group = cls.__find_last_from_previous_page()
+                cls.__chain_groups(current_group,parent_group)
+                return current_group
+        else:
+             return None
+            
+        #param current_group:lxml.etree._Element
+        #return: found possible chainable group element or None
 
-        :param current_group:lxml.etree._Element
-        :return: found possible chainable group element or None
-        """
 
     @classmethod
     def __chainable_middle_alone(cls, current_group):
@@ -109,8 +118,8 @@ class Assembler(object):
     # get column position
     @classmethod
     def _find_column_position(cls, group):
-        left = cls.__find_neerest_left(group)
-        right = cls.__find_neerest_right(group)
+        left = cls.__find_nearest_left(group)
+        right = cls.__find_nearest_right(group)
 
         if (left is not None) and (right is not None):
             return 'middle'
@@ -123,16 +132,16 @@ class Assembler(object):
 
     # Jakub
     @classmethod
-    def __find_neerest_left(cls, group):
-        """find neerest left group
+    def __find_nearest_left(cls, group):
+        """find nearest left group
 
         :param group:lxml.etree._Element
         :return: group:lxml.etree._Element or None
         """
 
     @classmethod
-    def __find_neerest_right(cls, group):
-        """find neerest right group
+    def __find_nearest_right(cls, group):
+        """find nearest right group
 
         :param group:lxml.etree._Element
         :return: group:lxml.etree._Element or None
@@ -150,7 +159,7 @@ class Assembler(object):
     # Martina
     @classmethod
     def __find_nearest_above(cls, group):
-        """find neerest group element located above current group element
+        """find nearest group element located above current group element
 
         :param group:lxml.etree._Element
         :return: lxml.etree._Element or Non
