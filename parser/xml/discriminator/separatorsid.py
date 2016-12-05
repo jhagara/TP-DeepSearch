@@ -54,7 +54,7 @@ class SeparatorId(object):
     #rename type attribute to Separator
     @classmethod
     def __change_blocktype(cls, node):
-        node.attrib['type'] = 'Separator'
+        node.attrib['type'] = 'separator'
 
         return node
 
@@ -68,7 +68,7 @@ class SeparatorId(object):
         new_hr.attrib['t'] = top
         new_hr.attrib['r'] = right
         new_hr.attrib['b'] = bottom
-        new_hr.attrib['type'] = 'Separator'
+        new_hr.attrib['type'] = 'separator'
 
         return new_hr
 
@@ -92,8 +92,7 @@ class SeparatorId(object):
         relative = []
         for result in results:
             b = int(result.attrib['b'])
-            if nearest.attrib['type'] == 'text':
-                if b >= b_min and b <= b_max:
+            if b >= b_min and b <= b_max:
                     relative.append(result)
 
         return relative
@@ -102,10 +101,11 @@ class SeparatorId(object):
     @classmethod
     def __check_if_line_needed(cls, current, upper, parsed_xml):
         new_line = None
-        if int(current.attrib['t'])- int(upper.attrib['b']) >  gap:
-            new_line=cls.__create_new_horizontal_line(str(int(upper.attrib['b'])+1),
-                                             upper.attrib['r'],
-                                             str(int(current.attrib['t'])-1),
-                                             upper.attrib['l'])
+        if upper.attrib['type'] == 'text':
+            if int(current.attrib['t'])- int(upper.attrib['b']) >  gap:
+                new_line=cls.__create_new_horizontal_line(str(int(upper.attrib['b'])+1),
+                                                 upper.attrib['r'],
+                                                 str(int(current.attrib['t'])-1),
+                                                 upper.attrib['l'])
 
         return new_line
