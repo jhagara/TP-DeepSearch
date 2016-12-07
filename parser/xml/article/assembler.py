@@ -74,13 +74,10 @@ class Assembler(object):
     @classmethod
     def __chainable_left_alone(cls, current_group):
         #2Di, group is ALONE and its location is in left column
-        position = cls._find_column_position(current_group)
-        if position == 'left':
-            nearest_above = cls.__find_nearest_above(current_group)
-            if nearest_above is None or nearest_above.attrib['type']=='separator':
-                parent_group = cls.__find_last_from_previous_page()
-                cls.__chain_groups(current_group,parent_group)
-                return current_group
+        nearest_above = cls.__find_nearest_above(current_group)
+        if nearest_above is None or nearest_above.attrib['type']=='separator':
+            parent_group = cls.__find_last_from_previous_page()
+            return parent_group
         else:
              return None
             
