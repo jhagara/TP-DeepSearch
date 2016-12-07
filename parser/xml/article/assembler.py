@@ -1,7 +1,17 @@
+import operator
+
+
 class Assembler(object):
-    previous_page = None
-    current_page = None
-    parsed_xml = None
+    # previous_page = None
+    # current_page = None
+    # parsed_xml = None
+    # ERROR = 3
+
+    def __init__(self, parsed_xml, previous_page, current_page, ERROR):
+        self.previous_page = previous_page
+        self.current_page = current_page
+        self.parsed_xml = parsed_xml
+        self.ERROR = ERROR
 
     def assembly_articles(self, parsed_xml):
         self.parsed_xml = parsed_xml
@@ -49,7 +59,7 @@ class Assembler(object):
 
     @classmethod
     def __chainable_equal_heading(cls, current_group):
-        """2A, equal width of current_group and neerest heading above
+        """2A, equal width of current_group and nearest heading above
 
         :param current_group:lxml.etree._Element
         :return: found heading as group element or None
@@ -107,10 +117,9 @@ class Assembler(object):
         group2.attrib['chained'] = 'true'
 
     # get column position
-    @classmethod
-    def _find_column_position(cls, group):
-        left = cls.__find_neerest_left(group)
-        right = cls.__find_neerest_right(group)
+    def __find_column_position(self, group):
+        left = self.__find_nearest_left(group)
+        right = self.__find_nearest_right(group)
 
         if (left is not None) and (right is not None):
             return 'middle'
@@ -121,22 +130,64 @@ class Assembler(object):
         else:
             return 'left'
 
+    # get min or max from collection of groups
+    # just change input parameter to get certain coordinate and min or max
+    def __get_min_or_max(self, groups, compare_val, coordinate, compare):
+        if len(groups) == 0:
+            return None
+
+        for group in groups:
+            val = int(group.attrib[coordinate])
+            if compare(val, compare_val):
+                compare_val = val
+                target_elem = group
+
+        return target_elem
+
     # Jakub
-    @classmethod
-    def __find_neerest_left(cls, group):
-        """find neerest left group
+    def __find_nearest_left(self, group):
+        """find nearest left group
 
         :param group:lxml.etree._Element
         :return: group:lxml.etree._Element or None
         """
 
-    @classmethod
-    def __find_neerest_right(cls, group):
-        """find neerest right group
+        t = int(group.attrib['t'])
+        if t >= self.ERROR:
+            t -= self.ERROR
+        b = int(group.attrib['b']) + self.ERROR
+        l = int(group.attrib['l']) + self.ERROR
+
+        # De Morgan's law - check intersection - (StartA >= EndB)  and  (EndA <= StartB)
+        # StartA = @b, EndA = @t
+        # StartB = b, EndB = t
+        query = "group[@type != 'separators' and @b >= " + str(t) + \
+                " and @t <= " + str(b) + " and @r <= " + str(l) + "]"
+        results = self.current_page.xpath(query)
+
+        return self.__get_min_or_max(results, -1, 'r', operator.gt)
+
+    def __find_nearest_right(self, group):
+        """find nearest right group
 
         :param group:lxml.etree._Element
         :return: group:lxml.etree._Element or None
         """
+
+        t = int(group.attrib['t'])
+        if t >= self.ERROR:
+            t -= self.ERROR
+        b = int(group.attrib['b']) + self.ERROR
+        r = int(group.attrib['r']) - self.ERROR
+
+        # De Morgan's law - check intersection - (StartA >= EndB)  and  (EndA <= StartB)
+        # StartA = @b, EndA = @t
+        # StartB = b, EndB = t
+        query = "group[@type != 'separators' and @b >= " + str(t) + \
+                " and @t <= " + str(b) + " and @l >= " + str(r) + "]"
+        results = self.current_page.xpath(query)
+
+        return self.__get_min_or_max(results, 100000, 'l', operator.lt)
 
     # Jozef
     @classmethod
@@ -147,10 +198,23 @@ class Assembler(object):
         :return: group:lxml.etree._Element or None
         """
 
+    def __find_middle_alone(self):
+        """find any ALONE group element located in middle column
+
+        :param
+        :return: group:lxml.etree._Element or None
+        """
+
+        groups = self.current_page.xpath("group[@column_position = 'middle' and not(@chained)][1]")
+        if len(groups) != 0:
+            return groups[0]
+        else:
+            return None
+
     # Martina
     @classmethod
     def __find_nearest_above(cls, group):
-        """find neerest group element located above current group element
+        """find nearest group element located above current group element
 
         :param group:lxml.etree._Element
         :return: lxml.etree._Element or Non
