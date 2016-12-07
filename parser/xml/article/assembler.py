@@ -86,6 +86,10 @@ class Assembler(object):
         :param current_group:lxml.etree._Element
         :return: found possible chainable group element or None
         """
+        left = cls.__find_neerest_left(current_group)
+        if left != None and left.attrib['type'] == "separators":
+            return None
+        return left
 
     @classmethod
     def __chainable_right_alone(cls, current_group):
