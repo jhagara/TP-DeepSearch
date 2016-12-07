@@ -2,6 +2,7 @@ class Assembler(object):
     previous_page = None
     current_page = None
     parsed_xml = None
+    ERROR = 3
 
     def assembly_articles(self, parsed_xml):
         self.parsed_xml = parsed_xml
@@ -54,6 +55,16 @@ class Assembler(object):
         :param current_group:lxml.etree._Element
         :return: found heading as group element or None
         """
+
+        result = cls.__find_nearest_above(current_group)
+        if result is None:
+            return None
+        elif result.tag != 'heading':
+            return None
+        else:
+            return cls.__is_equal_2a(current_group, result)
+
+
 
     @classmethod
     def __chainable_equal_ratio_heading(cls, current_group):
@@ -150,11 +161,32 @@ class Assembler(object):
     # Martina
     @classmethod
     def __find_nearest_above(cls, group):
+
         """find neerest group element located above current group element
 
         :param group:lxml.etree._Element
         :return: lxml.etree._Element or Non
         """
+
+        l = int(group.attrib['l'])
+        r = int(group.attrib['r'])
+        t = int(group.attrib['t'])
+
+        query = "group[@l <= " + str(r) + " and " \
+                "@r >= " + str(l) + " and @b <= " + str(t) + "]"
+        results = cls.current_page.xpath(query)
+
+        if len(results) != 0:
+            maximum = -1
+            max_elem = results[0]
+            for result in results:
+                val = int(result.attrib['b'])
+                if val > maximum:
+                    maximum = val
+                    max_elem = result
+            return max_elem
+
+        return None
 
     @classmethod
     def __find_last_from_previous_page(cls):
@@ -163,3 +195,52 @@ class Assembler(object):
         :param
         :return: group:lxml.etree._Element or None
         """
+
+    @classmethod
+    def __is_equal_2a(cls, text, head):
+        r1 = int(text.attrib['r']) - cls.ERROR
+        l1 = int(text.attrib['l']) - cls.ERROR
+        r2 = int(text.attrib['r']) + cls.ERROR
+        l2 = int(text.attrib['l']) + cls.ERROR
+        r = int(head.attrib['r'])
+        l = int(head.attrib['l'])
+        if r1 <= r <= r2 and l1 <= l <= l2:
+            return head
+        else:
+            return None
+
+    @classmethod
+    def __find_all_nearest_below(cls, group):
+        """find all nearest group element located below current group element
+
+        :param group:lxml.etree._Element
+        :return: array of lxml.etree._Element or None
+        """
+        l = int(group.attrib['l'])
+        r = int(group.attrib['r'])
+        b = int(group.attrib['b'])
+
+        query = "group[@l <= " + str(r) + " and " \
+                "@r >= " + str(l) + " and @t >= " + str(b) + "]"
+        results = cls.current_page.xpath(query)
+
+        if len(results) != 0:
+            max_elem = results[0]
+            maximum = results[0].attrib['t']
+            for result in results:
+                val = int(result.attrib['t'])
+                if val < maximum:
+                    maximum = val
+                    max_elem = result
+
+            t_max = int(max_elem.attrib['t'])
+            t_min = t_max + cls.ERROR
+            relative = []
+            for result in results:
+                t = int(result.attrib['t'])
+                if t_min <= t <= t_max:
+                    relative.append(result)
+
+            return relative
+
+        return None
