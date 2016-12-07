@@ -87,7 +87,7 @@ class Assembler(object):
         :return: found possible chainable group element or None
         """
         left = cls.__find_neerest_left(current_group)
-        if left != None and left.attrib['type'] == "separators":
+        if left != None and left.attrib['type'] == 'separators':
             return None
         return left
 
