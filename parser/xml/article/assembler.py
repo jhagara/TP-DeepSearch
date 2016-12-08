@@ -96,7 +96,14 @@ class Assembler(object):
         """
         o = cls.__find_middle_alone()
         last_mid = __find_last_middle()
+
+        while (last_mid.attrib['type']=='separators'):
+            last_mid = last_mid.__find_nearest_above()
+
         result = last_mid.__find_nearest_above()
+
+        while (result.attrib['type']=='separators'):
+            result = result.__find_nearest_above()
 
         if o is not None and result is not None:
             return result
@@ -179,7 +186,7 @@ class Assembler(object):
 
         for group in groups:
             b = int(group.attrib['b'])
-            if max < b:
+            if group.attrib['type'] != 'separators' and max < b:
                 max = b
                 result = group
 
