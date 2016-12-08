@@ -107,6 +107,8 @@ class Assembler(object):
             elif len(result) > 1:
                 if all_groups_width_main_larger(current_group, result):
                     return header
+                elif all_groups_fulltext_alone(current_group, result):
+                    return header
                 else:
                     return None
 
@@ -225,13 +227,14 @@ class Assembler(object):
         max_width = cmp_width + cls.ERROR
 
         for group in all_groups:
+            if group.tag != "fulltext":
+                return False
             l = int(group.attrib['l'])
             r = int(group.attrib['r'])
             width = r - l
             if width < min_width || width > max_width:
                 return False
         return True
-
 
     @classmethod
     def __all_groups_width_main_larger(current, all_groups):
@@ -240,6 +243,8 @@ class Assembler(object):
         cmp_width = r - l
 
         for group in all_groups:
+            if group.tag != "fulltext":
+                return False
             l = int(group.attrib['l'])
             r = int(group.attrib['r'])
             if curr_r == r && curr_l == l:
@@ -249,6 +254,21 @@ class Assembler(object):
                 return False
         return True
         
+    @classmethod
+    def __all_groups_fulltext_alone(current, result):
+        if current.tag != "fulltext":
+            return False
+        curr_r = int(current.attrib['r'])
+        cmp_width = r - l
+
+        for group in all_groups:
+            l = int(group.attrib['l'])
+            r = int(group.attrib['r'])
+            if curr_r == r && curr_l == l:
+                continue
+            if group.tag == "fulltext":
+                return False
+        return True
 
     @classmethod
     def __find_all_nearest_below(cls, group):
