@@ -51,18 +51,134 @@ class TestMerger(unittest.TestCase):
                        <group type="fulltext" t="3441" b="4800" l="2450" r="3450">
                        </group>
                     </page>
+                     <page width="3455" height="4871" resolution="400">
+                       <group type="heading" t="0" b="800" l="0" r="1700">
+                       </group>
+                       <group type="fulltext" t="1000" b="1700" l="0" r="1700">
+                       </group>
+                       <group type="separator" t="2251" b="1700" l="0" r="1500">
+                       </group>
+                       <group type="heading" t="1720" b="2000" l="500" r="2000">
+                       </group>
+                       <group type="fulltext" t="2281" b="3400" l="0" r="1000">
+                       </group>
+                       <group type="fulltext" t="2281" b="4800" l="1020" r="2000">
+                       </group>
+                       <group type="fulltext" t="1720" b=4800" l="2020" r="3450">
+                       </group>
+                       <group type="heading" t="0" b="500" l="2000" r="3450">
+                       </group>
+                       <group type="fulltext" t="520" b="1700" l="2000" r="2483">
+                       </group>
+                        <group type="fulltext" t="520" b="1700" l="2486" r="2969">
+                       </group>
+                        <group type="fulltext" t="520" b="1700" l="2972" r="3455">
+                       </group>
+                    </page>
+                    <page width="3455" height="4871" resolution="400">
+                       <group type="heading" t="0" b="1000" l="200" r="3200">
+                       </group>
+                       <group type="fulltext" t="1100" b="2500" l="0" r="1152">
+                       </group>
+                       <group type="fulltext" t="1100" b="2500" l="1157" r="2308">
+                       </group>
+                        <group type="fulltext" t="1100" b="2500" l="2309" r="3455">
+                       </group>
+                       <group type="separator" t="2501" b="2520" l="0" r="1152">
+                       </group>
+                       <group type="separator" t="2501" b="2520" l="1157" r="2308">
+                       </group>
+                       <group type="separator" t="2501" b="2520" l="2309" r="3455">
+                       </group>
+                        <group type="heading" t="2521 b="2540" l="0" r="2000">
+                       </group>
+                       <group type="fulltext" t="2545" b="4871" l="0" r="1000">
+                       </group>
+                        <group type="fulltext" t="2545" b="4871" l="1010" r="2000">
+                       </group>
+                       <group type="heading" t="2521" b="2561" l="2020" r="3400">
+                       </group>
+                       <group type="fulltext" t="2565" b="4800" l="1520" r="2450">
+                       </group>
+                       <group type="separators" t="3441" b="4800" l="2500" r="3450">
+                       </group>
+                    </page>
+                    <page width="3455" height="4871" resolution="400">
+                       <group type="heading" t="0" b="540" l="100" r="600">
+                       </group>
+                       <group type="fulltext" t="550" b="4871" l="0" r="700">
+                       </group>
+                       <group type="heading" t="0" b="545" l="900" r="2200">
+                       </group>
+                       <group type="fulltext" t="550" b="2500" l="800" r="1608">
+                       </group>
+                       <group type="separator" t="2501" b="2520" l="800" r="1608">
+                       </group>
+                        <group type="separator" t="550" b="2500" l="1640" r="2200">
+                       </group>
+                       <group type="heading" t="2521" b="2550" l="900" r="2200">
+                       </group>
+                       <group type="fulltext" t="2700" b="4870" l="800" r="1607">
+                       </group>
+                        <group type="fulltext" t="2700" b="4870" l="1640" r="2200">
+                       </group>
+                       <group type="fulltext" t="0" b="4871" l="2400" r="3450">
+                       </group>
+                    </page>
+                    <page width="3455" height="4871" resolution="400">
+                       <group type="heading" t="0" b="540" l="500" r="3000">
+                       </group>
+                       <group type="fulltext" t="550" b="4871" l="0" r="1100">
+                       </group>
+                       <group type="fulltext" t="550" b="1800" l="1120" r="2250">
+                       </group>
+                       <group type="fulltext" t="550" b="4871" l="2300" r="3450">
+                       </group>
+                       <group type="separator" t="2000" b="2520" l="1150" r="2200">
+                       </group>
+                       <group type="fulltext" t="2600" b="4870" l="1120" r="2250">
+                       </group>
+                    </page>
+                    <page width="3455" height="4871" resolution="400">
+                       <group type="heading" t="0" b="540" l="100" r="600">
+                       </group>
+                       <group type="fulltext" t="550" b="2000" l="0" r="3400">
+                       </group>
+                       <group type="separator" t="2001" b="2080" l="0" r="3400">
+                       </group>
+                       <group type="fulltext" t="2081" b="4871" l="0" r="1100">
+                       </group>
+                         <group type="fulltext" t="2081" b="4871" l="1120" r="2200">
+                       </group>
+                         <group type="separator" t="2081" b="4871" l="2220" r="3400">
+                       </group>
+                    </page>
+                   <page width="3455" height="4871" resolution="400">
+                       <group type="separator" t="0" b="540" l="0" r="600">
+                       </group>
+                       <group type="fulltext" t="550" b="4871" l="0" r="700">
+                       </group>
+                       <group type="heading" t="0" b="545" l="900" r="2200">
+                       </group>
+                       <group type="fulltext" t="550" b="2500" l="800" r="1608">
+                       </group>
+                       <group type="separator" t="2501" b="2520" l="800" r="1608">
+                       </group>
+                        <group type="separator" t="550" b="2500" l="1640" r="2200">
+                       </group>
+                       <group type="heading" t="2521" b="2550" l="900" r="2200">
+                       </group>
+                       <group type="fulltext" t="2700" b="3200" l="800" r="2200">
+                       </group>
+                        <group type="heading" t="3220" b="3300" l="900" r="2020">
+                       </group>
+                       <group type="fulltext" t="3370" b="4871" l="800" r="2200">
+                       </group>
+                        <group type="f" t="fulltext" b="4870" l="2300" r="3455">
+                       </group>
+                    </page>
                </document>"""
 
-        actual_xml = SeparatorId.discriminant_separators(etree.fromstring(original_xml))
-        desired_xml = etree.fromstring(desired_xml)
 
-        print (etree.tostring(actual_xml).decode('utf-8'))
-        self.assertEqual(re.sub('[^\040-\176]| ', '', etree.tostring(desired_xml).decode('utf-8')),
-                         re.sub('[^\040-\176]| ', '', etree.tostring(actual_xml).decode('utf-8')))
-
-
-
-        self.assertEqual(re.sub('[^\040-\176]| ', '', etree.tostring(desired_xml).decode('utf-8')),
-                         re.sub('[^\040-\176]| ', '', etree.tostring(actual_xml).decode('utf-8')))
 
 
