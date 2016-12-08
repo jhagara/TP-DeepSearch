@@ -21,17 +21,6 @@ class Assembler(object):
         self.chains_mapper = args['chains_mapper']
         self.last_chain_num = args['last_chain_num']
 
-    # def __init__(self, parsed_xml, previous_page=None, current_page=None, ERROR=3,
-    #              current_page_num=None, chains={}, chains_mapper={}, last_chain_num=0):
-    #     self.previous_page = previous_page
-    #     self.current_page = current_page
-    #     self.current_page_num = current_page_num
-    #     self.parsed_xml = parsed_xml
-    #     self.ERROR = ERROR
-    #     self.chains = chains
-    #     self.chains_mapper = chains_mapper
-    #     self.last_chain_num = last_chain_num
-
     def assembly_articles(self, parsed_xml):
         self.parsed_xml = parsed_xml
 
