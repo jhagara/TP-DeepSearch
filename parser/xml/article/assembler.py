@@ -2,11 +2,6 @@ import operator
 
 
 class Assembler(object):
-    # previous_page = None
-    # current_page = None
-    # parsed_xml = None
-    # ERROR = 3
-
     def __init__(self, parsed_xml, **args):
         default = {'previous_page': None, 'current_page': None, 'ERROR': 3,
                    'current_page_num': None, 'chains': {}, 'chains_mapper': {}, 'last_chain_num': 0}
@@ -133,7 +128,7 @@ class Assembler(object):
 
         # chain group already exist
         if (chain_num_same1 is not None) or (chain_num_same2 is not None):
-            if (chain_num_same1 is not None):
+            if chain_num_same1 is not None:
                 chain_num = chain_num_same1
                 self.chains[self.current_page_num][chain_num].append(group2)
                 self.chains_mapper[id2] = chain_num
