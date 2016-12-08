@@ -233,8 +233,8 @@ class Assembler(object):
                     maximum = val
                     max_elem = result
 
-            t_max = int(max_elem.attrib['t'])
-            t_min = t_max + cls.ERROR
+            t_min = int(max_elem.attrib['t'])
+            t_max = t_min + cls.ERROR
             relative = []
             for result in results:
                 t = int(result.attrib['t'])
