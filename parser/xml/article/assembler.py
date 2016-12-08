@@ -94,16 +94,14 @@ class Assembler(object):
         :param current_group:lxml.etree._Element
         :return: found possible chainable group element or None
         """
-        o = cls.__find_last_middle_alone()
-        if o is None:
-            last_mid_bottom = __find_last_middle()
-            result = last_mid_bottom.__find_nearest_above()
-            if result is None:
-                return last_mid_bottom
-            else:
-                return result
+        o = cls.__find_middle_alone()
+        last_mid = __find_last_middle()
+        result = last_mid.__find_nearest_above()
+
+        if o is not None and result is not None:
+            return result
         else:
-            return o
+            return last_mid
 
     # PRIVATE HELPER METHODS
 
@@ -173,10 +171,16 @@ class Assembler(object):
         :param
         :return: group:lxml.etree._Element or None
         """
+        max = 0
+        groups = cls.previous_page.xpath("group[@column_position = 'right']")
 
-        bottom_candidate = cls.previous_page.__find_last_middle()
-        right_candidate = cls.previous_page.__find_neerest_right(bottom_candidate)
-        if right_candidate is None:
-            return bottom_candidate
-        else:
-            return right_candidate
+        if groups[0] is not None:
+            result = groups[0]
+
+        for group in groups:
+            b = int(group.attrib['b'])
+            if max < b:
+                max = b
+                result = group
+
+        return result
