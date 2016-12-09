@@ -114,8 +114,8 @@ class Test2Dii(unittest.TestCase):
 					</block>
 				</group>"""
 
-        assembler = Assembler()
-        Assembler.assembly_articles(etree.fromstring(original_xml))
+        assembler = Assembler(etree.fromstring(original_xml))
+        Assembler.assembly_articles
         chains = assembler.chains
         for i, page in enumerate(chains):
             print("page" + i)
