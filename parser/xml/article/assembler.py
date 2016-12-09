@@ -48,21 +48,20 @@ class Assembler(object):
 
     # PRIVATE
 
-    @classmethod
-    def __chainable_equal_heading(cls, current_group):
+    def __chainable_equal_heading(self, current_group):
         """2A, equal width of current_group and neerest heading above
 
         :param current_group:lxml.etree._Element
         :return: found heading as group element or None
         """
 
-        result = cls.__find_nearest_above(current_group)
+        result = self.__find_nearest_above(current_group)
         if result is None:
             return None
         elif result.tag != 'heading':
             return None
         else:
-            return cls.__is_equal_2a(current_group, result)
+            return self.__is_equal_2a(current_group, result)
 
 
 
@@ -159,8 +158,7 @@ class Assembler(object):
         """
 
     # Martina
-    @classmethod
-    def __find_nearest_above(cls, group):
+    def __find_nearest_above(self, group):
 
         """find neerest group element located above current group element
 
@@ -174,19 +172,8 @@ class Assembler(object):
 
         query = "group[@l <= " + str(r) + " and " \
                 "@r >= " + str(l) + " and @b <= " + str(t) + "]"
-        results = cls.current_page.xpath(query)
-
-        if len(results) != 0:
-            maximum = -1
-            max_elem = results[0]
-            for result in results:
-                val = int(result.attrib['b'])
-                if val > maximum:
-                    maximum = val
-                    max_elem = result
-            return max_elem
-
-        return None
+        results = self.current_page.xpath(query)
+        return self.__get_min_or_max(results, -1, 'b', operator.gt)
 
     @classmethod
     def __find_last_from_previous_page(cls):
@@ -196,21 +183,17 @@ class Assembler(object):
         :return: group:lxml.etree._Element or None
         """
 
-    @classmethod
-    def __is_equal_2a(cls, text, head):
-        r1 = int(text.attrib['r']) - cls.ERROR
-        l1 = int(text.attrib['l']) - cls.ERROR
-        r2 = int(text.attrib['r']) + cls.ERROR
-        l2 = int(text.attrib['l']) + cls.ERROR
+    def __is_equal_2a(self, text, head):
+        r1 = int(text.attrib['r']) + self.ERROR
+        l1 = int(text.attrib['l']) - self.ERROR
         r = int(head.attrib['r'])
         l = int(head.attrib['l'])
-        if r1 <= r <= r2 and l1 <= l <= l2:
+        if l >= l1 and r <= r1:
             return head
         else:
             return None
 
-    @classmethod
-    def __find_all_nearest_below(cls, group):
+    def __find_all_nearest_below(self, group):
         """find all nearest group element located below current group element
 
         :param group:lxml.etree._Element
@@ -222,19 +205,14 @@ class Assembler(object):
 
         query = "group[@l <= " + str(r) + " and " \
                 "@r >= " + str(l) + " and @t >= " + str(b) + "]"
-        results = cls.current_page.xpath(query)
-
-        if len(results) != 0:
-            max_elem = results[0]
-            maximum = results[0].attrib['t']
-            for result in results:
-                val = int(result.attrib['t'])
-                if val < maximum:
-                    maximum = val
-                    max_elem = result
-
+        results = self.current_page.xpath(query)
+        max_elem = self.__get_min_or_max(results, results[0].attrib['t'], 't',
+                                 operator.lt)
+        if max_elem is None:
+            return None
+        else:
             t_min = int(max_elem.attrib['t'])
-            t_max = t_min + cls.ERROR
+            t_max = t_min + self.ERROR
             relative = []
             for result in results:
                 t = int(result.attrib['t'])
@@ -242,5 +220,3 @@ class Assembler(object):
                     relative.append(result)
 
             return relative
-
-        return None
