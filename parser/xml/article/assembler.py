@@ -19,7 +19,7 @@ class Assembler(object):
     def assembly_articles(self):
         i = 0
         # first cycle of all groups in pages
-        for page in parsed_xml.xpath("/document/page"):
+        for page in self.parsed_xml.xpath("/document/page"):
             self.current_page = page
             i += 1
             self.current_page_num = i
@@ -43,7 +43,7 @@ class Assembler(object):
 
         i = 0
         # second cycle of all ALONE in the dark groups
-        for page in parsed_xml.xpath("/document/page"):
+        for page in self.parsed_xml.xpath("/document/page"):
             self.current_page = page
             i += 1
             self.current_page_num = i
