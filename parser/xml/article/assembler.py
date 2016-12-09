@@ -16,9 +16,7 @@ class Assembler(object):
         self.chains_mapper = args['chains_mapper']
         self.last_chain_num = args['last_chain_num']
 
-    def assembly_articles(self, parsed_xml):
-        self.parsed_xml = parsed_xml
-
+    def assembly_articles(self):
         i = 0
         # first cycle of all groups in pages
         for page in parsed_xml.xpath("/document/page"):
@@ -101,12 +99,17 @@ class Assembler(object):
         """
 
     @classmethod
-    def __chainable_middle_alone(cls, current_group):
+    def __chainable_middle_alone(self, current_group):
         """2Dii, group is ALONE and its location is in middle column
 
         :param current_group:lxml.etree._Element
         :return: found possible chainable group element or None
         """
+
+        left = self.__find_neerest_left(current_group)
+        if left is not None and left.attrib['type'] == 'separators':
+            return None
+        return left
 
     def __chainable_right_alone(self, current_group):
         """2Diii, group is ALONE and its location is in right column
