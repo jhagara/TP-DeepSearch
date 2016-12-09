@@ -108,13 +108,27 @@ class Assembler(object):
         :return: found possible chainable group element or None
         """
 
-    @classmethod
-    def __chainable_right_alone(cls, current_group):
+    def __chainable_right_alone(self, current_group):
         """2Diii, group is ALONE and its location is in right column
 
         :param current_group:lxml.etree._Element
         :return: found possible chainable group element or None
         """
+        o = self.__find_middle_alone()
+        last_mid = self.__find_last_middle()
+
+        while (last_mid.attrib['type']=='separators'):
+            last_mid = last_mid.__find_nearest_above()
+
+        result = last_mid.__find_nearest_above()
+
+        while (result.attrib['type']=='separators'):
+            result = result.__find_nearest_above()
+
+        if o is not None and result is not None:
+            return result
+        else:
+            return last_mid
 
     # PRIVATE HELPER METHODS
 
@@ -294,10 +308,20 @@ class Assembler(object):
         :return: lxml.etree._Element or Non
         """
 
-    @classmethod
-    def __find_last_from_previous_page(cls):
+    def __find_last_from_previous_page(self):
         """find last group element from previous page
 
         :param
         :return: group:lxml.etree._Element or None
         """
+        max = 0
+        groups = self.previous_page.xpath("group[@column_position = 'right']")
+
+        result = None
+        if len(groups) != 0:
+            for group in groups:
+                b = int(group.attrib['b'])
+                if group.attrib['type'] != 'separators' and max < b:
+                    max = b
+                    result = group
+        return result
