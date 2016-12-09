@@ -102,7 +102,8 @@ class Assembler(object):
             elif len(result) == 1:
                 if result[0].tag == 'fulltext':
                     return header
-                else: None
+                else:
+                    None
             elif len(result) > 1:
                 if all_groups_width_main_larger(current_group, result):
                     return header
@@ -231,7 +232,7 @@ class Assembler(object):
             l = int(group.attrib['l'])
             r = int(group.attrib['r'])
             width = r - l
-            if width < min_width || width > max_width:
+            if width < min_width or widrh > max_width:
                 return False
         return True
 
@@ -246,13 +247,13 @@ class Assembler(object):
                 return False
             l = int(group.attrib['l'])
             r = int(group.attrib['r'])
-            if curr_r == r && curr_l == l:
+            if curr_r == r and curr_l == l:
                 continue
             width = r - l
             if width > cmp_width:
                 return False
         return True
-        
+
     @classmethod
     def __all_groups_fulltext_alone(current, result):
         if current.tag != "fulltext":
@@ -263,7 +264,7 @@ class Assembler(object):
         for group in all_groups:
             l = int(group.attrib['l'])
             r = int(group.attrib['r'])
-            if curr_r == r && curr_l == l:
+            if curr_r == r and curr_l == l:
                 continue
             if group.tag == "fulltext":
                 return False
