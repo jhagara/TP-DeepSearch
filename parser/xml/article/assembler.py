@@ -56,20 +56,20 @@ class Assembler(object):
         """
 
     @classmethod
-    def __chainable_equal_ratio_heading(cls, current_group):
+    def __chainable_equal_ratio_heading(self, current_group):
         """2B, equal ratio of groups below heading, this heading is above current_group
 
         :param current_group:lxml.etree._Element
         :return: found heading as group element or None
         """
 
-        header = cls.__find_nearest_above(current_group)
+        header = self.__find_nearest_above(current_group)
         if header is None:
             return None
         elif header.tag != 'heading':
             return None
         else:
-            result = cls.__find_all_nearest_below(header)
+            result = self.__find_all_nearest_below(header)
             if result is None:
                 return None
             elif len(result) == 1:
@@ -83,21 +83,20 @@ class Assembler(object):
                 else:
                     return None
 
-    @classmethod
-    def __chainable_major_ratio_heading(cls, current_group):
+    def __chainable_major_ratio_heading(self, current_group):
         """2C, current_group represents major width of above heading
 
         :param current_group:lxml.etree._Element
         :return: found heading as group element or None
         """
 
-        header = cls.__find_nearest_above(current_group)
+        header = self.__find_nearest_above(current_group)
         if header is None:
             return None
         elif header.tag != 'heading':
             return None
         else:
-            result = cls.__find_all_nearest_below(header)
+            result = self.__find_all_nearest_below(header)
             if result is None:
                 return None
             elif len(result) == 1:
