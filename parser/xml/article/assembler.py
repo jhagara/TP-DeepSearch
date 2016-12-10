@@ -173,10 +173,6 @@ class Assembler(object):
         group2.attrib['chained'] = 'true'
 
     # get column position
-<<<<<<< HEAD
-=======
-
->>>>>>> 9da6b837b2924a6a58e38899989bc3bbc8853ac2
     def __find_column_position(self, group):
         exist_left = self.__exist_any_on_the_left(group)
         exist_right = self.__exist_any_on_the_right(group)
@@ -205,13 +201,7 @@ class Assembler(object):
         return target_elem
 
     # Jakub
-<<<<<<< HEAD
     def __find_nearest_left(self, group):
-=======
-
-    def __find_nearest_left(self, group):
-
->>>>>>> 9da6b837b2924a6a58e38899989bc3bbc8853ac2
         """find nearest left group
 
         :param group:lxml.etree._Element
@@ -257,10 +247,6 @@ class Assembler(object):
 
     def __exist_any_on_the_left(self, group):
         """find all groups on the left from current group
-<<<<<<< HEAD
-=======
-
->>>>>>> 9da6b837b2924a6a58e38899989bc3bbc8853ac2
 
         :param group:lxml.etree._Element
         :return: group:lxml.etree._Element or None
