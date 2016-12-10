@@ -91,12 +91,18 @@ class Assembler(object):
         """
 
     @classmethod
-    def __chainable_left_alone(cls, current_group):
-        """2Di, group is ALONE and its location is in left column
+    def __chainable_left_alone(self, current_group):
+        #2Di, group is ALONE and its location is in left column
+        nearest_above = self.__find_nearest_above(current_group)
+        if nearest_above is None or nearest_above.attrib['type']=='separator':
+            parent_group = self.__find_last_from_previous_page()
+            return parent_group
+        else:
+             return None
+            
+        #param current_group:lxml.etree._Element
+        #return: found possible chainable group element or None
 
-        :param current_group:lxml.etree._Element
-        :return: found possible chainable group element or None
-        """
 
     @classmethod
     def __chainable_middle_alone(self, current_group):
@@ -168,6 +174,7 @@ class Assembler(object):
         group2.attrib['chained'] = 'true'
 
     # get column position
+
     def __find_column_position(self, group):
         exist_left = self.__exist_any_on_the_left(group)
         exist_right = self.__exist_any_on_the_right(group)
@@ -196,7 +203,9 @@ class Assembler(object):
         return target_elem
 
     # Jakub
+
     def __find_nearest_left(self, group):
+
         """find nearest left group
 
         :param group:lxml.etree._Element
@@ -242,6 +251,7 @@ class Assembler(object):
 
     def __exist_any_on_the_left(self, group):
         """find all groups on the left from current group
+
 
         :param group:lxml.etree._Element
         :return: group:lxml.etree._Element or None
