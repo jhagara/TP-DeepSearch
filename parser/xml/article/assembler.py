@@ -90,13 +90,19 @@ class Assembler(object):
         :return: found heading as group element or None
         """
 
-    @classmethod
-    def __chainable_left_alone(cls, current_group):
+    def __chainable_left_alone(self, current_group):
         """2Di, group is ALONE and its location is in left column
 
         :param current_group:lxml.etree._Element
         :return: found possible chainable group element or None
         """
+
+        nearest_above = self.__find_nearest_above(current_group)
+        if nearest_above is None or nearest_above.attrib['type'] == 'separator':
+            parent_group = self.__find_last_from_previous_page()
+            return parent_group
+        else:
+            return None
 
     @classmethod
     def __chainable_middle_alone(self, current_group):
