@@ -68,7 +68,6 @@ class Assembler(object):
 
     def __chainable_equal_heading(self, current_group):
         """2A, equal width of current_group and neerest heading above
-
         :param current_group:lxml.etree._Element
         :return: found heading as group element or None
         """
@@ -80,8 +79,6 @@ class Assembler(object):
             return None
         else:
             return self.__is_equal_2a(current_group, result)
-
-
 
     @classmethod
     def __chainable_equal_ratio_heading(cls, current_group):
@@ -99,22 +96,23 @@ class Assembler(object):
         :return: found heading as group element or None
         """
 
-    @classmethod
     def __chainable_left_alone(self, current_group):
-        #2Di, group is ALONE and its location is in left column
+        """2Di, group is ALONE and its location is in left column
+
+        :param current_group:lxml.etree._Element
+        :return: found possible chainable group element or None
+        """
+
         nearest_above = self.__find_nearest_above(current_group)
-        if nearest_above is None or nearest_above.attrib['type']=='separator':
+        if nearest_above is None or nearest_above.attrib['type'] == 'separator':
             parent_group = self.__find_last_from_previous_page()
             return parent_group
         else:
-             return None
+            return None
 
-        #param current_group:lxml.etree._Element
-        #return: found possible chainable group element or None
-
-    @classmethod
     def __chainable_middle_alone(self, current_group):
         """2Dii, group is ALONE and its location is in middle column
+
         :param current_group:lxml.etree._Element
         :return: found possible chainable group element or None
         """
@@ -126,18 +124,19 @@ class Assembler(object):
 
     def __chainable_right_alone(self, current_group):
         """2Diii, group is ALONE and its location is in right column
+
         :param current_group:lxml.etree._Element
         :return: found possible chainable group element or None
         """
         o = self.__find_middle_alone()
         last_mid = self.__find_last_middle()
 
-        while (last_mid.attrib['type'] == 'separators'):
+        while (last_mid.attrib['type']=='separators'):
             last_mid = last_mid.__find_nearest_above()
 
         result = last_mid.__find_nearest_above()
 
-        while (result.attrib['type'] == 'separators'):
+        while (result.attrib['type']=='separators'):
             result = result.__find_nearest_above()
 
         if o is not None and result is not None:
@@ -180,7 +179,6 @@ class Assembler(object):
         group2.attrib['chained'] = 'true'
 
     # get column position
-
     def __find_column_position(self, group):
         exist_left = self.__exist_any_on_the_left(group)
         exist_right = self.__exist_any_on_the_right(group)
@@ -209,10 +207,9 @@ class Assembler(object):
         return target_elem
 
     # Jakub
-
     def __find_nearest_left(self, group):
-
         """find nearest left group
+
         :param group:lxml.etree._Element
         :return: group:lxml.etree._Element or None
         """
@@ -234,6 +231,7 @@ class Assembler(object):
 
     def __find_nearest_right(self, group):
         """find nearest right group
+
         :param group:lxml.etree._Element
         :return: group:lxml.etree._Element or None
         """
@@ -255,6 +253,7 @@ class Assembler(object):
 
     def __exist_any_on_the_left(self, group):
         """find all groups on the left from current group
+
         :param group:lxml.etree._Element
         :return: group:lxml.etree._Element or None
         """
@@ -268,6 +267,7 @@ class Assembler(object):
 
     def __exist_any_on_the_right(self, group):
         """find all groups on the left from current group
+
         :param group:lxml.etree._Element
         :return: group:lxml.etree._Element or None
         """
@@ -282,6 +282,7 @@ class Assembler(object):
     # Jozef
     def __find_last_middle(self):
         """find last group element located in middle column
+
         :param
         :return: group:lxml.etree._Element or None
         """
@@ -301,6 +302,7 @@ class Assembler(object):
 
     def __find_middle_alone(self):
         """find any ALONE group element located in middle column
+
         :param
         :return: group:lxml.etree._Element or None
         """
@@ -313,9 +315,7 @@ class Assembler(object):
 
     # Martina
     def __find_nearest_above(self, group):
-
         """find neerest group element located above current group element
-
         :param group:lxml.etree._Element
         :return: lxml.etree._Element or Non
         """
@@ -331,6 +331,7 @@ class Assembler(object):
 
     def __find_last_from_previous_page(self):
         """find last group element from previous page
+
         :param
         :return: group:lxml.etree._Element or None
         """
@@ -358,7 +359,6 @@ class Assembler(object):
 
     def __find_all_nearest_below(self, group):
         """find all nearest group element located below current group element
-
         :param group:lxml.etree._Element
         :return: array of lxml.etree._Element or None
         """
@@ -367,7 +367,7 @@ class Assembler(object):
         b = int(group.attrib['b'])
 
         query = "group[@l <= " + str(r) + " and " \
-                "@r >= " + str(l) + " and @t >= " + str(b) + "]"
+                                          "@r >= " + str(l) + " and @t >= " + str(b) + "]"
         results = self.current_page.xpath(query)
         max_elem = self.__get_min_or_max(results, int(self.current_page.attrib['height']), 't', operator.lt)
         if max_elem is None:
