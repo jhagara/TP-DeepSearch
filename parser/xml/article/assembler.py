@@ -47,15 +47,13 @@ class Assembler(object):
 
     # PRIVATE
 
-    @classmethod
-    def __chainable_equal_heading(cls, current_group):
+    def __chainable_equal_heading(self, current_group):
         """2A, equal width of current_group and neerest heading above
 
         :param current_group:lxml.etree._Element
         :return: found heading as group element or None
         """
 
-    @classmethod
     def __chainable_equal_ratio_heading(self, current_group):
         """2B, equal ratio of groups below heading, this heading is above current_group
 
