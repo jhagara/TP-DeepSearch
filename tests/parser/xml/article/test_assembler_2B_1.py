@@ -16,6 +16,18 @@ def test_scenario_2B_2_of_same_size(self):
             </page>
         </document>"""
 
+        original_xml = etree.fromstring(original_xml)
+        group_A = original_xml.xpath("/document/page/group[@name='A'][1]")[0]
+        current_page = original_xml.xpath("/document/page[1]")[0]
+
+        assembler = Assembler(None, current_page=current_page, ERROR=3)
+        found_group = assembler._Assembler__chainable_equal_ratio_heading(group_A)
+        list = []
+        self.assertIsNotNone(found_group)
+        for x in found_group:
+            list.append(x.attrib['name'])
+        self.assertEqual(['A', 'B'], list)
+
 def test_scenario_2B_3_of_same_size(self):
         original_xml = """
         <document>
@@ -30,3 +42,15 @@ def test_scenario_2B_3_of_same_size(self):
                 type='fulltexts' column_position='left'></group>
             </page>
         </document>"""
+
+        original_xml = etree.fromstring(original_xml)
+        group_A = original_xml.xpath("/document/page/group[@name='A'][1]")[0]
+        current_page = original_xml.xpath("/document/page[1]")[0]
+
+        assembler = Assembler(None, current_page=current_page, ERROR=3)
+        found_group = assembler._Assembler__chainable_equal_ratio_heading(group_A)
+        list = []
+        self.assertIsNotNone(found_group)
+        for x in found_group:
+            list.append(x.attrib['name'])
+        self.assertEqual(['A', 'B', 'C'], list)
