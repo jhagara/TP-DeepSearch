@@ -64,14 +64,14 @@ class Assembler(object):
         header = self.__find_nearest_above(current_group)
         if header is None:
             return None
-        elif header.tag != 'heading':
+        elif header.tag != 'headings':
             return None
         else:
             result = self.__find_all_nearest_below(header)
             if result is None:
                 return None
             elif len(result) == 1:
-                if result[0].tag == 'fulltext':
+                if result[0].tag == 'fulltexts':
                     return header
                 else:
                     None
@@ -91,14 +91,14 @@ class Assembler(object):
         header = self.__find_nearest_above(current_group)
         if header is None:
             return None
-        elif header.tag != 'heading':
+        elif header.tag != 'headings':
             return None
         else:
             result = self.__find_all_nearest_below(header)
             if result is None:
                 return None
             elif len(result) == 1:
-                if result[0].tag == 'fulltext':
+                if result[0].tag == 'fulltexts':
                     return header
                 else:
                     None
@@ -225,7 +225,7 @@ class Assembler(object):
         max_width = cmp_width + cls.ERROR
 
         for group in all_groups:
-            if group.tag != "fulltext":
+            if group.tag != "fulltexts":
                 return False
             l = int(group.attrib['l'])
             r = int(group.attrib['r'])
@@ -241,7 +241,7 @@ class Assembler(object):
         cmp_width = r - l
 
         for group in all_groups:
-            if group.tag != "fulltext":
+            if group.tag != "fulltexts":
                 return False
             l = int(group.attrib['l'])
             r = int(group.attrib['r'])
@@ -254,7 +254,7 @@ class Assembler(object):
 
     @classmethod
     def __all_groups_fulltext_alone(current, result):
-        if current.tag != "fulltext":
+        if current.tag != "fulltexts":
             return False
         curr_r = int(current.attrib['r'])
         cmp_width = r - l
@@ -264,7 +264,7 @@ class Assembler(object):
             r = int(group.attrib['r'])
             if curr_r == r and curr_l == l:
                 continue
-            if group.tag == "fulltext":
+            if group.tag == "fulltexts":
                 return False
         return True
 
