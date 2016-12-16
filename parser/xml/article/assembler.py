@@ -110,24 +110,21 @@ class Assembler(object):
                 else:
                     return None
 
-    @classmethod
-    def __chainable_left_alone(cls, current_group):
+    def __chainable_left_alone(self, current_group):
         """2Di, group is ALONE and its location is in left column
 
         :param current_group:lxml.etree._Element
         :return: found possible chainable group element or None
         """
 
-    @classmethod
-    def __chainable_middle_alone(cls, current_group):
+    def __chainable_middle_alone(self, current_group):
         """2Dii, group is ALONE and its location is in middle column
 
         :param current_group:lxml.etree._Element
         :return: found possible chainable group element or None
         """
 
-    @classmethod
-    def __chainable_right_alone(cls, current_group):
+    def __chainable_right_alone(self, current_group):
         """2Diii, group is ALONE and its location is in right column
 
         :param current_group:lxml.etree._Element
@@ -137,8 +134,7 @@ class Assembler(object):
     # PRIVATE HELPER METHODS
 
     # chain together two groups, creat associations between them
-    @classmethod
-    def __chain_groups(cls, group1, group2):
+    def __chain_groups(self, group1, group2):
         # chain groups
 
         # mark groups as already chained, as not ALONE, attrib chained=true
@@ -146,10 +142,9 @@ class Assembler(object):
         group2.attrib['chained'] = 'true'
 
     # get column position
-    @classmethod
-    def _find_column_position(cls, group):
-        left = cls.__find_neerest_left(group)
-        right = cls.__find_neerest_right(group)
+    def _find_column_position(self, group):
+        left = self.__find_neerest_left(group)
+        right = self.__find_neerest_right(group)
 
         if (left is not None) and (right is not None):
             return 'middle'
@@ -161,16 +156,14 @@ class Assembler(object):
             return 'left'
 
     # Jakub
-    @classmethod
-    def __find_neerest_left(cls, group):
+    def __find_neerest_left(self, group):
         """find neerest left group
 
         :param group:lxml.etree._Element
         :return: group:lxml.etree._Element or None
         """
 
-    @classmethod
-    def __find_neerest_right(cls, group):
+    def __find_neerest_right(self, group):
         """find neerest right group
 
         :param group:lxml.etree._Element
@@ -178,8 +171,7 @@ class Assembler(object):
         """
 
     # Jozef
-    @classmethod
-    def __find_last_middle_alone(cls):
+    def __find_last_middle_alone(self):
         """find last ALONE group element located in middle column
 
         :param
@@ -187,28 +179,25 @@ class Assembler(object):
         """
 
     # Martina
-    @classmethod
-    def __find_nearest_above(cls, group):
+    def __find_nearest_above(self, group):
         """find neerest group element located above current group element
 
         :param group:lxml.etree._Element
         :return: lxml.etree._Element or Non
         """
 
-    @classmethod
-    def __find_last_from_previous_page(cls):
+    def __find_last_from_previous_page(self):
         """find last group element from previous page
 
         :param
         :return: group:lxml.etree._Element or None
         """
 
-    @classmethod
-    def __is_equal_2a(cls, text, head):
-        r1 = int(text.attrib['r']) - cls.ERROR
-        l1 = int(text.attrib['l']) - cls.ERROR
-        r2 = int(text.attrib['r']) + cls.ERROR
-        l2 = int(text.attrib['l']) + cls.ERROR
+    def __is_equal_2a(self, text, head):
+        r1 = int(text.attrib['r']) - self.ERROR
+        l1 = int(text.attrib['l']) - self.ERROR
+        r2 = int(text.attrib['r']) + self.ERROR
+        l2 = int(text.attrib['l']) + self.ERROR
         r = int(head.attrib['r'])
         l = int(head.attrib['l'])
         if r1 <= r <= r2 and l1 <= l <= l2:
@@ -216,13 +205,12 @@ class Assembler(object):
         else:
             return None
 
-    @classmethod
     def __all_groups_width_same(all_groups):
         l = int(group[0].attrib['l'])
         r = int(group[0].attrib['r'])
         cmp_width = r - l
-        min_width = cmp_width - cls.ERROR
-        max_width = cmp_width + cls.ERROR
+        min_width = cmp_width - self.ERROR
+        max_width = cmp_width + self.ERROR
 
         for group in all_groups:
             if group.tag != "fulltexts":
@@ -234,7 +222,6 @@ class Assembler(object):
                 return False
         return True
 
-    @classmethod
     def __all_groups_width_main_larger(current, all_groups):
         curr_l = int(current.attrib['l'])
         curr_r = int(current.attrib['r'])
@@ -252,7 +239,6 @@ class Assembler(object):
                 return False
         return True
 
-    @classmethod
     def __all_groups_fulltext_alone(current, result):
         if current.tag != "fulltexts":
             return False
@@ -268,8 +254,7 @@ class Assembler(object):
                 return False
         return True
 
-    @classmethod
-    def __find_all_nearest_below(cls, group):
+    def __find_all_nearest_below(self, group):
         """find all nearest group element located below current group element
 
         :param group:lxml.etree._Element
@@ -281,7 +266,7 @@ class Assembler(object):
 
         query = "group[@l <= " + str(r) + " and " \
                 "@r >= " + str(l) + " and @t >= " + str(b) + "]"
-        results = cls.current_page.xpath(query)
+        results = self.current_page.xpath(query)
 
         if len(results) != 0:
             max_elem = results[0]
@@ -293,7 +278,7 @@ class Assembler(object):
                     max_elem = result
 
             t_max = int(max_elem.attrib['t'])
-            t_min = t_max + cls.ERROR
+            t_min = t_max + self.ERROR
             relative = []
             for result in results:
                 t = int(result.attrib['t'])
