@@ -88,13 +88,55 @@ class Assembler(object):
         :return: found heading as group element or None
         """
 
-    @classmethod
-    def __chainable_major_ratio_heading(cls, current_group):
+        header = self.__find_nearest_above(current_group)
+        if header is None:
+            return None
+        elif header.tag != 'headings':
+            return None
+        else:
+            result = self.__find_all_nearest_below(header)
+            if result is None:
+                return None
+            elif len(result) == 1:
+                if result[0].tag == 'fulltexts':
+                    return header
+                else:
+                    None
+            elif len(result) > 1:
+                if all_groups_width_same(result):
+                    return header
+                else:
+                    return None
+
+    def __chainable_major_ratio_heading(self, current_group):
         """2C, current_group represents major width of above heading
 
         :param current_group:lxml.etree._Element
         :return: found heading as group element or None
         """
+
+
+        header = self.__find_nearest_above(current_group)
+        if header is None:
+            return None
+        elif header.tag != 'headings':
+            return None
+        else:
+            result = self.__find_all_nearest_below(header)
+            if result is None:
+                return None
+            elif len(result) == 1:
+                if result[0].tag == 'fulltexts':
+                    return header
+                else:
+                    None
+            elif len(result) > 1:
+                if all_groups_width_main_larger(current_group, result):
+                    return header
+                elif all_groups_fulltext_alone(current_group, result):
+                    return header
+                else:
+                    return None
 
     def __chainable_left_alone(self, current_group):
         """2Di, group is ALONE and its location is in left column
@@ -209,11 +251,11 @@ class Assembler(object):
     # Jakub
     def __find_nearest_left(self, group):
         """find nearest left group
-
+        
         :param group:lxml.etree._Element
         :return: group:lxml.etree._Element or None
         """
-
+        
         t = int(group.attrib['t'])
         if t >= self.ERROR:
             t -= self.ERROR
@@ -356,6 +398,55 @@ class Assembler(object):
             return head
         else:
             return None
+          
+    def __all_groups_width_same(all_groups):
+        l = int(group[0].attrib['l'])
+        r = int(group[0].attrib['r'])
+        cmp_width = r - l
+        min_width = cmp_width - self.ERROR
+        max_width = cmp_width + self.ERROR
+
+        for group in all_groups:
+            if group.tag != "fulltexts":
+                return False
+            l = int(group.attrib['l'])
+            r = int(group.attrib['r'])
+            width = r - l
+            if width < min_width or widrh > max_width:
+                return False
+        return True
+
+    def __all_groups_width_main_larger(current, all_groups):
+        curr_l = int(current.attrib['l'])
+        curr_r = int(current.attrib['r'])
+        cmp_width = r - l
+
+        for group in all_groups:
+            if group.tag != "fulltexts":
+                return False
+            l = int(group.attrib['l'])
+            r = int(group.attrib['r'])
+            if curr_r == r and curr_l == l:
+                continue
+            width = r - l
+            if width > cmp_width:
+                return False
+        return True
+
+    def __all_groups_fulltext_alone(current, result):
+        if current.tag != "fulltexts":
+            return False
+        curr_r = int(current.attrib['r'])
+        cmp_width = r - l
+
+        for group in all_groups:
+            l = int(group.attrib['l'])
+            r = int(group.attrib['r'])
+            if curr_r == r and curr_l == l:
+                continue
+            if group.tag == "fulltexts":
+                return False
+        return True
 
     def __find_all_nearest_below(self, group):
         """find all nearest group element located below current group element
