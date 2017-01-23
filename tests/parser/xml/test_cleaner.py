@@ -95,7 +95,7 @@ class TestCleaner(unittest.TestCase):
                         </text>
                     </block>
                 </page>
-            </document>"""
+            </document>""" # NOQA
 
         desired_xml = """
             <document version="1.0" producer="FineReader 8.0"
@@ -127,9 +127,12 @@ class TestCleaner(unittest.TestCase):
                         </par>
                     </block>
                 </page>
-            </document>"""
+            </document>""" # NOQA
 
         actual_xml = Cleaner.clean(etree.fromstring(original_xml))
         desired_xml = etree.fromstring(desired_xml)
-        self.assertEqual(re.sub('[^\040-\176]| ', '', etree.tostring(desired_xml).decode('utf-8')),
-                         re.sub('[^\040-\176]| ', '', etree.tostring(actual_xml).decode('utf-8')))
+        self.assertEqual(
+                re.sub('[^\040-\176]| ', '', etree.tostring(desired_xml)
+                       .decode('utf-8')),
+                re.sub('[^\040-\176]| ', '', etree.tostring(actual_xml)
+                       .decode('utf-8')))
