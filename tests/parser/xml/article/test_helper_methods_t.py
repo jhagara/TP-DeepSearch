@@ -61,5 +61,3 @@ class TestAssemblerHelperMethods(unittest.TestCase):
         found_group = assembler._Assembler__find_nearest_above(group_F)
         self.assertIsNotNone(found_group)
         self.assertEqual('E', found_group.attrib['name'])
-
-

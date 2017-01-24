@@ -123,7 +123,7 @@ class FulltextTest(unittest.TestCase):
 </par>
 </block>
 </page>
-</document>"""
+</document>""" # NOQA
 
         desired_xml = """
 <document version="1.0" producer="FineReader 8.0"
@@ -242,9 +242,13 @@ class FulltextTest(unittest.TestCase):
 </par>
 </block>
 </page>
-</document>"""
+</document>""" # NOQA
 
-        actual_xml = _Fulltext.discriminate_fulltexts(etree.fromstring(original_xml))
+        actual_xml = _Fulltext.discriminate_fulltexts(
+                etree.fromstring(original_xml))
         desired_xml = etree.fromstring(desired_xml)
-        self.assertEqual(re.sub('[^\040-\176]| ', '', etree.tostring(desired_xml).decode('utf-8')),
-                         re.sub('[^\040-\176]| ', '', etree.tostring(actual_xml).decode('utf-8')))
+        self.assertEqual(
+                re.sub('[^\040-\176]| ', '', etree.tostring(desired_xml)
+                       .decode('utf-8')),
+                re.sub('[^\040-\176]| ', '', etree.tostring(actual_xml)
+                       .decode('utf-8')))

@@ -156,7 +156,7 @@ class Preprocessor(object):
     def __create_group(cls, node):
 
         new_group = etree.Element('group')
-        new_group.attrib['type'] = node.attrib['type']
+        new_group.attrib['type'] = node.attrib['type'] + 's'
         new_group.append(copy.deepcopy(node))
 
         return new_group

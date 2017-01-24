@@ -1,6 +1,4 @@
 import re
-from lxml import etree
-import unittest
 
 
 # purpose of this class is to identify headings

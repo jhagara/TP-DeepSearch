@@ -2,12 +2,15 @@ import unittest
 from lxml import etree
 from parser.xml.article.assembler import Assembler
 import re
+import os
 
 
 class Testassemblerall(unittest.TestCase):
     def test_assembler_all_success(self):
-        assembler = Assembler()
-        Assembler.assembly_articles(etree.parse("input_test_assembler.xml"))
+        path = os.path.dirname(os.path.abspath(__file__)) + "/input_test_assembler.xml"
+        xml = etree.parse(path)
+        assembler = Assembler(xml)
+        assembler.assembly_articles
         chains = assembler.chains
         for i, page in enumerate(chains):
             print("page" + i)
@@ -15,4 +18,3 @@ class Testassemblerall(unittest.TestCase):
                 print("chain" + j)
                 for group in chain:
                     print(group.xpath('.//formatting').text)
-
