@@ -4,7 +4,7 @@ from parser.xml.article.assembler import Assembler
 
 
 class Test2B(unittest.TestCase):
-    def test_scenario_2B_2_of_same_size(self):
+    def test_scenario_2B_2_of_same_size_success(self):
             original_xml = """
             <document>
                 <page width="1020" height="510" resolution="400">
@@ -18,20 +18,21 @@ class Test2B(unittest.TestCase):
             </document>""" # NOQA
 
             original_xml = etree.fromstring(original_xml)
-            group_A = original_xml.xpath(
-                    "/document/page/group[@name='A'][1]")[0]
             current_page = original_xml.xpath(
                     "/document/page[1]")[0]
-
             assembler = Assembler(None, current_page=current_page, ERROR=3)
-            found_group = assembler._Assembler__chainable_equal_ratio_heading(group_A) # NOQA
-            list = []
-            self.assertIsNotNone(found_group)
-            for x in found_group:
-                list.append(x.attrib['name'])
-            self.assertEqual(['A', 'B'], list)
 
-    def test_scenario_2B_3_of_same_size(self):
+            group_A = original_xml.xpath("/document/page/group[@name='A'][1]")[0]
+            found_group = assembler._Assembler__chainable_equal_ratio_heading(group_A) # NOQA
+            self.assertIsNotNone(found_group)
+            self.assertEqual(found_group.attrib['name'], 'N')
+
+            group_B = original_xml.xpath("/document/page/group[@name='B'][1]")[0]
+            found_group = assembler._Assembler__chainable_equal_ratio_heading(group_B)  # NOQA
+            self.assertIsNotNone(found_group)
+            self.assertEqual(found_group.attrib['name'], 'N')
+
+    def test_scenario_2B_3_of_same_size_failure(self):
             original_xml = """
             <document>
                 <page width="960" height="510" resolution="400">
@@ -39,9 +40,7 @@ class Test2B(unittest.TestCase):
                     type='headings' column_position='left'></group>
                     <group l="20" t="220" r="320" b="500" name="A"
                     type='fulltexts' column_position='left'></group>
-                    <group l="330" t="220" r="630" b="500" name="B"
-                    type='fulltexts' column_position='left'></group>
-                    <group l="640" t="220" r="940" b="500" name="C"
+                    <group l="330" t="220" r="430" b="500" name="B"
                     type='fulltexts' column_position='left'></group>
                 </page>
             </document>""" # NOQA
@@ -54,8 +53,4 @@ class Test2B(unittest.TestCase):
 
             assembler = Assembler(None, current_page=current_page, ERROR=3)
             found_group = assembler._Assembler__chainable_equal_ratio_heading(group_A) # NOQA
-            list = []
-            self.assertIsNotNone(found_group)
-            for x in found_group:
-                list.append(x.attrib['name'])
-            self.assertEqual(['A', 'B', 'C'], list)
+            self.assertIsNone(found_group)

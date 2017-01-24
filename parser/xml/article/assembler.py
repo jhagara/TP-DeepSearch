@@ -80,12 +80,11 @@ class Assembler(object):
         result = current_group.__find_nearest_above()
         if result is None:
             return None
-        elif result.tag != 'heading':
+        elif result.attrib['type'] != 'headings':
             return None
         else:
             return self.__is_equal_2a(current_group, result)
 
-    @classmethod
     def __chainable_equal_ratio_heading(self, current_group):
         """2B, equal ratio of groups below heading, this heading is above current_group
 
@@ -93,17 +92,17 @@ class Assembler(object):
         :return: found heading as group element or None
         """
 
-        header = current_group.__find_nearest_above()
+        header = self.__find_nearest_above(current_group)
         if header is None:
             return None
-        elif header.tag != 'headings':
+        elif header.attrib['type'] != 'headings':
             return None
         else:
             result = self.__find_all_nearest_below(header)
             if result is None:
                 return None
             elif len(result) == 1:
-                if result[0].tag == 'fulltexts':
+                if result[0].attrib['type'] == 'fulltexts':
                     return header
                 else:
                     None
@@ -120,22 +119,22 @@ class Assembler(object):
         :return: found heading as group element or None
         """
 
-        header = current_group.__find_nearest_above()
+        header = self.__find_nearest_above(current_group)
         if header is None:
             return None
-        elif header.tag != 'headings':
+        elif header.attrib['type'] != 'headings':
             return None
         else:
             result = self.__find_all_nearest_below(header)
             if result is None:
                 return None
             elif len(result) == 1:
-                if result[0].tag == 'fulltexts':
+                if result[0].attrib['type'] == 'fulltexts':
                     return header
                 else:
                     None
             elif len(result) > 1:
-                if self.all_groups_width_main_larger(current_group, result):
+                if self.__all_groups_width_main_larger(current_group, result):
                     return header
                 elif self.__all_groups_fulltext_alone(current_group, result):
                     return header
@@ -149,9 +148,9 @@ class Assembler(object):
         :return: found possible chainable group element or None
         """
 
-        nearest_above = current_group.__find_nearest_above()
+        nearest_above = self.__find_nearest_above(current_group)
         if (nearest_above is None
-                or nearest_above.attrib['type'] == 'separator'):
+                or nearest_above.attrib['type'] == 'separators'):
             parent_group = self.__find_last_from_previous_page()
             return parent_group
         else:
@@ -179,12 +178,12 @@ class Assembler(object):
         last_mid = self.__find_last_middle()
 
         while (last_mid.attrib['type'] == 'separators'):
-            last_mid = last_mid.__find_nearest_above()
+            last_mid = self.__find_nearest_above(last_mid)
 
-        result = last_mid.__find_nearest_above()
+        result = self.__find_nearest_above(last_mid)
 
         while (result.attrib['type'] == 'separators'):
-            result = result.__find_nearest_above()
+            result = self.__find_nearest_above(result)
 
         if o is not None and result is not None:
             return result
@@ -413,7 +412,7 @@ class Assembler(object):
         max_width = cmp_width + self.ERROR
 
         for group in all_groups:
-            if group.tag != "fulltexts":
+            if group.attrib['type'] != "fulltexts":
                 return False
             l = int(group.attrib['l'])
             r = int(group.attrib['r'])
@@ -422,13 +421,13 @@ class Assembler(object):
                 return False
         return True
 
-    def __all_groups_width_main_larger(current, all_groups):
+    def __all_groups_width_main_larger(self, current, all_groups):
         curr_l = int(current.attrib['l'])
         curr_r = int(current.attrib['r'])
         cmp_width = curr_r - curr_l
 
         for group in all_groups:
-            if group.tag != "fulltexts":
+            if group.attrib['type'] != "fulltexts":
                 return False
             l = int(group.attrib['l'])
             r = int(group.attrib['r'])
@@ -439,8 +438,8 @@ class Assembler(object):
                 return False
         return True
 
-    def __all_groups_fulltext_alone(current, all_groups, result):
-        if current.tag != "fulltexts":
+    def __all_groups_fulltext_alone(self, current, all_groups):
+        if current.attrib['type'] != "fulltexts":
             return False
         curr_l = int(current.attrib['l'])
         curr_r = int(current.attrib['r'])
@@ -450,7 +449,7 @@ class Assembler(object):
             r = int(group.attrib['r'])
             if curr_r == r and curr_l == l:
                 continue
-            if group.tag == "fulltexts":
+            if group.attrib['type'] == "fulltexts":
                 return False
         return True
 
