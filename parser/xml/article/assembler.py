@@ -340,11 +340,7 @@ class Assembler(object):
 
         if most_right is not None:
             r = int(most_right.attrib['r'])
-            query = "group[@column_position = 'middle' and @r >= "
-            + str(r - self.ERROR)
-            + " and @r <= "
-            + str(r + self.ERROR)
-            + "]"
+            query = "group[@column_position = 'middle' and @r >= " + str(r - self.ERROR) + " and @r <= " + str(r + self.ERROR) + "]" # NOQA
             groups = self.current_page.xpath(query)
             most_bottom = self.__get_min_or_max(groups, -1, 'b', operator.gt)
             return most_bottom
@@ -467,14 +463,8 @@ class Assembler(object):
         r = int(group.attrib['r'])
         b = int(group.attrib['b'])
 
-        query = "group[@l <= "
-        + str(r)
-        + " and "
-        + "@r >= "
-        + str(l)
-        + " and @t >= "
-        + str(b)
-        + "]"
+        query = "group[@l <= " + str(r) + " and " \
+                "@r >= " + str(l) + " and @t >= " + str(b) + "]"
 
         results = self.current_page.xpath(query)
         max_elem = self.__get_min_or_max(

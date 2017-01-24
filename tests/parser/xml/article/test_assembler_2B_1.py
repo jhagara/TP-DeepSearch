@@ -24,8 +24,7 @@ class Test2B(unittest.TestCase):
                     "/document/page[1]")[0]
 
             assembler = Assembler(None, current_page=current_page, ERROR=3)
-            found_group = assembler._Assembler__chainable_equal_ratio_heading(
-                    group_A)
+            found_group = assembler._Assembler__chainable_equal_ratio_heading(group_A) # NOQA
             list = []
             self.assertIsNotNone(found_group)
             for x in found_group:
