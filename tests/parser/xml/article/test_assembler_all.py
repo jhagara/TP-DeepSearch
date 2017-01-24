@@ -15,4 +15,3 @@ class Testassemblerall(unittest.TestCase):
                 print("chain" + j)
                 for group in chain:
                     print(group.xpath('.//formatting').text)
-

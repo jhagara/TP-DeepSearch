@@ -1,7 +1,6 @@
 import unittest
 from lxml import etree
 from parser.xml.article.assembler import Assembler
-import re
 
 
 class Test2Dii(unittest.TestCase):
@@ -61,7 +60,7 @@ class Test2Dii(unittest.TestCase):
 					</block>
 				</group>
         </page>
-</document>"""
+</document>""" # NOQA
 
         desired_output = """
 <group xmlns="http://www.abbyy.com/FineReader_xml/FineReader6-schema-v1.xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="headings" l="294" t="800" r="824" b="1018" chained="true">
@@ -112,7 +111,7 @@ class Test2Dii(unittest.TestCase):
 							</line>
 						</par>
 					</block>
-				</group>"""
+				</group>""" # NOQA
 
         assembler = Assembler(etree.fromstring(original_xml))
         Assembler.assembly_articles
@@ -123,5 +122,3 @@ class Test2Dii(unittest.TestCase):
                 print("chain" + j)
                 for group in chain:
                     print(group.xpath('.//formatting').text)
-
-

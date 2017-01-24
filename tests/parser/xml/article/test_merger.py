@@ -60,7 +60,8 @@ class TestMerger(unittest.TestCase):
                         </par>
                 </block>
         </page>
-        </document>"""
+        </document>""" # NOQA
+
         desired_xml = """<document version="1.0" producer="FineReader 8.0" pagesCount="8" mainLanguage="Slovak"
         languages="Slovak,Czech,EnglishUnitedStates">
         <page width="3455" height="4871" resolution="400">
@@ -106,12 +107,15 @@ class TestMerger(unittest.TestCase):
                         <par type="fulltext" l="10" t="1111" r="220" b="1260">
                         </par>
                 </group></page>
-        </document>"""
+        </document>""" # NOQA
 
         actual_xml = Preprocessor.preprocess(etree.fromstring(original_xml))
         desired_xml = etree.fromstring(desired_xml)
-        self.assertEqual(re.sub('[^\040-\176]| ', '', etree.tostring(desired_xml).decode('utf-8')),
-                         re.sub('[^\040-\176]| ', '', etree.tostring(actual_xml).decode('utf-8')))
+        self.assertEqual(
+                re.sub('[^\040-\176]| ', '', etree.tostring(desired_xml)
+                       .decode('utf-8')),
+                re.sub('[^\040-\176]| ', '', etree.tostring(actual_xml)
+                       .decode('utf-8')))
 
     def test_medium_merge_output_format_success(self):
 
@@ -139,7 +143,8 @@ class TestMerger(unittest.TestCase):
                         </par>
                 </block>
         </page>
-        </document>"""
+        </document>""" # NOQA
+
         desired_xml = """<document version="1.0" producer="FineReader 8.0" pagesCount="8" mainLanguage="Slovak" languages="Slovak,Czech,EnglishUnitedStates">
         <page width="3455" height="4871" resolution="400">
                 <group type="heading" t="0" b="40" r="200" l="0"><par type="heading" l="0" t="0" r="200" b="40">
@@ -155,9 +160,12 @@ class TestMerger(unittest.TestCase):
                         <par type="fulltext" l="105" t="45" r="200" b="100">
                         </par>
                 </group></page>
-        </document>"""
+        </document>""" # NOQA
 
         actual_xml = Preprocessor.preprocess(etree.fromstring(original_xml))
         desired_xml = etree.fromstring(desired_xml)
-        self.assertEqual(re.sub('[^\040-\176]| ', '', etree.tostring(desired_xml).decode('utf-8')),
-                         re.sub('[^\040-\176]| ', '', etree.tostring(actual_xml).decode('utf-8')))
+        self.assertEqual(
+                re.sub('[^\040-\176]| ', '', etree.tostring(desired_xml)
+                       .decode('utf-8')),
+                re.sub('[^\040-\176]| ', '', etree.tostring(actual_xml)
+                       .decode('utf-8')))

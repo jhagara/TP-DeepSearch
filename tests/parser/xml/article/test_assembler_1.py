@@ -229,8 +229,4 @@ class TestMerger(unittest.TestCase):
                         FN18
                     </group>
                 </page>
-               </document>"""
-
-
-
-
+               </document>""" # NOQA

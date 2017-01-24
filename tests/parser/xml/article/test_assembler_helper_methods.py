@@ -26,7 +26,7 @@ class TestAssemblerHelperMethods(unittest.TestCase):
                 <group l="120" t="120" r="210" b="205" name="G" type='fulltexts' column_position='right'></group>
             </page>
         </document>
-        """
+        """ # NOQA
 
         original_xml = etree.fromstring(original_xml)
         pages = original_xml.xpath("/document/page")
@@ -56,7 +56,7 @@ class TestAssemblerHelperMethods(unittest.TestCase):
                 <group l="120" t="100" r="180" b="135" name="E" type='fulltexts'></group>
                 <group l="200" t="150" r="250" b="200" name="F" type='separators'></group>
             </page>
-        </document>"""
+        </document>""" # NOQA
 
         original_xml = etree.fromstring(original_xml)
         group_E = original_xml.xpath("/document/page/group[@name='E'][1]")[0]
@@ -79,7 +79,7 @@ class TestAssemblerHelperMethods(unittest.TestCase):
                 <group l="200" t="150" r="250" b="200" name="F" type='fulltexts'></group>
                 <group l="195" t="80" r="250" b="110" name="G" type='headings'></group>
             </page>
-        </document>"""
+        </document>""" # NOQA
 
         original_xml = etree.fromstring(original_xml)
         group_E = original_xml.xpath("/document/page/group[@name='E'][1]")[0]
@@ -104,7 +104,7 @@ class TestAssemblerHelperMethods(unittest.TestCase):
                 <group l="55" t="300" r="100" b="300" name="M" type='fulltexts'></group>
                 <group l="120" t="350" r="200" b="400" name="N" type='headings'></group>
             </page>
-        </document>"""
+        </document>""" # NOQA
 
         original_xml = etree.fromstring(original_xml)
         current_page = original_xml.xpath("/document/page[1]")[0]
@@ -112,27 +112,39 @@ class TestAssemblerHelperMethods(unittest.TestCase):
 
         # left group
         group_B = original_xml.xpath("/document/page/group[@name='B'][1]")[0]
-        self.assertEqual('left', assembler._Assembler__find_column_position(group_B))
+        self.assertEqual(
+                'left',
+                assembler._Assembler__find_column_position(group_B))
 
         # middle group
         group_D = original_xml.xpath("/document/page/group[@name='D'][1]")[0]
-        self.assertEqual('middle', assembler._Assembler__find_column_position(group_D))
+        self.assertEqual(
+                'middle',
+                assembler._Assembler__find_column_position(group_D))
 
         # middle group
         group_E = original_xml.xpath("/document/page/group[@name='E'][1]")[0]
-        self.assertEqual('middle', assembler._Assembler__find_column_position(group_E))
+        self.assertEqual(
+                'middle',
+                assembler._Assembler__find_column_position(group_E))
 
         # middle group
         group_M = original_xml.xpath("/document/page/group[@name='M'][1]")[0]
-        self.assertEqual('middle', assembler._Assembler__find_column_position(group_M))
+        self.assertEqual(
+                'middle',
+                assembler._Assembler__find_column_position(group_M))
 
         # middle group
         group_N = original_xml.xpath("/document/page/group[@name='N'][1]")[0]
-        self.assertEqual('middle', assembler._Assembler__find_column_position(group_N))
+        self.assertEqual(
+                'middle',
+                assembler._Assembler__find_column_position(group_N))
 
         # right group
         group_G = original_xml.xpath("/document/page/group[@name='G'][1]")[0]
-        self.assertEqual('right', assembler._Assembler__find_column_position(group_G))
+        self.assertEqual(
+                'right',
+                assembler._Assembler__find_column_position(group_G))
 
     def test_find_middle_alone_success(self):
         original_xml = """
@@ -146,7 +158,7 @@ class TestAssemblerHelperMethods(unittest.TestCase):
                 <group l="200" t="150" r="250" b="200" name="F" type='fulltexts' column_position='right' chained='true'></group>
                 <group l="195" t="80" r="250" b="110" name="G" type='headings' column_position='right' chained='true'></group>
             </page>
-        </document>"""
+        </document>""" # NOQA
 
         original_xml = etree.fromstring(original_xml)
         current_page = original_xml.xpath("/document/page[1]")[0]
@@ -170,7 +182,7 @@ class TestAssemblerHelperMethods(unittest.TestCase):
                 <group l="195" t="80" r="250" b="110" name="G" type='headings' column_position='right' chained='true'></group>
                 <group l="115" t="150" r="178" b="230" name="H" type='headings' column_position='middle' chained='true'></group>
             </page>
-        </document>"""
+        </document>""" # NOQA
         original_xml = etree.fromstring(original_xml)
         current_page = original_xml.xpath("/document/page[1]")[0]
         assembler = Assembler(None, current_page=current_page, ERROR=3)
@@ -191,7 +203,7 @@ class TestAssemblerHelperMethods(unittest.TestCase):
                 <group l="120" t="100" r="180" b="135" name="E" type='fulltexts'></group>
                 <group l="200" t="150" r="250" b="200" name="F" type='separators'></group>
             </page>
-        </document>"""
+        </document>""" # NOQA
         original_xml = etree.fromstring(original_xml)
         assembler = Assembler(None, current_page_num=1, chains={1: {}})
 
@@ -215,7 +227,10 @@ class TestAssemblerHelperMethods(unittest.TestCase):
 
         # should create 2 chains
         # 1 chain with elements A, C, D
-        self.assertCountEqual([group_A, group_C, group_D], assembler.chains[1][1])
+        self.assertCountEqual(
+                [group_A, group_C, group_D],
+                assembler.chains[1][1])
         # 2 chain with elements B, E, F
-        self.assertCountEqual([group_B, group_E, group_F], assembler.chains[1][2])
-
+        self.assertCountEqual(
+                [group_B, group_E, group_F],
+                assembler.chains[1][2])
