@@ -1,6 +1,4 @@
 import array
-import math
-from lxml import etree
 
 
 # class identifying which paragraphs are fulltexts
