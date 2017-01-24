@@ -72,12 +72,12 @@ class Assembler(object):
     # PRIVATE
 
     def __chainable_equal_heading(self, current_group):
-        """2A, equal width of current_group and neerest heading above
+        """2A, equal width of current_group and nearest heading above
         :param current_group:lxml.etree._Element
         :return: found heading as group element or None
         """
 
-        result = self.__find_nearest_above(current_group)
+        result = current_group.__find_nearest_above()
         if result is None:
             return None
         elif result.tag != 'heading':
@@ -93,7 +93,7 @@ class Assembler(object):
         :return: found heading as group element or None
         """
 
-        header = self.__find_nearest_above(current_group)
+        header = current_group.__find_nearest_above()
         if header is None:
             return None
         elif header.tag != 'headings':
@@ -120,7 +120,7 @@ class Assembler(object):
         :return: found heading as group element or None
         """
 
-        header = self.__find_nearest_above(current_group)
+        header = current_group.__find_nearest_above()
         if header is None:
             return None
         elif header.tag != 'headings':
@@ -149,7 +149,7 @@ class Assembler(object):
         :return: found possible chainable group element or None
         """
 
-        nearest_above = self.__find_nearest_above(current_group)
+        nearest_above = current_group.__find_nearest_above()
         if (nearest_above is None
                 or nearest_above.attrib['type'] == 'separator'):
             parent_group = self.__find_last_from_previous_page()
@@ -164,7 +164,7 @@ class Assembler(object):
         :return: found possible chainable group element or None
         """
 
-        left = self.__find_neerest_left(current_group)
+        left = self.__find_nearest_left(current_group)
         if left is not None and left.attrib['type'] == 'separators':
             return None
         return left
@@ -363,7 +363,7 @@ class Assembler(object):
 
     # Martina
     def __find_nearest_above(self, group):
-        """find neerest group element located above current group element
+        """find nearest group element located above current group element
         :param group:lxml.etree._Element
         :return: lxml.etree._Element or Non
         """
