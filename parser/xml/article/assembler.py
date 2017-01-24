@@ -80,8 +80,7 @@ class Assembler(object):
         else:
             return self.__is_equal_2a(current_group, result)
 
-    @classmethod
-    def __chainable_equal_ratio_heading(cls, current_group):
+    def __chainable_equal_ratio_heading(self, current_group):
         """2B, equal ratio of groups below heading, this heading is above current_group
 
         :param current_group:lxml.etree._Element
@@ -103,7 +102,7 @@ class Assembler(object):
                 else:
                     None
             elif len(result) > 1:
-                if all_groups_width_same(result):
+                if self.all_groups_width_same(result):
                     return header
                 else:
                     return None
@@ -131,9 +130,9 @@ class Assembler(object):
                 else:
                     None
             elif len(result) > 1:
-                if all_groups_width_main_larger(current_group, result):
+                if self.all_groups_width_main_larger(current_group, result):
                     return header
-                elif all_groups_fulltext_alone(current_group, result):
+                elif self.all_groups_fulltext_alone(current_group, result):
                     return header
                 else:
                     return None
@@ -399,9 +398,9 @@ class Assembler(object):
         else:
             return None
           
-    def __all_groups_width_same(all_groups):
-        l = int(group[0].attrib['l'])
-        r = int(group[0].attrib['r'])
+    def __all_groups_width_same(self, all_groups):
+        l = int(all_groups[0].attrib['l'])
+        r = int(all_groups[0].attrib['r'])
         cmp_width = r - l
         min_width = cmp_width - self.ERROR
         max_width = cmp_width + self.ERROR
@@ -412,14 +411,14 @@ class Assembler(object):
             l = int(group.attrib['l'])
             r = int(group.attrib['r'])
             width = r - l
-            if width < min_width or widrh > max_width:
+            if width < min_width or width > max_width:
                 return False
         return True
 
-    def __all_groups_width_main_larger(current, all_groups):
-        curr_l = int(current.attrib['l'])
-        curr_r = int(current.attrib['r'])
-        cmp_width = r - l
+    def __all_groups_width_main_larger(self, all_groups):
+        curr_l = int(self.attrib['l'])
+        curr_r = int(self.attrib['r'])
+        cmp_width = curr_r - curr_l
 
         for group in all_groups:
             if group.tag != "fulltexts":
