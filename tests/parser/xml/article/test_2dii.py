@@ -1,7 +1,6 @@
 import unittest
 from lxml import etree
 from parser.xml.article.assembler import Assembler
-import re
 
 
 class Test2Dii(unittest.TestCase):
@@ -27,7 +26,7 @@ class Test2Dii(unittest.TestCase):
 						</par>
 					</block>
 				</group>
-				<group type='fulltext' l="142" t="1056" r="930" b="4766">
+				<group type='fulltexts' l="142" t="1056" r="930" b="4766">
 					<block blockType="Text" l="142" t="1056" r="930" b="4766" type='text'>
 						<par type='fulltext'>
 							<line baseline="1086" l="441" t="1062" r="924" b="1092">
@@ -61,7 +60,7 @@ class Test2Dii(unittest.TestCase):
 					</block>
 				</group>
         </page>
-</document>"""
+</document>""" # NOQA
 
         desired_output = """
 <group xmlns="http://www.abbyy.com/FineReader_xml/FineReader6-schema-v1.xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="headings" l="294" t="800" r="824" b="1018" chained="true">
@@ -80,7 +79,7 @@ class Test2Dii(unittest.TestCase):
 						</par>
 					</block>
 				</group>
-				<group xmlns="http://www.abbyy.com/FineReader_xml/FineReader6-schema-v1.xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="fulltext" l="142" t="1056" r="930" b="4766" chained="true">
+				<group xmlns="http://www.abbyy.com/FineReader_xml/FineReader6-schema-v1.xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="fulltexts" l="142" t="1056" r="930" b="4766" chained="true">
 					<block blockType="Text" l="142" t="1056" r="930" b="4766" type="text">
 						<par type="fulltext">
 							<line baseline="1086" l="441" t="1062" r="924" b="1092">
@@ -112,7 +111,7 @@ class Test2Dii(unittest.TestCase):
 							</line>
 						</par>
 					</block>
-				</group>"""
+				</group>""" # NOQA
 
         assembler = Assembler(etree.fromstring(original_xml))
         Assembler.assembly_articles
@@ -123,5 +122,3 @@ class Test2Dii(unittest.TestCase):
                 print("chain" + j)
                 for group in chain:
                     print(group.xpath('.//formatting').text)
-
-

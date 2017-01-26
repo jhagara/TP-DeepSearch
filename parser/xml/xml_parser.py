@@ -29,6 +29,10 @@ class XmlParser(object):
         # discriminate fulltexts
         xml = _Fulltext.discriminate_fulltexts(xml)
 
+        # temporary set all missing par with attrib type = None to fulltexts
+        for par in xml.xpath('/document/page/block/par[not(@type)]'):
+            par.attrib['type'] = 'fulltext'
+
         # discriminate separators
         xml = SeparatorId.discriminant_separators(xml)
 
@@ -36,8 +40,8 @@ class XmlParser(object):
         xml = Preprocessor.preprocess(xml)
 
         # assemble article block
-        assembler = Assembler()
-        Assembler.assembly_articles(xml)
+        assembler = Assembler(xml)
+        assembler.assembly_articles()
 
         # return parsed header and chains of blocks of articles
         return header, assembler.chains

@@ -3,8 +3,13 @@ import operator
 
 class Assembler(object):
     def __init__(self, parsed_xml, **args):
-        default = {'previous_page': None, 'current_page': None, 'ERROR': 3,
-                   'current_page_num': None, 'chains': {}, 'chains_mapper': {}, 'last_chain_num': 0}
+        default = {'previous_page': None,
+                   'current_page': None,
+                   'ERROR': 3,
+                   'current_page_num': None,
+                   'chains': {},
+                   'chains_mapper': {},
+                   'last_chain_num': 0}
         args = {**default, **args}
 
         self.previous_page = args['previous_page']
@@ -67,7 +72,7 @@ class Assembler(object):
     # PRIVATE
 
     def __chainable_equal_heading(self, current_group):
-        """2A, equal width of current_group and neerest heading above
+        """2A, equal width of current_group and nearest heading above
         :param current_group:lxml.etree._Element
         :return: found heading as group element or None
         """
@@ -75,7 +80,7 @@ class Assembler(object):
         result = self.__find_nearest_above(current_group)
         if result is None:
             return None
-        elif result.tag != 'heading':
+        elif result.attrib['type'] != 'headings':
             return None
         else:
             return self.__is_equal_2a(current_group, result)
@@ -90,19 +95,19 @@ class Assembler(object):
         header = self.__find_nearest_above(current_group)
         if header is None:
             return None
-        elif header.tag != 'headings':
+        elif header.attrib['type'] != 'headings':
             return None
         else:
             result = self.__find_all_nearest_below(header)
             if result is None:
                 return None
             elif len(result) == 1:
-                if result[0].tag == 'fulltexts':
+                if result[0].attrib['type'] == 'fulltexts':
                     return header
                 else:
                     None
             elif len(result) > 1:
-                if self.all_groups_width_same(result):
+                if self.__all_groups_width_same(result):
                     return header
                 else:
                     return None
@@ -114,25 +119,24 @@ class Assembler(object):
         :return: found heading as group element or None
         """
 
-
         header = self.__find_nearest_above(current_group)
         if header is None:
             return None
-        elif header.tag != 'headings':
+        elif header.attrib['type'] != 'headings':
             return None
         else:
             result = self.__find_all_nearest_below(header)
             if result is None:
                 return None
             elif len(result) == 1:
-                if result[0].tag == 'fulltexts':
+                if result[0].attrib['type'] == 'fulltexts':
                     return header
                 else:
                     None
             elif len(result) > 1:
-                if self.all_groups_width_main_larger(current_group, result):
+                if self.__all_groups_width_main_larger(current_group, result):
                     return header
-                elif self.all_groups_fulltext_alone(current_group, result):
+                elif self.__all_groups_fulltext_alone(current_group, result):
                     return header
                 else:
                     return None
@@ -145,7 +149,8 @@ class Assembler(object):
         """
 
         nearest_above = self.__find_nearest_above(current_group)
-        if nearest_above is None or nearest_above.attrib['type'] == 'separator':
+        if (nearest_above is None
+                or nearest_above.attrib['type'] == 'separators'):
             parent_group = self.__find_last_from_previous_page()
             return parent_group
         else:
@@ -158,7 +163,7 @@ class Assembler(object):
         :return: found possible chainable group element or None
         """
 
-        left = self.__find_neerest_left(current_group)
+        left = self.__find_nearest_left(current_group)
         if left is not None and left.attrib['type'] == 'separators':
             return None
         return left
@@ -172,13 +177,21 @@ class Assembler(object):
         o = self.__find_middle_alone()
         last_mid = self.__find_last_middle()
 
-        while (last_mid.attrib['type']=='separators'):
-            last_mid = last_mid.__find_nearest_above()
+        # end if there was not any middle group
+        if last_mid is None:
+            return None
 
-        result = last_mid.__find_nearest_above()
+        while (last_mid.attrib['type'] == 'separators'):
+            last_mid_help = last_mid
+            last_mid = self.__find_nearest_above(last_mid)
+            # bugfix last_mid is None, that means there is no upper headings or fulltexts
+            if last_mid is None:
+                return None
 
-        while (result.attrib['type']=='separators'):
-            result = result.__find_nearest_above()
+        result = self.__find_nearest_above(last_mid)
+
+        while (result.attrib['type'] == 'separators'):
+            result = self.__find_nearest_above(result)
 
         if o is not None and result is not None:
             return result
@@ -210,7 +223,7 @@ class Assembler(object):
             # plus 1 - we're gonna create new chain group
             self.last_chain_num += 1
             # add groups to newly created group
-            self.chains[self.current_page_num][self.last_chain_num] = [group1, group2]
+            self.chains[self.current_page_num][self.last_chain_num] = [group1, group2] # NOQA
             # add knowledge of appending groups to chains mapper
             self.chains_mapper[id1] = self.last_chain_num
             self.chains_mapper[id2] = self.last_chain_num
@@ -250,18 +263,17 @@ class Assembler(object):
     # Jakub
     def __find_nearest_left(self, group):
         """find nearest left group
-        
         :param group:lxml.etree._Element
         :return: group:lxml.etree._Element or None
         """
-        
+
         t = int(group.attrib['t'])
         if t >= self.ERROR:
             t -= self.ERROR
         b = int(group.attrib['b']) + self.ERROR
         l = int(group.attrib['l']) + self.ERROR
 
-        # De Morgan's law - check intersection - (StartA >= EndB)  and  (EndA <= StartB)
+        # De Morgan's law - check intersection - (StartA >= EndB)  and  (EndA <= StartB) # NOQA
         # StartA = @b, EndA = @t
         # StartB = b, EndB = t
         query = "group[@type != 'separators' and @b >= " + str(t) + \
@@ -283,7 +295,7 @@ class Assembler(object):
         b = int(group.attrib['b']) + self.ERROR
         r = int(group.attrib['r']) - self.ERROR
 
-        # De Morgan's law - check intersection - (StartA >= EndB)  and  (EndA <= StartB)
+        # De Morgan's law - check intersection - (StartA >= EndB)  and  (EndA <= StartB) # NOQA
         # StartA = @b, EndA = @t
         # StartB = b, EndB = t
         query = "group[@type != 'separators' and @b >= " + str(t) + \
@@ -300,7 +312,8 @@ class Assembler(object):
         """
 
         l = int(group.attrib['l']) + self.ERROR
-        results = self.current_page.xpath("group[@type != 'separators' and @r <= " + str(l) + "][1]")
+        results = self.current_page.xpath(
+                "group[@type != 'separators' and @r <= " + str(l) + "][1]")
         if len(results) != 0:
             return True
         else:
@@ -314,7 +327,8 @@ class Assembler(object):
         """
 
         r = int(group.attrib['r']) - self.ERROR
-        results = self.current_page.xpath("group[@type != 'separators' and @l >= " + str(r) + "][1]")
+        results = self.current_page.xpath(
+                "group[@type != 'separators' and @l >= " + str(r) + "][1]")
         if len(results) != 0:
             return True
         else:
@@ -333,8 +347,7 @@ class Assembler(object):
 
         if most_right is not None:
             r = int(most_right.attrib['r'])
-            query = "group[@column_position = 'middle' and @r >= " \
-                    "" + str(r - self.ERROR) + " and @r <= " + str(r + self.ERROR) + "]"
+            query = "group[@column_position = 'middle' and @r >= " + str(r - self.ERROR) + " and @r <= " + str(r + self.ERROR) + "]" # NOQA
             groups = self.current_page.xpath(query)
             most_bottom = self.__get_min_or_max(groups, -1, 'b', operator.gt)
             return most_bottom
@@ -348,7 +361,8 @@ class Assembler(object):
         :return: group:lxml.etree._Element or None
         """
 
-        groups = self.current_page.xpath("group[@column_position = 'middle' and not(@chained)][1]")
+        groups = self.current_page.xpath(
+                "group[@column_position = 'middle' and not(@chained)][1]")
         if len(groups) != 0:
             return groups[0]
         else:
@@ -356,7 +370,7 @@ class Assembler(object):
 
     # Martina
     def __find_nearest_above(self, group):
-        """find neerest group element located above current group element
+        """find nearest group element located above current group element
         :param group:lxml.etree._Element
         :return: lxml.etree._Element or Non
         """
@@ -376,6 +390,9 @@ class Assembler(object):
         :param
         :return: group:lxml.etree._Element or None
         """
+
+        if self.previous_page is None:
+            return None
         max = 0
         groups = self.previous_page.xpath("group[@column_position = 'right']")
 
@@ -397,7 +414,7 @@ class Assembler(object):
             return head
         else:
             return None
-          
+
     def __all_groups_width_same(self, all_groups):
         l = int(all_groups[0].attrib['l'])
         r = int(all_groups[0].attrib['r'])
@@ -406,7 +423,7 @@ class Assembler(object):
         max_width = cmp_width + self.ERROR
 
         for group in all_groups:
-            if group.tag != "fulltexts":
+            if group.attrib['type'] != "fulltexts":
                 return False
             l = int(group.attrib['l'])
             r = int(group.attrib['r'])
@@ -415,13 +432,13 @@ class Assembler(object):
                 return False
         return True
 
-    def __all_groups_width_main_larger(self, all_groups):
-        curr_l = int(self.attrib['l'])
-        curr_r = int(self.attrib['r'])
+    def __all_groups_width_main_larger(self, current, all_groups):
+        curr_l = int(current.attrib['l'])
+        curr_r = int(current.attrib['r'])
         cmp_width = curr_r - curr_l
 
         for group in all_groups:
-            if group.tag != "fulltexts":
+            if group.attrib['type'] != "fulltexts":
                 return False
             l = int(group.attrib['l'])
             r = int(group.attrib['r'])
@@ -432,18 +449,18 @@ class Assembler(object):
                 return False
         return True
 
-    def __all_groups_fulltext_alone(current, result):
-        if current.tag != "fulltexts":
+    def __all_groups_fulltext_alone(self, current, all_groups):
+        if current.attrib['type'] != "fulltexts":
             return False
+        curr_l = int(current.attrib['l'])
         curr_r = int(current.attrib['r'])
-        cmp_width = r - l
 
         for group in all_groups:
             l = int(group.attrib['l'])
             r = int(group.attrib['r'])
             if curr_r == r and curr_l == l:
                 continue
-            if group.tag == "fulltexts":
+            if group.attrib['type'] == "fulltexts":
                 return False
         return True
 
@@ -457,9 +474,14 @@ class Assembler(object):
         b = int(group.attrib['b'])
 
         query = "group[@l <= " + str(r) + " and " \
-                                          "@r >= " + str(l) + " and @t >= " + str(b) + "]"
+                "@r >= " + str(l) + " and @t >= " + str(b) + "]"
+
         results = self.current_page.xpath(query)
-        max_elem = self.__get_min_or_max(results, int(self.current_page.attrib['height']), 't', operator.lt)
+        max_elem = self.__get_min_or_max(
+                results,
+                int(self.current_page.attrib['height']),
+                't',
+                operator.lt)
         if max_elem is None:
             return None
         else:

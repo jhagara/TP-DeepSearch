@@ -19,7 +19,7 @@ class Preprocessor(object):
             # search every page for blocks
             for node in page.xpath("block"):
                 # if block type is separator
-                if node.attrib['type'] == "separator":
+                if node.attrib.get('type') == "separator":
                     l = int(node.attrib['l'])
                     if l >= ERROR:
                         l -= ERROR
@@ -99,7 +99,7 @@ class Preprocessor(object):
     @classmethod
     def __get_type(cls, node, nearest):
 
-        t = node.attrib['type']
+        t = node.attrib.get('type')
         for n in nearest:
             if t != n.attrib['type']:
                 return False
@@ -156,7 +156,7 @@ class Preprocessor(object):
     def __create_group(cls, node):
 
         new_group = etree.Element('group')
-        new_group.attrib['type'] = node.attrib['type']
+        new_group.attrib['type'] = node.attrib['type'] + 's'
         new_group.append(copy.deepcopy(node))
 
         return new_group
@@ -164,7 +164,9 @@ class Preprocessor(object):
     # method for determining whether node is part of existing group
     @classmethod
     def __in_group(cls, page, node):
-        query = "group/" + node.tag + "[@type = '" + node.attrib['type'] +\
+        type = node.attrib.get('type') if node.attrib.get('type') is not None else ''
+
+        query = "group/" + node.tag + "[@type = '" + type +\
                 "' and @r = " + node.attrib['r'] + " and @b = " + \
                 node.attrib['b'] + " and @l = " + node.attrib['l'] +\
                 " and @t = " + node.attrib['t'] + "]"
