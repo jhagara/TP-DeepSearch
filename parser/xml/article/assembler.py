@@ -184,7 +184,8 @@ class Assembler(object):
         while (last_mid.attrib['type'] == 'separators'):
             last_mid_help = last_mid
             last_mid = self.__find_nearest_above(last_mid)
-            # bugfix last_mid is None, that means there is no upper headings or fulltexts
+            # bugfix last_mid is None,
+            # that means there is no upper headings or fulltexts
             if last_mid is None:
                 return None
 

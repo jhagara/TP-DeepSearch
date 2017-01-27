@@ -22,12 +22,14 @@ class Test2B(unittest.TestCase):
                     "/document/page[1]")[0]
             assembler = Assembler(None, current_page=current_page, ERROR=3)
 
-            group_A = original_xml.xpath("/document/page/group[@name='A'][1]")[0]
+            group_A = original_xml.xpath(
+                    "/document/page/group[@name='A'][1]")[0]
             found_group = assembler._Assembler__chainable_equal_ratio_heading(group_A) # NOQA
             self.assertIsNotNone(found_group)
             self.assertEqual(found_group.attrib['name'], 'N')
 
-            group_B = original_xml.xpath("/document/page/group[@name='B'][1]")[0]
+            group_B = original_xml.xpath(
+                    "/document/page/group[@name='B'][1]")[0]
             found_group = assembler._Assembler__chainable_equal_ratio_heading(group_B)  # NOQA
             self.assertIsNotNone(found_group)
             self.assertEqual(found_group.attrib['name'], 'N')

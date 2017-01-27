@@ -55,5 +55,3 @@ class XmlParser(object):
             except ValueError:
                 print('Error! Unable to read file!')
                 return {}
-
-

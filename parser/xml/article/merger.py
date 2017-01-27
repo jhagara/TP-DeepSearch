@@ -164,7 +164,7 @@ class Preprocessor(object):
     # method for determining whether node is part of existing group
     @classmethod
     def __in_group(cls, page, node):
-        type = node.attrib.get('type') if node.attrib.get('type') is not None else ''
+        type = node.attrib.get('type') if node.attrib.get('type') is not None else '' # NOQA
 
         query = "group/" + node.tag + "[@type = '" + type +\
                 "' and @r = " + node.attrib['r'] + " and @b = " + \
