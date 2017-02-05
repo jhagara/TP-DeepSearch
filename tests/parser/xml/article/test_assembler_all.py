@@ -7,7 +7,8 @@ import os
 
 class Testassemblerall(unittest.TestCase):
     def test_assembler_all_success(self):
-        path = os.path.dirname(os.path.abspath(__file__)) + "/input_test_assembler.xml"
+        abs_path = os.path.dirname(os.path.abspath(__file__))
+        path = abs_path + "/input_test_assembler.xml"
         xml = etree.parse(path)
         assembler = Assembler(xml)
         assembler.assembly_articles
