@@ -32,6 +32,9 @@ class Assembler(object):
 
             for group in page.xpath("group"):
 
+                # put page num into group attribute for future group ordering
+                group.attrib['page'] = i
+
                 chained = self.__chainable_equal_heading(group)
                 if chained is None:
                     chained = self.__chainable_equal_ratio_heading(group)
@@ -483,3 +486,62 @@ class Assembler(object):
                     relative.append(result)
 
             return relative
+
+    def __order_groups_and_create_array(self):
+        for page_num, articles in self.chains.items():
+            for num, groups in self.chains.items():
+                left_pos = []
+                top_pos = []
+
+                for group in groups:
+                    # for left position
+                    if len(left_pos) == 0:
+                        left_pos.append([group.attrib['l'], group.attrib['l']])
+                    else:
+                        for poss in left_pos:
+                            if (poss[0] - self.ERROR) <= group.attrib['l'] and (poss[1] + self.ERROR) >= \
+                                    group.attrib['l']:
+                                if group.attrib['l'] < poss[0]:
+                                    poss[0] = group.attrib['l']
+                                elif group.attrib['l'] > poss[1]:
+                                    poss[1] = group.attrib['l']
+                            else:
+                                left_pos.append([group.attrib['l'], group.attrib['l']])
+
+                    # for top position
+                    if len(top_pos) == 0:
+                        top_pos.append([group.attrib['t'], group.attrib['t']])
+                    else:
+                        for poss in top_pos:
+                            if (poss[0] - self.ERROR) <= group.attrib['t'] and (poss[1] + self.ERROR) >= \
+                                    group.attrib['t']:
+                                if group.attrib['t'] < poss[0]:
+                                    poss[0] = group.attrib['t']
+                                elif group.attrib['t'] > poss[1]:
+                                    poss[1] = group.attrib['t']
+                            else:
+                                top_pos.append([group.attrib['t'], group.attrib['t']])
+
+                # sort arrays by min/0 and max/1 values
+                left_pos = sorted(left_pos, key=operator.itemgetter(0))
+                top_pos = sorted(top_pos, key=operator.itemgetter(0))
+
+
+
+
+        # order by page and by two values
+        # N = [{'a': 7, 'b': 1}, {'a': 2, 'b': 2}, {'a': 7, 'b': 3}]
+        # list1 = sorted(N, key=operator.itemgetter('a', 'b'))
+
+        # assing helper variables to groups depending on array position index
+        for group in groups:
+            for index, poss in enumerate(left_pos):
+                if poss[0] <= group.attrib['l'] and poss[1] >= group.attrib['l']:
+                    group.attrib['l-index'] = index
+                    break
+            for index, poss in enumerate(top_pos):
+                if poss[0] <= group.attrib['t'] and poss[1] >= group.attrib['t']:
+                    group.attrib['t-index'] = index
+
+        # sort groups by page and by left end top index, represent virtual columns
+        groups = sorted(groups, key=operator.itemgetter('a', 'b'))

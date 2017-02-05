@@ -34,7 +34,7 @@ class SourceHeader(object):
     @classmethod
     def __clean_and_join_list(cls, list):
         if (len(list) != 0):
-            return re.sub('[^\040-\176]', '', ''.join(list))
+            return re.sub("[\a\f\n\r\t\v]", '', ''.join(list))
         else:
             return None
 

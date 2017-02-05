@@ -25,12 +25,12 @@ class TestSourceHeader(unittest.TestCase):
         desired_xml = Cleaner.clean(desired_xml)
 
         actual_xml, header = SourceHeader.get_source_header(original_xml, data)
-        self.assertEqual(header['marc21'][0]['value'], 'Cena 80 h?l.')
+        self.assertEqual('Cena 80 h?l.', header['marc21'][0]['value'])
 
         self.assertEqual(
-            re.sub('[^\040-\176]| ', '', etree.tostring(desired_xml)
+            re.sub("[\a\f\n\r\t\v ]", '', etree.tostring(desired_xml)
                    .decode('utf-8')),
-            re.sub('[^\040-\176]| ', '', etree.tostring(actual_xml)
+            re.sub("[\a\f\n\r\t\v ]", '', etree.tostring(actual_xml)
                    .decode('utf-8')))
 
     # reading of JSON configuration file which defines paths

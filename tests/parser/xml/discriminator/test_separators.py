@@ -86,13 +86,13 @@ class TestSeparator(unittest.TestCase):
         desired_xml = etree.fromstring(desired_xml)
         print(etree.tostring(actual_xml).decode('utf-8'))
         self.assertEqual(
-                re.sub('[^\040-\176]| ', '', etree.tostring(desired_xml)
+                re.sub("[\a\f\n\r\t\v ]", '', etree.tostring(desired_xml)
                        .decode('utf-8')),
-                re.sub('[^\040-\176]| ', '', etree.tostring(actual_xml)
+                re.sub("[\a\f\n\r\t\v ]", '', etree.tostring(actual_xml)
                        .decode('utf-8')))
 
         self.assertEqual(
-                re.sub('[^\040-\176]| ', '', etree.tostring(desired_xml)
+                re.sub("[\a\f\n\r\t\v ]", '', etree.tostring(desired_xml)
                        .decode('utf-8')),
-                re.sub('[^\040-\176]| ', '', etree.tostring(actual_xml)
+                re.sub("[\a\f\n\r\t\v ]", '', etree.tostring(actual_xml)
                        .decode('utf-8')))
