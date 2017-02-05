@@ -3,7 +3,8 @@ import unittest
 from lxml import etree
 from parser.xml.article.merger import Preprocessor
 
-#test for usage of 2B,2C, 2A,2Di,2Dii,2Diii
+
+# test for usage of 2B,2C, 2A,2Di,2Dii,2Diii
 class TestMerger(unittest.TestCase):
     def test_clean_output_format_success(self):
         original_xml = """<document version="1.0" producer="FineReader 8.0" pagesCount="8" mainLanguage="Slovak" languages="Slovak,Czech,EnglishUnitedStates">

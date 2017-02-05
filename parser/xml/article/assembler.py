@@ -77,7 +77,7 @@ class Assembler(object):
         :return: found heading as group element or None
         """
 
-        result = current_group.__find_nearest_above()
+        result = self.__find_nearest_above(current_group)
         if result is None:
             return None
         elif result.attrib['type'] != 'headings':
@@ -177,8 +177,17 @@ class Assembler(object):
         o = self.__find_middle_alone()
         last_mid = self.__find_last_middle()
 
+        # end if there was not any middle group
+        if last_mid is None:
+            return None
+
         while (last_mid.attrib['type'] == 'separators'):
+            last_mid_help = last_mid
             last_mid = self.__find_nearest_above(last_mid)
+            # bugfix last_mid is None,
+            # that means there is no upper headings or fulltexts
+            if last_mid is None:
+                return None
 
         result = self.__find_nearest_above(last_mid)
 
@@ -382,6 +391,9 @@ class Assembler(object):
         :param
         :return: group:lxml.etree._Element or None
         """
+
+        if self.previous_page is None:
+            return None
         max = 0
         groups = self.previous_page.xpath("group[@column_position = 'right']")
 
