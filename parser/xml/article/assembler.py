@@ -20,6 +20,7 @@ class Assembler(object):
         self.chains = args['chains']
         self.chains_mapper = args['chains_mapper']
         self.last_chain_num = args['last_chain_num']
+        self.articles = []
 
     def assembly_articles(self):
         i = 0
@@ -31,6 +32,7 @@ class Assembler(object):
             self.chains[i] = {}
 
             for group in page.xpath("group"):
+                group.attrib['page'] = str(i)
 
                 chained = self.__chainable_equal_heading(group)
                 if chained is None:
@@ -68,6 +70,8 @@ class Assembler(object):
                     self.__chain_groups(group, chained)
 
             self.previous_page = page
+
+        self.__order_groups_and_create_array()
 
     # PRIVATE
 
@@ -182,7 +186,6 @@ class Assembler(object):
             return None
 
         while (last_mid.attrib['type'] == 'separators'):
-            last_mid_help = last_mid
             last_mid = self.__find_nearest_above(last_mid)
             # bugfix last_mid is None,
             # that means there is no upper headings or fulltexts
@@ -495,3 +498,64 @@ class Assembler(object):
                     relative.append(result)
 
             return relative
+
+    def __order_groups_and_create_array(self):
+        for page_num, articles in self.chains.items():
+            self.articles.append([])
+            for num, groups in articles.items():
+                left_pos = self.__limit_pos_array(
+                    self.ERROR,
+                    list(map(lambda x: int(x.attrib['l']), groups)))
+                top_pos = self.__limit_pos_array(
+                    self.ERROR,
+                    list(map(lambda x: int(x.attrib['t']), groups)))
+
+                # initialize helper dictionary for next sorting
+                sort_helper = []
+
+                # assing helper variables to groups depending on
+                # array position index
+                for group in groups:
+                    l = int(group.attrib['l'])
+                    t = int(group.attrib['t'])
+                    sortable = {'page': int(group.attrib['page']),
+                                'group': group}
+
+                    for index, poss in enumerate(left_pos):
+                        if poss[0] <= l and poss[1] >= l:
+                            sortable['l-index'] = index
+                            break
+                    for index, poss in enumerate(top_pos):
+                        if poss[0] <= t and poss[1] >= t:
+                            sortable['t-index'] = index
+                            break
+
+                    sort_helper.append(sortable)
+
+                # sort groups by page and by left end top index,
+                # represent virtual columns and
+                # add then as new array into articles array by pages
+                sorted_groups = sorted(
+                    sort_helper,
+                    key=operator.itemgetter('page', 'l-index', 't-index'))
+                self.articles[page_num - 1].append(
+                    list(map(lambda x: x['group'], sorted_groups)))
+
+    @classmethod
+    def __limit_pos_array(cls, error, array):
+        poss_arr = []
+        sorted_arr = sorted(array)
+        previous = 0
+
+        for index, pos in enumerate(sorted_arr):
+            if len(poss_arr) == 0:
+                poss_arr.append([pos, pos])
+            elif index + 1 == len(sorted_arr)\
+                    and previous + error >= pos:
+                poss_arr[-1][1] = pos
+            elif previous + error < pos:
+                poss_arr[-1][1] = previous
+                poss_arr.append([pos, pos])
+            previous = pos
+
+        return poss_arr

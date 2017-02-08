@@ -234,3 +234,30 @@ class TestAssemblerHelperMethods(unittest.TestCase):
         self.assertCountEqual(
                 [group_B, group_E, group_F],
                 assembler.chains[1][2])
+
+    def test_sort_articles_success(self):
+        original_xml = """
+                <document>
+                    <page>
+                        <group l="3" t="2" r="50" b="20" page="1" name="C"></group>
+                        <group l="57" t="1" r="100" b="40" page="1" name="A"></group>
+                        <group l="3" t="102" r="50" b="120" page="1" name="E"></group>
+                        <group l="2" t="50" r="50" b="90" page="1" name="D"></group>
+                        <group l="53" t="52" r="100" b="90" page="1" name="B"></group>
+                        <group l="56" t="100" r="100" b="200" page="1" name="F"></group>
+                        <group l="1" t="140" r="50" b="200" page="1" name="G"></group>
+                    </page>
+                    <page>
+                        <group l="3" t="2" r="50" b="20" page="2" name="H"></group>
+                        <group l="3" t="102" r="50" b="120" page="2" name="I"></group>
+                        <group l="2" t="50" r="50" b="90" page="2" name="J"></group>
+                        <group l="1" t="140" r="50" b="200" page="2" name="K"></group>
+                    </page>
+                </document>"""
+
+        original_xml = etree.fromstring(original_xml)
+        chains = {1: {1: original_xml.xpath('/document/page/group')}}
+        assembler = Assembler(None, ERROR=3, chains=chains)
+        assembler._Assembler__order_groups_and_create_array()
+        self.assertEqual(['C', 'D', 'E', 'G', 'A', 'B', 'F', 'H', 'J', 'I', 'K'],
+                         list(map(lambda x: x.attrib['name'], assembler.articles[0][0])))

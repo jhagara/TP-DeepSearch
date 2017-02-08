@@ -228,7 +228,7 @@ languages="Slovak,Czech,EnglishUnitedStates">
             _Heading.discriminate_headings(etree.fromstring(original_xml))
         desired_xml = \
             etree.fromstring(desired_xml)
-        self.assertEqual(re.sub('[^\040-\176]| ', '',
+        self.assertEqual(re.sub("[\a\f\n\r\t\v ]", '',
                                 etree.tostring(desired_xml).decode('utf-8')),
-                         re.sub('[^\040-\176]| ', '',
+                         re.sub("[\a\f\n\r\t\v ]", '',
                                 etree.tostring(actual_xml).decode('utf-8')))

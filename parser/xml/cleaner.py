@@ -89,7 +89,7 @@ class Cleaner(object):
     @classmethod
     def __get_text_from_char_params(cls, formatting):
         etree.strip_tags(formatting, 'charParams')
-        formatting.text = re.sub('[^\040-\176]', '', formatting.text)
+        formatting.text = re.sub("[\a\f\n\r\t\v]", '', formatting.text)
 
         return formatting
 

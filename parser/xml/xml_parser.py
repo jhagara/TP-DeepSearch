@@ -43,8 +43,8 @@ class XmlParser(object):
         assembler = Assembler(xml)
         assembler.assembly_articles()
 
-        # return parsed header and chains of blocks of articles
-        return header, assembler.chains
+        # return parsed header and articles (arrays of groups)
+        return header, assembler.articles
 
     # reading of JSON configuration file which defines paths
     @classmethod
