@@ -71,6 +71,8 @@ class Assembler(object):
 
             self.previous_page = page
 
+        self.__order_groups_and_create_array()
+
     # PRIVATE
 
     def __chainable_equal_heading(self, current_group):
