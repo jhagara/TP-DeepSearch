@@ -54,9 +54,9 @@ class _Heading(object):
             # checking only font sizes of paragraphs of Text blocks
             if block.get("blockType") == 'Text':
                 for paragraph in block.getchildren():
-                    counter += 1
                     for line in paragraph.getchildren():
                         for element in line.getchildren():
+                            counter += 1
                             font_sizes.append(float(element.get("fs")))
 
         font_sizes = font_sizes.tolist()
