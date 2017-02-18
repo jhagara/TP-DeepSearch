@@ -4,6 +4,8 @@ import array
 ERROR = 2
 
 # purpose of this class is to identify headings
+
+
 class _Heading(object):
     # indentify all headings
     @classmethod
@@ -12,7 +14,8 @@ class _Heading(object):
             limit = _Heading._most_used_fs(page) + ERROR
             for par in page.xpath('.//*[local-name() = \'par\']'):
                 is_heading = True
-                for formatting in par.xpath('.//*[local-name() = \'formatting\']'):
+                for formatting \
+                        in par.xpath('.//*[local-name() = \'formatting\']'):
                     fs = _Heading._get_fs(formatting)
                     if fs <= limit:
                         is_heading = False
