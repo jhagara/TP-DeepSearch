@@ -21,3 +21,15 @@ class Semantic(object):
                         for line in par.xpath('line'):
                             for formatting in line.xpath('formatting'):
                                 print(formatting.text)
+
+    def print_correct_articles(self):
+        for page in self.articles:
+            print('\n\n--PAGE------------------------------------------------------------------------------------')
+            for article in page:
+                print('==ARTICLE==============================================')
+                for group in article:
+                    print('::TYPE: ' + group.attrib['type'])
+                    for par in group.xpath('par'):
+                        for line in par.xpath('line'):
+                            for formatting in line.xpath('formatting'):
+                                print(formatting.text)
