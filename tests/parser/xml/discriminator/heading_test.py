@@ -106,7 +106,7 @@ languages="Slovak,Czech,EnglishUnitedStates">
             </formatting>
     </line>
     <line baseline="336" l="202" t="314" r="570" b="337">
-            <formatting lang="Czech" ff="Times New Roman" fs="7.">
+            <formatting lang="Czech" ff="Times New Roman" fs="11.">
             Podnadpis
             </formatting>
     </line>
@@ -215,7 +215,7 @@ languages="Slovak,Czech,EnglishUnitedStates">
             </formatting>
     </line>
     <line baseline="336" l="202" t="314" r="570" b="337">
-            <formatting lang="Czech" ff="Times New Roman" fs="7.">
+            <formatting lang="Czech" ff="Times New Roman" fs="11.">
             Podnadpis
             </formatting>
     </line>

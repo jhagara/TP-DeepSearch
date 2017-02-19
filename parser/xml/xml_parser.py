@@ -27,11 +27,15 @@ class XmlParser(object):
         xml = _Heading.discriminate_headings(xml)
 
         # discriminate fulltexts
-        xml = _Fulltext.discriminate_fulltexts(xml)
+        #xml = _Fulltext.discriminate_fulltexts(xml)
 
-        # temporary set all missing par with attrib type = None to fulltexts
+        # set all missing par with attrib type = None to fulltexts
         for par in xml.xpath('/document/page/block/par[not(@type)]'):
             par.attrib['type'] = 'fulltext'
+
+        # set all block with attrib blockType 'text' to contain attrib type='text'
+        for block in xml.xpath('/document/page/block[@blockType=\'Text\']'):
+            block.attrib['type'] = 'text'
 
         # discriminate separators
         xml = SeparatorId.discriminant_separators(xml)
