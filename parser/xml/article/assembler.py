@@ -194,7 +194,7 @@ class Assembler(object):
 
         result = self.__find_nearest_above(last_mid)
 
-        while (result.attrib['type'] == 'separators'):
+        while (result is not None and result.attrib['type'] == 'separators'):
             result = self.__find_nearest_above(result)
 
         if o is not None and result is not None:
