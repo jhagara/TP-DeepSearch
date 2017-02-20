@@ -8,7 +8,7 @@ class Semantic(object):
         args = {**default, **args}
 
         if args['xml'] is not None:
-            self.header, self.articles = XmlParser.parse(args['header_config'], args['xml'])
+            self.xml, self.header, self.articles = XmlParser.parse(args['header_config'], args['xml'])
 
     def print_articles(self):
         for key, value in self.chains.items():

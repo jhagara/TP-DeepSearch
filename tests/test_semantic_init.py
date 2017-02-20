@@ -7,7 +7,7 @@ from lxml import etree
 from parser.xml.cleaner import Cleaner
 from parser.xml.source_header import SourceHeader
 from parser.xml.discriminator.heading import _Heading
-from parser.xml.discriminator._fulltext import _Fulltext
+from parser.xml.discriminator.separatorsid import SeparatorId
 
 
 class TestSemanticInit(unittest.TestCase):
@@ -16,7 +16,6 @@ class TestSemanticInit(unittest.TestCase):
         header_conf_path = abs_path + "/page_header_conf_1941_1.json"
         xml_path = abs_path + "/slovak_1941_1_strana_1.xml"
         semantic = Semantic(xml=xml_path, header_config=header_conf_path)
-        i = 7
 
     def test_preprocess_xml(self):
         abs_path = os.path.dirname(os.path.abspath(__file__))
@@ -53,9 +52,25 @@ class TestSemanticInit(unittest.TestCase):
             headed_and_fulltexted = re.sub("[\a\f\n\r\t\v ]", '', myfile.read())
         # discriminate headings
         xml = _Heading.discriminate_headings(xml)
-        # discriminate fulltexts
-        xml = _Fulltext.discriminate_fulltexts(xml)
+        # set all missing par with attrib type = None to fulltexts
+        for par in xml.xpath('/document/page/block/par[not(@type)]'):
+            par.attrib['type'] = 'fulltext'
+
+        # set all block with attrib blockType 'text' to contain attrib type='text'
+        for block in xml.xpath('/document/page/block[@blockType=\'Text\']'):
+            block.attrib['type'] = 'text'
+
         self.assertEqual(headed_and_fulltexted,
+                         re.sub("[\a\f\n\r\t\v ]", '', etree.tostring(xml)
+                                .decode('utf-8')))
+
+        # check correct adding of separators, should add only 2 new separators
+        with open(abs_path + '/slovak_1941_1_strana_after_separators.xml', 'r') as myfile:
+            after_separators = re.sub("[\a\f\n\r\t\v ]", '', myfile.read())
+        # discriminate separators
+        xml = SeparatorId.discriminant_separators(xml)
+
+        self.assertEqual(after_separators,
                          re.sub("[\a\f\n\r\t\v ]", '', etree.tostring(xml)
                                 .decode('utf-8')))
 

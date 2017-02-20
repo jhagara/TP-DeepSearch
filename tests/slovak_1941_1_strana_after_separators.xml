@@ -49,7 +49,7 @@
                 </line>
             </par>
         </block>
-        <block blockType="Picture" l="582" t="80" r="2814" b="566"/>
+        <block blockType="Picture" l="582" t="80" r="2814" b="566" type="separator"/>
         <block blockType="Text" l="1304" t="566" r="2138" b="622" type="text">
             <par l="1308" t="572" r="2121" b="618" type="fulltext">
                 <line baseline="610" l="1308" t="572" r="2121" b="618">
@@ -1646,5 +1646,7 @@
                 </line>
             </par>
         </block>
+        <block blockType="Picture" l="960" t="4150" r="1696" b="4267" type="separator"> </block>
+        <block blockType="Picture" l="1716" t="4186" r="2482" b="4265" type="separator"> </block>
     </page>
 </document>
