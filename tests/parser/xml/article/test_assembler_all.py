@@ -4,6 +4,8 @@ from parser.xml.article.assembler import Assembler
 import re
 import os
 
+desired_numbers = [2, 3, 4, 2, 2, 4, 2, 3, 3, 2, 3, 2, 3, 3, 3, 2, 3, 2, 2, 3, 2, 3, 3, 2, 4, 4, 5]
+
 
 class Testassemblerall(unittest.TestCase):
     def test_assembler_all_success(self):
@@ -30,5 +32,8 @@ class Testassemblerall(unittest.TestCase):
                                 number = re.findall('\d+', formatting.text)
                                 art_numbers.append(number[1])
                 art_numb = art_numbers[0]
+                self.assertEqual(desired_numbers[int(art_numb) - 1], len(art_numbers), "article " + str(art_numb)
+                                 + " not correctly assembled on page " + str(i+1))
                 for n in art_numbers:
-                    self.assertEqual(art_numb, n, "article " + str(n) + " not correctly assembled on page " + str(i+1))
+                    self.assertEqual(art_numb, n, "article " + str(art_numb) + " not correctly assembled on page "
+                                     + str(i+1))
