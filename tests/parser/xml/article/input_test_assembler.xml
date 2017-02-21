@@ -287,9 +287,9 @@
                 </line>
             </par>
 		</group>
-		<group type="fulltexts" l="205" t="60" r="305" b="150">
-			<par type="fulltext" l="205" t="60" r="305" b="150">
-                <line baseline="156" l="205" t="60" r="305" b="150">
+		<group type="fulltexts" l="205" t="60" r="300" b="150">
+			<par type="fulltext" l="205" t="60" r="300" b="150">
+                <line baseline="156" l="205" t="60" r="300" b="150">
                     <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 9 clanok 2</formatting>
                 </line>
             </par>
@@ -316,8 +316,8 @@
             </par>
 		</group>
 		<group type="fulltexts" l="205" t="450" r="300" b="500">
-			<par type="fulltext" l="20" t="60" r="390" b="500">
-                <line baseline="156" l="20" t="60" r="390" b="500">
+			<par type="fulltext" l="205" t="450" r="300" b="500">
+                <line baseline="156" l="205" t="450" r="300" b="500">
                     <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 9 clanok 4</formatting>
                 </line>
             </par>
