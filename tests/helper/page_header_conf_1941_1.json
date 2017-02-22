@@ -1,0 +1,46 @@
+{
+        "type": "journal details",
+        "marc21": [
+                {
+                        "key": "Cost",
+                        "path": "/document/page[1]/block[1]//text()",
+                        "value": ""
+                },
+		{
+                        "key": "Address",
+                        "path": "/document/page[1]/block[1]//text()",
+                        "value": ""
+                },
+		{
+                        "key": "Date_Location",
+                        "path": "/document/page[1]/block[3]//text()",
+                        "value": ""
+                } ,
+		 {
+                        "key": "Annual_set",
+                        "path": "/document/page[1]/block[5]//text()",
+                        "value": ""
+                },
+		 {
+                        "key": "Subscriptions",
+                        "path": "/document/page[1]/block[5]//text()",
+                        "value": ""
+                },
+		{
+                        "key": "Founder",
+                        "path": "/document/page[1]/block[4]//text()",
+                        "value": ""
+                },
+		{
+                        "key": "Number",
+                        "path": "/document/page[1]/block[6]//text()",
+                        "value": ""
+                }
+        ],
+        "articles": [
+                {
+                        "titles": [""],
+                        "fulltext": ""
+                }
+        ]
+}

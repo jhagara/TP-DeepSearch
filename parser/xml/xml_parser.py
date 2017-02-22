@@ -48,7 +48,7 @@ class XmlParser(object):
         assembler.assembly_articles()
 
         # return parsed header and articles (arrays of groups)
-        return header, assembler.articles
+        return xml, header, assembler.articles
 
     # reading of JSON configuration file which defines paths
     @classmethod
