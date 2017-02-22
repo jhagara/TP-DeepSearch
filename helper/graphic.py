@@ -1,9 +1,23 @@
 import turtle
 
 
+# Simple graphic helper class mainly build for testing correctness of steps
+# of preprocessing of xml data for articles
 class Graphic(object):
     @classmethod
     def draw_elem_network(cls, page, attrs):
+        """
+        simply draws certain elements from page, the chosen elements
+        must have coordinates attributes, for real example, check
+        test in helper dir with name test_graphic
+
+        :param
+        page: lxml element, schould contain only 1 page
+        attrs: Dictionary, includes Hashes with 2 keys:
+            elem_path - String xpath format, example: '//par'
+            attrib - Array of Strings, String value represents name
+                of element attribute, example: ['type', 'l', 'r']
+        """
         devider = 1
 
         boom = turtle.Turtle()
