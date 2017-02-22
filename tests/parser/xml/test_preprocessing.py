@@ -568,3 +568,8 @@ class TestPreprocess(unittest.TestCase):
         actual_xml = _Fulltext.discriminate_fulltexts(actual_xml)
         actual_xml = SeparatorId.discriminant_separators(acutal_xml)
         actual_xml = Preprocessor.preprocess(actual_xml)
+        self.assertEqual(
+            re.sub("[\a\f\n\r\t\v ]", '', etree.tostring(desired_xml)
+                   .decode('utf-8')),
+            re.sub("[\a\f\n\r\t\v ]", '', etree.tostring(actual_xml)
+                   .decode('utf-8')))
