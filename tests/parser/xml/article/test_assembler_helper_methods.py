@@ -205,7 +205,8 @@ class TestAssemblerHelperMethods(unittest.TestCase):
             </page>
         </document>""" # NOQA
         original_xml = etree.fromstring(original_xml)
-        assembler = Assembler(None, current_page_num=1, chains={1: {}})
+        original_xml = etree.ElementTree(original_xml)
+        assembler = Assembler(original_xml, current_page_num=1, chains={1: {}})
 
         # chain not exists yet
         group_A = original_xml.xpath("/document/page/group[@name='A'][1]")[0]

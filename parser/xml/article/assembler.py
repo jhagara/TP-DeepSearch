@@ -1,5 +1,5 @@
 import operator
-
+from lxml import etree
 
 class Assembler(object):
     def __init__(self, parsed_xml, **args):
@@ -21,6 +21,8 @@ class Assembler(object):
         self.chains_mapper = args['chains_mapper']
         self.last_chain_num = args['last_chain_num']
         self.articles = []
+        # if self.parsed_xml is not None:
+        #     self.tree = etree.ElementTree(self.parsed_xml)
 
     def assembly_articles(self):
         i = 0
@@ -207,8 +209,8 @@ class Assembler(object):
     # chain together two groups, creat associations between them
     def __chain_groups(self, group1, group2):
         # chain groups
-        id1 = id(group1)
-        id2 = id(group2)
+        id1 = self.parsed_xml.getpath(group1)
+        id2 = self.parsed_xml.getpath(group2)
         chain_num_same1 = self.chains_mapper.get(id1)
         chain_num_same2 = self.chains_mapper.get(id2)
 
@@ -216,11 +218,11 @@ class Assembler(object):
         if (chain_num_same1 is not None) or (chain_num_same2 is not None):
             if chain_num_same1 is not None:
                 chain_num = chain_num_same1
-                self.chains[self.current_page_num][chain_num].append(group2)
+                self.chains[chain_num[0]][chain_num[1]].append(group2)
                 self.chains_mapper[id2] = chain_num
             else:
                 chain_num = chain_num_same2
-                self.chains[self.current_page_num][chain_num].append(group1)
+                self.chains[chain_num[0]][chain_num[1]].append(group1)
                 self.chains_mapper[id1] = chain_num
         # chain group not exist
         else:
@@ -229,8 +231,8 @@ class Assembler(object):
             # add groups to newly created group
             self.chains[self.current_page_num][self.last_chain_num] = [group1, group2] # NOQA
             # add knowledge of appending groups to chains mapper
-            self.chains_mapper[id1] = self.last_chain_num
-            self.chains_mapper[id2] = self.last_chain_num
+            self.chains_mapper[id1] = [self.current_page_num, self.last_chain_num]
+            self.chains_mapper[id2] = [self.current_page_num, self.last_chain_num]
 
         # mark groups as already chained, as not ALONE, attrib chained=true
         group1.attrib['chained'] = 'true'
