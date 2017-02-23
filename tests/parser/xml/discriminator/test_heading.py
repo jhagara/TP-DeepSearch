@@ -122,7 +122,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 pagesCount="1" mainLanguage="Slovak"
 languages="Slovak,Czech,EnglishUnitedStates">
 <page width="3485" height="4887" resolution="400">
-<block blockType="Text" l="212" t="130" r="540" b="190" type="text">
+<block blockType="Text" l="212" t="130" r="540" b="190">
 <par type="heading">
     <line baseline="185" l="227" t="139" r="536" b="186">
             <formatting lang="Czech" ff="Arial" fs="11." spacing="-9">
@@ -145,7 +145,7 @@ languages="Slovak,Czech,EnglishUnitedStates">
     </line>
 </par>
 </block>
-<block blockType="Text" l="186" t="242" r="730" b="578" type="text">
+<block blockType="Text" l="186" t="242" r="730" b="578">
 <par type="heading">
     <line baseline="270" l="205" t="247" r="570" b="271">
             <formatting lang="Czech" ff="Arial" fs="11." spacing="-9">
@@ -184,7 +184,7 @@ languages="Slovak,Czech,EnglishUnitedStates">
 </par>
 </block>
 
-<block blockType="Text" l="198" t="632" r="1038" b="686" type="text">
+<block blockType="Text" l="198" t="632" r="1038" b="686">
 <par type="heading">
     <line baseline="676" l="214" t="641" r="1022" b="681">
             <formatting lang="Czech" ff="Arial" fs="24." spacing="-9">
@@ -207,7 +207,7 @@ languages="Slovak,Czech,EnglishUnitedStates">
     </line>
 </par>
 </block>
-<block blockType="Text" l="198" t="632" r="1038" b="686" type="text">
+<block blockType="Text" l="198" t="632" r="1038" b="686">
 <par type="heading">
     <line baseline="676" l="214" t="641" r="1022" b="681">
             <formatting lang="Czech" ff="Arial" fs="24." spacing="-9">
