@@ -657,3 +657,4 @@ class TestAssembler3(unittest.TestCase):
                    .decode('utf-8')),
             re.sub("[\a\f\n\r\t\v ]", '', etree.tostring(actual_xml)
                    .decode('utf-8')))
+
