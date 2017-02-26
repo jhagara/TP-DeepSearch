@@ -7,7 +7,7 @@ db = pymysql.connect(host="127.0.0.1",
                      database="tp")
 
 print('Connection estalished')
-with db.cursor()  as cursor:
+with db.cursor() as cursor:
 
     query_create_issues = """
             CREATE TABLE IF NOT EXISTS issues (
