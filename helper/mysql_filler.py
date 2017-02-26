@@ -4,6 +4,27 @@ class Filler(object):
 
     def fill_articles(self, issue_name, db_name):
 
+        heads = []
+        fulltexts = []
+
+        for element in semantic.articles:
+            for elem in element:
+                heading = ''
+                fulltext = ''
+                for group in elem:
+                    if group.attrib['type'] == 'headings':
+                        for par in group.xpath('par'):
+                            for line in par.xpath('line'):
+                                for formatting in line.xpath('formatting'):
+                                    heading = heading + ' ' + formatting.text
+                    elif group.attrib['type'] == 'fulltexts':
+                        for par in group.xpath('par'):
+                            for line in par.xpath('line'):
+                                for formatting in line.xpath('formatting'):
+                                    fulltext = fulltext + ' ' + formatting.text
+                heads.append(heading)
+                ftexts.append(fulltext)
+
         db = pymysql.connect(host="127.0.0.1",
                              user="root",
                              password="rootroot",
@@ -32,9 +53,9 @@ class Filler(object):
 
         if (create_issue):
             with db.cursor() as cursor:
-                    # Create a new record
-                    sql = "INSERT INTO `issues` (`name`) VALUES (%s)"
-                    cursor.execute(sql, (issue_name))
+                # Create a new record
+                sql = "INSERT INTO `issues` (`name`) VALUES (%s)"
+                cursor.execute(sql, (issue_name))
 
                 # connection is not autocommit by default. So you must commit to save
                 # your changes.
@@ -44,17 +65,18 @@ class Filler(object):
                 except:
                     db.rollback()
 
-        with db.cursor() as cursor:
+        for index in range(len(heads)):
+            with db.cursor() as cursor:
                 # Create a new record
-                sql = "INSERT INTO `articles` (`heading`, `ftext`, 'issue_id') VALUES (%s, %s)"
-                cursor.execute(sql, (heading, ftext, issue_id))
+                sql = "INSERT INTO `articles` (`heading`, `ftext`, 'issue_id') VALUES (%s, %s, %s)"
+                cursor.execute(sql, (heads[index], fulltexts[index], issue_id))
 
-            # connection is not autocommit by default. So you must commit to save
-            # your changes.
-            try:
-                db.commit()
-            except:
-                db.rollback()
+                # connection is not autocommit by default. So you must commit to save
+                # your changes.
+                try:
+                    db.commit()
+                except:
+                    db.rollback()
 
 
     def fill_mark_21(self, issue_name, db_name):
