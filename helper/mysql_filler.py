@@ -2,18 +2,18 @@ import pymysql
 
 class Filler(object):
 
-    def fill_articles(self, issue_name):
+    def fill_articles(self, issue_name, db_name):
 
         db = pymysql.connect(host="127.0.0.1",
                              user="root",
                              password="rootroot",
-                             database="tp")
+                             database=db_name)
 
         print('Connection estalished')
         with db.cursor() as cursor:
-                # Create a new record
-                sql = "SELECT id FROM issues"
-                cursor.execute(sql)
+            # Create a new record
+            sql = "SELECT id FROM issues"
+            cursor.execute(sql)
 
             # connection is not autocommit by default. So you must commit to save
             # your changes.
@@ -57,18 +57,18 @@ class Filler(object):
                 db.rollback()
 
 
-    def fill_mark_21(self, issue_name):
+    def fill_mark_21(self, issue_name, db_name):
 
         db = pymysql.connect(host="127.0.0.1",
                              user="root",
                              password="rootroot",
-                             database="tp")
+                             database=db_name)
 
         print('Connection estalished')
         with db.cursor() as cursor:
-                # Create a new record
-                sql = "SELECT id FROM issues"
-                cursor.execute(sql)
+            # Create a new record
+            sql = "SELECT id FROM issues"
+            cursor.execute(sql)
 
             # connection is not autocommit by default. So you must commit to save
             # your changes.
