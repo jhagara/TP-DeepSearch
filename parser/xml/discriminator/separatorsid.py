@@ -105,8 +105,16 @@ class SeparatorId(object):
     @classmethod
     def __check_if_line_needed(cls, current, upper, parsed_xml):
         new_line = None
-        if upper.attrib.get('type') == 'fulltext':
-            if int(current.attrib['t']) - int(upper.attrib['b']) > gap:
+
+        if upper.attrib.get('type') == 'fulltext' and current.attrib.get('type') == 'fulltext':
+            first_line = current.xpath("line[1]")
+            if len(first_line) > 0:
+                first_line = first_line[0]
+                first_line_height = (int(first_line.attrib.get('b')) - int(first_line.attrib.get('t'))) * 2
+            else:
+                first_line_height = gap
+
+            if int(current.attrib['t']) - int(upper.attrib['b']) > first_line_height:
                 new_line = cls.__create_new_horizontal_line(
                         str(int(upper.attrib['b']) + 1),
                         upper.attrib['r'],

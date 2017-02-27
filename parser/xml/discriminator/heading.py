@@ -22,8 +22,6 @@ class _Heading(object):
                         break
                 if is_heading:
                     par.set("type", "heading")
-                    block = par.getparent()
-                    block.set("type", "text")
         return parsed_xml
 
     # find the most used font size
