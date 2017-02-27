@@ -11,19 +11,19 @@ class TestMerger(unittest.TestCase):
         original_xml = """<document version="1.0" producer="FineReader 8.0"
         pagesCount="8" mainLanguage="Slovak" languages="Slovak,Czech,EnglishUnitedStates">
         <page width="3455" height="4871" resolution="400">
-                <block blockType="Text" l="10" t="25" r="220" b="780" type="Text">
+                <block blockType="Text" l="10" t="25" r="220" b="780" type="text">
                         <par type="heading" l="10" t="25" r="220" b="256">
                         </par>
                         <par type="heading" l="10" t="257" r="220" b="780">
                         </par>
                 </block>
-                <block blockType="Text" l="10" t="783" r="220" b="1260" type="Text">
+                <block blockType="Text" l="10" t="783" r="220" b="1260" type="text">
                         <par type="heading" l="10" t="783" r="220" b="1012">
                         </par>
                         <par type="fulltext" l="10" t="1013" r="220" b="1260" >
                         </par>
                 </block>
-                <block blockType="Text" l="11" t="1262" r="221" b="1484" type="Text">
+                <block blockType="Text" l="11" t="1262" r="221" b="1484" type="text">
                         <par type="fulltext" l="11" t="1262" r="221" b="1316">
                         </par>
                         <par type="fulltext" l="11" t="1317" r="221" b="1395">
@@ -39,19 +39,19 @@ class TestMerger(unittest.TestCase):
                 </block>
         </page>
         <page width="3455" height="4871" resolution="400">
-                <block blockType="Text" l="10" t="25" r="220" b="780" type="Text">
+                <block blockType="Text" l="10" t="25" r="220" b="780" type="text">
                         <par type="heading" l="10" t="25" r="220" b="480">
                         </par>
                         <par type="heading" l="10" t="481" r="220" b="780">
                         </par>
                 </block>
-                <block blockType="Text" l="10" t="783" r="220" b="1260" type="Text">
+                <block blockType="Text" l="10" t="783" r="220" b="1260" type="text">
                         <par type="heading" l="10" t="783" r="220" b="1110">
                         </par>
                         <par type="fulltext" l="10" t="1111" r="220" b="1260">
                         </par>
                 </block>
-                <block blockType="Text" l="11" t="1262" r="221" b="1484" type="Text">
+                <block blockType="Text" l="11" t="1262" r="221" b="1484" type="text">
                         <par type="fulltext" l="11" t="1262" r="221" b="1299">
                         </par>
                         <par type="fulltext" l="11" t="1300" r="221" b="1401">

@@ -562,9 +562,9 @@ class TestPreprocess(unittest.TestCase):
 	</page>
 </document>"""
         actual_xml = Cleaner.clean(etree.fromstring(original_xml))
-        acutal_xml = _Heading.discriminate_headings(actual_xml)
+        actual_xml = _Heading.discriminate_headings(actual_xml)
         actual_xml = _Fulltext.discriminate_fulltexts(actual_xml)
-        actual_xml = SeparatorId.discriminant_separators(acutal_xml)
+        actual_xml = SeparatorId.discriminant_separators(actual_xml)
         actual_xml = Preprocessor.preprocess(actual_xml)
         self.assertEqual(
             re.sub("[\a\f\n\r\t\v ]", '', etree.tostring(desired_xml)
