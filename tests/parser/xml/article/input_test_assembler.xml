@@ -6,481 +6,379 @@
                     pagesCount="14" mainLanguage="Slovak" languages="Slovak,Czech,EnglishUnitedStates">
 	<page resolution="400" width="400" height="600">
 		<group type="headings" l="50" t="50" r="350" b="100">
-			<par type="heading">
+			<par type="heading" l="50" t="50" r="350" b="100">
                 <line baseline="156" l="50" t="50" r="350" b="100">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">
-					strana 1 clanok 1 nadpis
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">strana 1 clanok 1 nadpis</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="50" t="105" r="350" b="500">
-			<par type="fulltext">
+			<par type="fulltext" l="50" t="105" r="350" b="500">
                 <line baseline="156" l="50" t="105" r="350" b="500">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 1 clanok 1
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 1 clanok 1</formatting>
                 </line>
             </par>
 		</group>
 	</page>
 	<page resolution="400" width="400" height="600">
 		<group type="headings" l="50" t="50" r="350" b="100">
-			<par type="heading">
+			<par type="heading" l="50" t="50" r="350" b="100">
                 <line baseline="156" l="50" t="50" r="350" b="100">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">
-					strana 2 clanok 1 nadpis
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">strana 2 clanok 2 nadpis</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="50" t="105" r="195" b="500">
-			<par type="fulltext">
+			<par type="fulltext" l="50" t="105" r="195" b="500">
                 <line baseline="156" l="50" t="105" r="195" b="500">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 2 clanok 1
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 2 clanok 2</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="200" t="105" r="350" b="500">
-			<par type="fulltext">
+			<par type="fulltext" l="200" t="105" r="350" b="500">
                 <line baseline="156" l="200" t="105" r="350" b="500">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 2 clanok 1
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 2 clanok 2</formatting>
                 </line>
             </par>
 		</group>
 	</page>
 	<page resolution="400" width="400" height="600">
 		<group type="headings" l="50" t="50" r="350" b="100">
-			<par type="heading">
+			<par type="heading" l="50" t="50" r="350" b="100">
                 <line baseline="156" l="50" t="50" r="350" b="100">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">
-					strana 3 clanok 1 nadpis
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">strana 3 clanok 3 nadpis</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="50" t="105" r="150" b="500">
-			<par type="fulltext">
+			<par type="fulltext" l="50" t="105" r="150" b="500">
                 <line baseline="156" l="50" t="105" r="150" b="500">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 3 clanok 1
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 3 clanok 3</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="155" t="105" r="252" b="500">
-			<par type="fulltext">
+			<par type="fulltext" l="155" t="105" r="252" b="500">
                 <line baseline="156" l="155" t="105" r="252" b="500">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 3 clanok 1
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 3 clanok 3</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="258" t="105" r="350" b="500">
-			<par type="fulltext">
+			<par type="fulltext" l="258" t="105" r="350" b="500">
                 <line baseline="156" l="258" t="105" r="350" b="500">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 3 clanok 1
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 3 clanok 3</formatting>
                 </line>
             </par>
 		</group>
 	</page>
 	<page resolution="400" width="400" height="600">
 		<group type="headings" l="50" t="50" r="195" b="100">
-			<par type="heading">
+			<par type="heading" l="50" t="50" r="195" b="100">
                 <line baseline="156" l="50" t="50" r="195" b="100">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">
-					strana 4 clanok 1 nadpis
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">strana 4 clanok 4 nadpis</formatting>
                 </line>
             </par>
 		</group>
 		<group type="headings" l="200" t="50" r="350" b="100">
-			<par type="heading">
+			<par type="heading" l="200" t="50" r="350" b="100">
                 <line baseline="156" l="200" t="50" r="350" b="100">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">
-					strana 4 clanok 2 nadpis
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">strana 4 clanok 5 nadpis</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="50" t="105" r="195" b="500">
-			<par type="fulltext">
+			<par type="fulltext" l="50" t="105" r="195" b="500">
                 <line baseline="156" l="50" t="105" r="195" b="500">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 4 clanok 1
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 4 clanok 4</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="200" t="105" r="350" b="500">
-			<par type="fulltext">
+			<par type="fulltext" l="200" t="105" r="350" b="500">
                 <line baseline="156" l="200" t="105" r="350" b="500">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 4 clanok 2
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 4 clanok 5</formatting>
                 </line>
             </par>
 		</group>
 	</page>
 	<page resolution="400" width="400" height="600">
 		<group type="headings" l="10" t="10" r="300" b="50">
-			<par type="heading">
+			<par type="heading" l="10" t="10" r="300" b="50">
                 <line baseline="156" l="10" t="10" r="300" b="50">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">
-					strana 5 clanok 1 nadpis
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">strana 5 clanok 6 nadpis</formatting>
                 </line>
             </par>
 		</group>
 		<group type="headings" l="305" t="10" r="390" b="50">
-			<par type="heading">
+			<par type="heading" l="305" t="10" r="390" b="50">
                 <line baseline="156" l="305" t="10" r="390" b="50">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">
-					strana 5 clanok 2 nadpis
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">strana 5 clanok 7 nadpis</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="10" t="70" r="100" b="550">
-			<par type="fulltext">
+			<par type="fulltext" l="10" t="70" r="100" b="550">
                 <line baseline="156" l="10" t="70" r="100" b="550">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 5 clanok 1
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 5 clanok 6</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="105" t="70" r="200" b="550">
-			<par type="fulltext">
+			<par type="fulltext" l="105" t="70" r="200" b="550">
                 <line baseline="156" l="105" t="70" r="200" b="550">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 5 clanok 1
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 5 clanok 6</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="205" t="70" r="300" b="100">
-			<par type="fulltext">
+			<par type="fulltext" l="205" t="70" r="300" b="100">
                 <line baseline="156" l="205" t="70" r="300" b="100">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 5 clanok 1
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 5 clanok 6</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="305" t="70" r="390" b="100">
-			<par type="fulltext">
+			<par type="fulltext" l="305" t="70" r="390" b="100">
                 <line baseline="156" l="305" t="70" r="390" b="100">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 5 clanok 2
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 5 clanok 7</formatting>
                 </line>
             </par>
 		</group>
 		<group type="headings" l="205" t="110" r="390" b="140">
-			<par type="heading">
+			<par type="heading" l="205" t="110" r="390" b="140">
                 <line baseline="156" l="205" t="110" r="390" b="140">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">
-					strana 5 clanok 3 nadpis
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">strana 5 clanok 8 nadpis</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="205" t="150" r="300" b="550">
-			<par type="fulltext">
+			<par type="fulltext" l="205" t="150" r="300" b="550">
                 <line baseline="156" l="205" t="150" r="300" b="550">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 5 clanok 3
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 5 clanok 8</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="305" t="150" r="390" b="550">
-			<par type="fulltext">
+			<par type="fulltext" l="305" t="150" r="390" b="550">
                 <line baseline="156" l="305" t="150" r="390" b="550">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 5 clanok 3
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 5 clanok 8</formatting>
                 </line>
             </par>
 		</group>
 	</page>
 	<page resolution="400" width="400" height="600">
 		<group type="headings" l="10" t="10" r="195" b="50">
-			<par type="heading">
+			<par type="heading" l="10" t="10" r="195" b="50">
                 <line baseline="156" l="10" t="10" r="195" b="50">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">
-					strana 6 clanok 1 nadpis
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">strana 6 clanok 9 nadpis</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="10" t="60" r="195" b="500">
-			<par type="fulltext">
+			<par type="fulltext" l="10" t="60" r="195" b="500">
                 <line baseline="156" l="10" t="60" r="195" b="500">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 6 clanok 1
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 6 clanok 9</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="200" t="10" r="390" b="500">
-			<par type="fulltext">
+			<par type="fulltext" l="200" t="10" r="390" b="500">
                 <line baseline="156" l="200" t="10" r="390" b="500">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 6 clanok 1
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 6 clanok 9</formatting>
                 </line>
             </par>
 		</group>
 	</page>
 	<page resolution="400" width="400" height="600">
 		<group type="headings" l="170" t="10" r="230" b="50">
-			<par type="heading">
+			<par type="heading" l="170" t="10" r="230" b="50">
                 <line baseline="156" l="170" t="10" r="230" b="50">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">
-					strana 7 clanok 1 nadpis
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">strana 7 clanok 10 nadpis</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="10" t="60" r="390" b="500">
-			<par type="fulltext">
+			<par type="fulltext" l="10" t="60" r="390" b="500">
                 <line baseline="156" l="10" t="60" r="390" b="500">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 7 clanok 1
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 7 clanok 10</formatting>
                 </line>
             </par>
 		</group>
 	</page>
 	<page resolution="400" width="400" height="600">
 		<group type="headings" l="170" t="10" r="230" b="50">
-			<par type="heading">
+			<par type="heading" l="170" t="10" r="230" b="50">
                 <line baseline="156" l="170" t="10" r="230" b="50">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">
-					strana 8 clanok 1 nadpis
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">strana 8 clanok 11 nadpis</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="10" t="60" r="195" b="500">
-			<par type="fulltext">
+			<par type="fulltext" l="10" t="60" r="195" b="500">
                 <line baseline="156" l="10" t="60" r="195" b="500">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 8 clanok 1
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 8 clanok 11</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="200" t="60" r="390" b="500">
-			<par type="fulltext">
+			<par type="fulltext" l="20" t="60" r="390" b="500">
                 <line baseline="156" l="20" t="60" r="390" b="500">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 8 clanok 1
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 8 clanok 11</formatting>
                 </line>
             </par>
 		</group>
 	</page>
 	<page resolution="400" width="400" height="600">
 		<group type="headings" l="10" t="10" r="100" b="50">
-			<par type="heading">
+			<par type="heading" l="10" t="10" r="100" b="50">
                 <line baseline="156" l="10" t="10" r="100" b="50">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">
-					strana 9 clanok 1 nadpis
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">strana 9 clanok 12 nadpis</formatting>
                 </line>
             </par>
 		</group>
 		<group type="headings" l="105" t="10" r="300" b="50">
-			<par type="heading">
+			<par type="heading" l="105" t="10" r="300" b="50">
                 <line baseline="156" l="105" t="10" r="300" b="50">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">
-					strana 9 clanok 2 nadpis
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">strana 9 clanok 13 nadpis</formatting>
                 </line>
             </par>
 		</group>
 		<group type="headings" l="305" t="10" r="390" b="50">
-			<par type="heading">
+			<par type="heading" l="305" t="10" r="390" b="50">
                 <line baseline="156" l="305" t="10" r="390" b="50">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">
-					strana 9 clanok 5 nadpis
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">strana 9 clanok 16 nadpis</formatting>
                 </line>
             </par>
 		</group>
 		<group type="headings" l="105" t="160" r="300" b="190">
-			<par type="heading">
+			<par type="heading" l="105" t="160" r="300" b="190">
                 <line baseline="156" l="105" t="160" r="300" b="190">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">
-					strana 9 clanok 3 nadpis
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">strana 9 clanok 14 nadpis</formatting>
                 </line>
             </par>
 		</group>
 		<group type="headings" l="105" t="410" r="300" b="440">
-			<par type="heading">
+			<par type="heading" l="105" t="410" r="300" b="440">
                 <line baseline="156" l="105" t="410" r="300" b="440">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">
-					strana 9 clanok 4 nadpis
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">strana 9 clanok 15 nadpis</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="10" t="60" r="100" b="500">
-			<par type="fulltext">
+			<par type="fulltext" l="10" t="60" r="100" b="500">
                 <line baseline="156" l="10" t="60" r="100" b="500">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 9 clanok 1
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 9 clanok 12</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="305" t="60" r="390" b="500">
-			<par type="fulltext">
+			<par type="fulltext" l="305" t="60" r="390" b="500">
                 <line baseline="156" l="305" t="60" r="390" b="500">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 9 clanok 5
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 9 clanok 16</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="105" t="60" r="200" b="150">
-			<par type="fulltext">
+			<par type="fulltext" l="105" t="60" r="200" b="150">
                 <line baseline="156" l="105" t="60" r="200" b="150">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 9 clanok 2
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 9 clanok 13</formatting>
                 </line>
             </par>
 		</group>
-		<group type="fulltexts" l="205" t="60" r="305" b="150">
-			<par type="fulltext">
-                <line baseline="156" l="205" t="60" r="305" b="150">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 9 clanok 2
-                    </formatting>
+		<group type="fulltexts" l="205" t="60" r="300" b="150">
+			<par type="fulltext" l="205" t="60" r="300" b="150">
+                <line baseline="156" l="205" t="60" r="300" b="150">
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 9 clanok 13</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="105" t="200" r="200" b="400">
-			<par type="fulltext">
+			<par type="fulltext" l="105" t="200" r="200" b="400">
                 <line baseline="156" l="105" t="200" r="200" b="400">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 9 clanok 3
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 9 clanok 14</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="205" t="200" r="300" b="400">
-			<par type="fulltext">
+			<par type="fulltext" l="205" t="200" r="300" b="400">
                 <line baseline="156" l="205" t="200" r="300" b="400">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 9 clanok 3
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 9 clanok 14</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="105" t="450" r="200" b="500">
-			<par type="fulltext">
+			<par type="fulltext" l="105" t="450" r="200" b="500">
                 <line baseline="156" l="105" t="450" r="200" b="500">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 9 clanok 4
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 9 clanok 15</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="205" t="450" r="300" b="500">
-			<par type="fulltext">
-                <line baseline="156" l="20" t="60" r="390" b="500">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 9 clanok 4
-                    </formatting>
+			<par type="fulltext" l="205" t="450" r="300" b="500">
+                <line baseline="156" l="205" t="450" r="300" b="500">
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 9 clanok 15</formatting>
                 </line>
             </par>
 		</group>
 	</page>
 	<page resolution="400" width="400" height="600">
 		<group type="headings" l="50" t="50" r="350" b="100">
-			<par type="heading">
+			<par type="heading" l="50" t="50" r="350" b="100">
                 <line baseline="156" l="50" t="50" r="350" b="100">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">
-					strana 10 clanok 1 nadpis
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">strana 10 clanok 17 nadpis</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="50" t="105" r="195" b="500">
-			<par type="fulltext">
+			<par type="fulltext" l="50" t="105" r="195" b="500">
                 <line baseline="156" l="50" t="105" r="195" b="500">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 10 clanok 1
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 10 clanok 17</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="200" t="105" r="350" b="500">
-			<par type="fulltext">
+			<par type="fulltext" l="200" t="105" r="350" b="500">
                 <line baseline="156" l="200" t="105" r="350" b="500">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 10 clanok 1
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 10 clanok 17</formatting>
                 </line>
             </par>
 		</group>
 	</page>
 	<page resolution="400" width="400" height="600">
 		<group type="headings" l="105" t="10" r="390" b="50">
-			<par type="heading">
+			<par type="heading" l="105" t="10" r="390" b="50">
                 <line baseline="156" l="105" t="10" r="390" b="50">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">
-					strana 11 clanok 1 nadpis
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">strana 11 clanok 18 nadpis</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="10" t="10" r="100" b="500">
-			<par type="fulltext">
+			<par type="fulltext" l="10" t="10" r="100" b="500">
                 <line baseline="156" l="10" t="10" r="100" b="500">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 11 clanok 1 zo strany 10
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 11 clanok 17 zo strany 10</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="105" t="60" r="390" b="200">
-			<par type="fulltext">
+			<par type="fulltext" l="105" t="60" r="390" b="200">
                 <line baseline="156" l="105" t="60" r="390" b="200">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 11 clanok 1
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 11 clanok 18</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="105" t="240" r="140" b="500">
-			<par type="fulltext">
+			<par type="fulltext" l="105" t="240" r="140" b="500">
                 <line baseline="156" l="105" t="240" r="140" b="500">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 11 clanok 1 zo strany 10
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 11 clanok 17 zo strany 10</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="145" t="240" r="390" b="500">
-			<par type="fulltext">
+			<par type="fulltext" l="145" t="240" r="390" b="500">
                 <line baseline="156" l="145" t="240" r="390" b="500">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 11 clanok 1 zo strany 10
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 11 clanok 17 zo strany 10</formatting>
                 </line>
             </par>
 		</group>
@@ -491,139 +389,109 @@
 	</page>
 	<page resolution="400" width="400" height="600">
 		<group type="headings" l="10" t="10" r="100" b="50">
-			<par type="heading">
+			<par type="heading" l="10" t="10" r="100" b="50">
                 <line baseline="156" l="10" t="10" r="100" b="50">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">
-					strana 12 clanok 1 nadpis
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">strana 12 clanok 19 nadpis</formatting>
                 </line>
             </par>
 		</group>
 		<group type="headings" l="105" t="10" r="300" b="50">
-			<par type="heading">
+			<par type="heading" l="105" t="10" r="300" b="50">
                 <line baseline="156" l="105" t="10" r="300" b="50">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">
-					strana 12 clanok 2 nadpis
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">strana 12 clanok 20 nadpis</formatting>
                 </line>
             </par>
 		</group>
 		<group type="headings" l="305" t="105" r="390" b="150">
-			<par type="heading">
+			<par type="heading" l="105" t="10" r="390" b="50">
                 <line baseline="156" l="105" t="10" r="390" b="50">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">
-					strana 12 clanok 3 nadpis
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">strana 12 clanok 21 nadpis</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="10" t="60" r="100" b="500">
-			<par type="fulltext">
+			<par type="fulltext" l="10" t="60" r="100" b="500">
                 <line baseline="156" l="10" t="60" r="100" b="500">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 12 clanok 1
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 12 clanok 19</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="105" t="60" r="300" b="500">
-			<par type="fulltext">
+			<par type="fulltext" l="105" t="60" r="300" b="200">
                 <line baseline="156" l="105" t="60" r="300" b="200">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 12 clanok 2
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 12 clanok 20</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="305" t="10" r="390" b="100">
-			<par type="fulltext">
+			<par type="fulltext" l="305" t="10" r="390" b="500">
                 <line baseline="156" l="305" t="10" r="390" b="500">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 12 clanok 2
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 12 clanok 20</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="305" t="155" r="390" b="500">
-			<par type="fulltext">
+			<par type="fulltext" l="305" t="155" r="390" b="500">
                 <line baseline="156" l="305" t="155" r="390" b="500">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 12 clanok 3
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 12 clanok 21</formatting>
                 </line>
             </par>
 		</group>
 	</page>
 	<page resolution="400" width="400" height="600">
 		<group type="headings" l="10" t="10" r="100" b="50">
-			<par type="heading">
+			<par type="heading" l="10" t="10" r="100" b="50">
                 <line baseline="156" l="10" t="10" r="100" b="50">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">
-					strana 13 clanok 1 nadpis
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">strana 13 clanok 22 nadpis</formatting>
                 </line>
             </par>
 		</group>
 		<group type="headings" l="105" t="10" r="300" b="50">
-			<par type="heading">
+			<par type="heading" l="105" t="10" r="300" b="50">
                 <line baseline="156" l="105" t="10" r="300" b="50">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">
-					strana 13 clanok 2 nadpis
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">strana 13 clanok 23 nadpis</formatting>
                 </line>
             </par>
 		</group>
 		<group type="headings" l="305" t="105" r="390" b="150">
-			<par type="heading">
+			<par type="heading" l="105" t="10" r="390" b="50">
                 <line baseline="156" l="105" t="10" r="390" b="50">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">
-					strana 13 clanok 3 nadpis
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">strana 13 clanok 24 nadpis</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="10" t="60" r="100" b="500">
-			<par type="fulltext">
+			<par type="fulltext" l="10" t="60" r="100" b="500">
                 <line baseline="156" l="10" t="60" r="100" b="500">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 13 clanok 1
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 13 clanok 22</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="105" t="60" r="300" b="150">
-			<par type="fulltext">
+			<par type="fulltext" l="105" t="60" r="300" b="200">
                 <line baseline="156" l="105" t="60" r="300" b="200">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 13 clanok 2
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 13 clanok 23</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="305" t="10" r="390" b="100">
-			<par type="fulltext">
+			<par type="fulltext" l="305" t="10" r="390" b="500">
                 <line baseline="156" l="305" t="10" r="390" b="500">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 13 clanok 2
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 13 clanok 23</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="305" t="155" r="390" b="500">
-			<par type="fulltext">
+			<par type="fulltext" l="305" t="155" r="390" b="500">
                 <line baseline="156" l="305" t="155" r="390" b="500">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 13 clanok 3
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 13 clanok 24</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="105" t="170" r="300" b="500">
-			<par type="fulltext">
+			<par type="fulltext" l="105" t="170" r="300" b="500">
                 <line baseline="156" l="105" t="170" r="300" b="500">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 13 clanok 1
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 13 clanok 22</formatting>
                 </line>
             </par>
 		</group>
@@ -634,119 +502,93 @@
 	</page>
 	<page resolution="400" width="400" height="600">
 		<group type="headings" l="10" t="10" r="300" b="50">
-			<par type="heading">
+			<par type="heading" l="10" t="10" r="300" b="50">
                 <line baseline="156" l="10" t="10" r="300" b="50">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">
-					strana 14 clanok 1 nadpis
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">strana 14 clanok 25 nadpis</formatting>
                 </line>
             </par>
 		</group>
 		<group type="headings" l="105" t="105" r="300" b="120">
-			<par type="heading">
+			<par type="heading" l="105" t="105" r="300" b="120">
                 <line baseline="156" l="105" t="105" r="300" b="120">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">
-					strana 14 clanok 2 nadpis
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">strana 14 clanok 26 nadpis</formatting>
                 </line>
             </par>
 		</group>
 		<group type="headings" l="10" t="235" r="100" b="280">
-			<par type="heading">
+			<par type="heading" l="10" t="235" r="100" b="280">
                 <line baseline="156" l="10" t="235" r="100" b="280">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">
-					strana 14 clanok 3 nadpis
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="25.">strana 14 clanok 27 nadpis</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="10" t="60" r="100" b="200">
-			<par type="fulltext">
+			<par type="fulltext" l="10" t="60" r="100" b="200">
                 <line baseline="156" l="10" t="60" r="100" b="200">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 14 clanok 1
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 14 clanok 25</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="105" t="60" r="200" b="100">
-			<par type="fulltext">
+			<par type="fulltext" l="105" t="60" r="100" b="100">
                 <line baseline="156" l="105" t="60" r="100" b="100">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 14 clanok 1
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 14 clanok 25</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="205" t="60" r="300" b="100">
-			<par type="fulltext">
+			<par type="fulltext" l="205" t="60" r="300" b="100">
                 <line baseline="156" l="205" t="60" r="300" b="100">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 14 clanok 1
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 14 clanok 25</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="105" t="125" r="200" b="200">
-			<par type="fulltext">
+			<par type="fulltext" l="105" t="125" r="200" b="200">
                 <line baseline="156" l="105" t="125" r="200" b="200">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 14 clanok 2
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 14 clanok 26</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="205" t="125" r="300" b="200">
-			<par type="fulltext">
+			<par type="fulltext" l="205" t="125" r="300" b="200">
                 <line baseline="156" l="205" t="125" r="300" b="200">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 14 clanok 2
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 14 clanok 26</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="305" t="10" r="390" b="200">
-			<par type="fulltext">
+			<par type="fulltext" l="205" t="10" r="390" b="200">
                 <line baseline="156" l="205" t="10" r="390" b="200">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 14 clanok 2
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 14 clanok 26</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="10" t="285" r="100" b="500">
-			<par type="fulltext">
+			<par type="fulltext" l="10" t="285" r="100" b="500">
                 <line baseline="156" l="10" t="285" r="100" b="500">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 14 clanok 3
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 14 clanok 27</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="105" t="235" r="200" b="500">
-			<par type="fulltext">
+			<par type="fulltext" l="105" t="235" r="200" b="500">
                 <line baseline="156" l="105" t="235" r="200" b="500">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 14 clanok 3
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 14 clanok 27</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="205" t="235" r="300" b="500">
-			<par type="fulltext">
+			<par type="fulltext" l="205" t="235" r="300" b="500">
                 <line baseline="156" l="205" t="235" r="300" b="500">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 14 clanok 3
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 14 clanok 27</formatting>
                 </line>
             </par>
 		</group>
 		<group type="fulltexts" l="305" t="235" r="390" b="500">
-			<par type="fulltext">
+			<par type="fulltext" l="305" t="235" r="390" b="500">
                 <line baseline="156" l="305" t="235" r="390" b="500">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">
-					strana 14 clanok 3
-                    </formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 14 clanok 27</formatting>
                 </line>
             </par>
 		</group>
