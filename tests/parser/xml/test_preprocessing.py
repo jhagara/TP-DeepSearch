@@ -297,7 +297,9 @@ class TestPreprocess(unittest.TestCase):
 </page>
 </document>"""
         desired_xml = """
-<document version="1.0" producer="FineReader 8.0" pagesCount="28" mainLanguage="Slovak" languages="Slovak,Czech,EnglishUnitedStates">
+<document version="1.0" producer="FineReader 8.0" xmlns="http://www.abbyy.com/FineReader_xml/FineReader6-schema-v1.xml"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.abbyy.com/FineReader_xml/FineReader6-schema-v1.xml http://www.abbyy.com/FineReader_xml/FineReader6-schema-v1.xml" pagesCount="28" mainLanguage="Slovak" languages="Slovak,Czech,EnglishUnitedStates">
 	<page width="3462" height="4986" resolution="400">
 		<group type="fulltexts" l="103" t="98" r="980" b="4861">
 			<par l="103" t="98" r="980" b="258" type="fulltext">
@@ -321,7 +323,7 @@ class TestPreprocess(unittest.TestCase):
 					</formatting>
 				</line>
 			</par>
-			<par type="fulltext" l="103" t="952" r="980" b="1200" type="fulltext">
+			<par l="103" t="952" r="980" b="1200" type="fulltext">
 				<line baseline="1198" l="103" t="952" r="980" b="1200">
 					<formatting lang="Slovak" ff="Arial" fs="7.">
 						B1
@@ -391,6 +393,7 @@ class TestPreprocess(unittest.TestCase):
 					</formatting>
 				</line>
 			</par>
+                </group>
 		<group type="headings" l="1006" t="90" r="3420" b="512">
 			<par l="1006" t="90" r="3420" b="512" type="heading">
 				<line baseline="508" l="1006" t="90" r="3420" b="512">
@@ -561,13 +564,20 @@ class TestPreprocess(unittest.TestCase):
 		</group>
 	</page>
 </document>"""
+        desired_xml = etree.fromstring(desired_xml)
         actual_xml = Cleaner.clean(etree.fromstring(original_xml))
         actual_xml = _Heading.discriminate_headings(actual_xml)
-        actual_xml = _Fulltext.discriminate_fulltexts(actual_xml)
+        # set all missing par with attrib type = None to fulltexts
+        for par in actual_xml.xpath('/document/page/block/par[not(@type)]'):
+            par.attrib['type'] = 'fulltext'
+
+        # set all block with attrib blockType 'text' to contain attrib type='text'
+        for block in actual_xml.xpath('/document/page/block[@blockType=\'Text\']'):
+            block.attrib['type'] = 'text'
         actual_xml = SeparatorId.discriminant_separators(actual_xml)
         actual_xml = Preprocessor.preprocess(actual_xml)
+        print('1: ',etree.tostring(actual_xml, pretty_print=True))
+        print('2: ',etree.tostring(desired_xml, pretty_print=True))
         self.assertEqual(
-            re.sub("[\a\f\n\r\t\v ]", '', etree.tostring(desired_xml)
-                   .decode('utf-8')),
-            re.sub("[\a\f\n\r\t\v ]", '', etree.tostring(actual_xml)
-                   .decode('utf-8')))
+            re.sub("[\a\f\n\r\t\v ]", '', etree.tostring(desired_xml).decode('utf-8')),
+            re.sub("[\a\f\n\r\t\v ]", '', etree.tostring(actual_xml).decode('utf-8')))
