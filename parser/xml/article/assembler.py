@@ -1,6 +1,7 @@
 import operator
 from lxml import etree
 
+
 class Assembler(object):
     def __init__(self, parsed_xml, **args):
         default = {'previous_page': None,
@@ -35,6 +36,8 @@ class Assembler(object):
 
             for group in page.xpath("group"):
                 group.attrib['page'] = str(i)
+                group.attrib['column_position'] = \
+                    self.__find_column_position(group)
 
                 chained = self.__chainable_equal_heading(group)
                 if chained is None:
@@ -58,8 +61,6 @@ class Assembler(object):
             self.current_page_num = i
 
             for group in page.xpath("group[not(@chained)]"):
-                group.attrib['column_position'] = \
-                    self.__find_column_position(group)
 
                 if group.attrib['column_position'] == 'left':
                     chained = self.__chainable_left_alone(group)
