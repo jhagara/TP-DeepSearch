@@ -191,10 +191,10 @@ class Preprocessor(object):
             if int(child.attrib['l']) < group_l or group_l == -1:
                 group_l = int(child.attrib['l'])
 
-        node.attrib['t'] = str(group_t)
-        node.attrib['b'] = str(group_b)
-        node.attrib['r'] = str(group_r)
         node.attrib['l'] = str(group_l)
+        node.attrib['t'] = str(group_t)
+        node.attrib['r'] = str(group_r)
+        node.attrib['b'] = str(group_b)
 
     # method to  get one nearest element
     @classmethod
