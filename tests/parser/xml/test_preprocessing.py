@@ -299,7 +299,7 @@ class TestPreprocess(unittest.TestCase):
         desired_xml = """
 <document version="1.0" producer="FineReader 8.0" xmlns="http://www.abbyy.com/FineReader_xml/FineReader6-schema-v1.xml"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://www.abbyy.com/FineReader_xml/FineReader6-schema-v1.xml http://www.abbyy.com/FineReader_xml/FineReader6-schema-v1.xml" pagesCount="28" mainLanguage="Slovak" languages="Slovak,Czech,EnglishUnitedStates">
+ pagesCount="28" mainLanguage="Slovak" languages="Slovak,Czech,EnglishUnitedStates">
 	<page width="3462" height="4986" resolution="400">
 		<group type="fulltexts" l="103" t="98" r="980" b="4861">
 			<par l="103" t="98" r="980" b="258" type="fulltext">
@@ -576,8 +576,8 @@ class TestPreprocess(unittest.TestCase):
             block.attrib['type'] = 'text'
         actual_xml = SeparatorId.discriminant_separators(actual_xml)
         actual_xml = Preprocessor.preprocess(actual_xml)
-        print('1: ',etree.tostring(actual_xml, pretty_print=True))
-        print('2: ',etree.tostring(desired_xml, pretty_print=True))
+        print('1: ', re.sub("[\a\f\n\r\t\v ]", '', etree.tostring(desired_xml).decode('utf-8')))
+        print('2: ', re.sub("[\a\f\n\r\t\v ]", '', etree.tostring(actual_xml).decode('utf-8')))
         self.assertEqual(
             re.sub("[\a\f\n\r\t\v ]", '', etree.tostring(desired_xml).decode('utf-8')),
             re.sub("[\a\f\n\r\t\v ]", '', etree.tostring(actual_xml).decode('utf-8')))
