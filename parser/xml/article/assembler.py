@@ -1,6 +1,7 @@
 import operator
 from lxml import etree
 
+
 class Assembler(object):
     def __init__(self, parsed_xml, **args):
         default = {'previous_page': None,
@@ -35,6 +36,8 @@ class Assembler(object):
 
             for group in page.xpath("group"):
                 group.attrib['page'] = str(i)
+                group.attrib['column_position'] = \
+                    self.__find_column_position(group)
 
                 chained = self.__chainable_equal_heading(group)
                 if chained is None:
@@ -58,8 +61,6 @@ class Assembler(object):
             self.current_page_num = i
 
             for group in page.xpath("group[not(@chained)]"):
-                group.attrib['column_position'] = \
-                    self.__find_column_position(group)
 
                 if group.attrib['column_position'] == 'left':
                     chained = self.__chainable_left_alone(group)
@@ -107,13 +108,8 @@ class Assembler(object):
             result = self.__find_all_nearest_below(header)
             if result is None:
                 return None
-            elif len(result) == 1:
-                if result[0].attrib['type'] == 'fulltexts':
-                    return header
-                else:
-                    None
             elif len(result) > 1:
-                if self.__all_groups_width_same(result):
+                if self.__all_groups_width_same(result, header):
                     return header
                 else:
                     return None
@@ -421,12 +417,15 @@ class Assembler(object):
         else:
             return None
 
-    def __all_groups_width_same(self, all_groups):
+    def __all_groups_width_same(self, all_groups, header):
+        l = int(header.attrib['l'])
+        r = int(header.attrib['r'])
+        error_width = r - l
         l = int(all_groups[0].attrib['l'])
         r = int(all_groups[0].attrib['r'])
         cmp_width = r - l
-        min_width = cmp_width - self.ERROR
-        max_width = cmp_width + self.ERROR
+        min_width = cmp_width - (error_width * 0.1)
+        max_width = cmp_width + (error_width * 0.1)
 
         for group in all_groups:
             if group.attrib['type'] != "fulltexts":
