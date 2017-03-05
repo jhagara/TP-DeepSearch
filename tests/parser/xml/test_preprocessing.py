@@ -1,10 +1,10 @@
 import unittest
 import re
 from lxml import etree
-from cleaner import Cleaner
-from heading import _Heading
-from separatorsid import SeparatorId
-from merger import Preprocessor
+from parser.xml.cleaner import Cleaner
+from parser.xml.discriminator.heading import _Heading
+from parser.xml.discriminator.separatorsid import SeparatorId
+from parser.xml.article.merger import Preprocessor
 
 
 class TestPreprocess(unittest.TestCase):

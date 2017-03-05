@@ -1,7 +1,7 @@
 import re
 import unittest
 from lxml import etree
-from merger import Preprocessor
+from parser.xml.article.merger import Preprocessor
 
 
 class TestMerger(unittest.TestCase):
