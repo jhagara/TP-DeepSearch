@@ -22,3 +22,12 @@ class TestGraphic(unittest.TestCase):
         semantic = Semantic(xml=xml_path, header_config=header_conf_path)
         Graphic.draw_elem_network(semantic.xml.xpath("/document/page[1]")[0],
                                   [{'elem_path': '//group', 'attrib': ['type']}])
+
+    # draw articles with groups
+    def test_draw_single_page_groups(self):
+        # abs_path = os.path.dirname(os.path.abspath(__file__))
+        # header_conf_path = abs_path + "/page_header_conf_1941_1.json"
+        # xml_path = '/home/vasko/PycharmProjects/TP-DeepSeach/tests/slovak_1939_05_26_full.xml'
+        # semantic = Semantic(xml=xml_path, header_config=header_conf_path)
+        # Graphic.draw_articles(semantic.articles, '/home/vasko/Documents/skola/TP/turtle_test')
+        self.assert_
