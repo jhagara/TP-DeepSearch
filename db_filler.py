@@ -15,8 +15,6 @@ issue_name = str(sys.argv[1])
 xml_path = str(sys.argv[2])
 header_conf_path = str(sys.argv[3])
 
-mysql_drop_tables.drop_tables(db_name)
-
 mysql_init_tables.init_tables(db_name)
 
 semantic = Semantic(xml=xml_path, header_config=header_conf_path)
