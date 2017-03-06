@@ -9,7 +9,7 @@ from helper import mysql_drop_tables
 class TestDB(unittest.TestCase):
 
     def test_tables(self):
-        db_name = 'text'
+        db_name = 'test'
         mysql_init_tables.init_tables(db_name)
 
         db = pymysql.connect(host="127.0.0.1",
@@ -46,7 +46,7 @@ class TestDB(unittest.TestCase):
         self.assertEqual(len(row), 0)
 
     def test_filler(self):
-        db_name = 'text'
+        db_name = 'test'
         abs_path = os.path.dirname(os.path.abspath(__file__))
         header_conf_path = abs_path + "/page_header_conf_1941_1.json"
         xml_path = abs_path + "/slovak_1941_1_strana_1.xml"
