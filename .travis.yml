@@ -1,0 +1,11 @@
+language: python
+python:
+    - "3.5"
+before_install:
+    - sudo apt-get install python3-tk
+install:
+    - pip install -r misc/requirements.txt
+    - pip install -r misc/test_requirements.txt
+script: python -m pytest tests
+notifications:
+  slack: nautilusds:FU9mJgkONTb7Fpg8xD7qUACf
