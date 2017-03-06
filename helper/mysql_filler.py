@@ -81,6 +81,7 @@ class Filler(object):
                 except:
                     db.rollback()
         print('done')
+        print('issue_id: ', issue_id)
 
     def fill_marc21(self, issue_name, db_name):
 
