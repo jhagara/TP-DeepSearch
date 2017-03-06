@@ -10,7 +10,7 @@ print ('Issue name: ', str(sys.argv[1]))
 print ('Path to XML file: ', str(sys.argv[2]))
 print ('Path to JSON header conffile: ', str(sys.argv[3]))
 
-db_name = 'text'
+db_name = 'test'
 issue_name = str(sys.argv[1])
 xml_path = str(sys.argv[2])
 header_conf_path = str(sys.argv[3])
