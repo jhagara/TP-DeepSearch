@@ -42,6 +42,8 @@ and enter your password (default_notsafe: root, default_safe - at least 8 chars)
 Create database and testing database:
 
         $ create database tp;
+
+
         $ create database test;
 
 Run table creating scripts of mysql_init_tables for creation of all tables or 
