@@ -132,6 +132,7 @@ class Cleaner(object):
     @classmethod
     def __remove_page_header(cls, parsed_xml):
         found = []
+        page_number = ["page", "strana"]
         for page in parsed_xml.xpath('.//page'):
             page_height = page.attrib['height']
             height = int(page_height) / 100 * HEADER_PER
@@ -147,9 +148,13 @@ class Cleaner(object):
                 line2 = par2.getchildren()
                 if len(line2) == 0 or len(line2[0].getchildren()) == 0:
                     continue
-                if par1.getchildren()[0].getchildren()[0].text == par2.getchildren()[0].getchildren()[0].text:
+                if par1.getchildren()[0].getchildren()[0].text.lower() == par2.getchildren()[0].getchildren()[0].text.lower():
                     to_remove.append(par1)
                     to_remove.append(par2)
+                    continue
+            for word in page_number:
+                if word in par1.getchildren()[0].getchildren()[0].text.lower():
+                    to_remove.append(par1)
 
         for par in to_remove:
             if par is not None and par.getparent() is not None:
