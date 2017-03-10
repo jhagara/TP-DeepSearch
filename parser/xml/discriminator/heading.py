@@ -1,7 +1,7 @@
 import re
 import array
 
-ERROR = 2
+ERROR = 3
 
 # purpose of this class is to identify headings
 
