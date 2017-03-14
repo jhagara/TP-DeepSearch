@@ -14,6 +14,8 @@ issue_name = str(sys.argv[1])
 xml_path = str(sys.argv[2])
 header_conf_path = str(sys.argv[3])
 
+dirname, filename = os.path.split(os.path.abspath(xml_path))
+
 with open('helper/empty_jsons/issue.json') as issue_file:
     empty_issue = json.load(issue_file)
 
@@ -34,6 +36,8 @@ es.indices.create(index='issues', ignore=400)
 # SETUP OF ISSUE DOCUMENT
 empty_issue['name'] = issue_name
 empty_issue_art['name'] = issue_name
+
+empty_issue['source_dirname'] = dirname
 
 page_zero = semantic.xml.xpath("//page")[0]
 empty_issue['page_height'] = int(page_zero.attrib['height'])
