@@ -1,13 +1,14 @@
 import unittest
 import os
 import pymysql
+import pytest
 from semantic import Semantic
 from helper import mysql_filler
 from helper import mysql_init_tables
 from helper import mysql_drop_tables
 
 class TestDB(unittest.TestCase):
-
+    @pytest.mark.skip(reason="no way of currently testing this")
     def test_tables(self):
         db_name = 'test'
         mysql_init_tables.init_tables(db_name)
@@ -45,6 +46,7 @@ class TestDB(unittest.TestCase):
 
         self.assertEqual(len(row), 0)
 
+    @pytest.mark.skip(reason="no way of currently testing this")
     def test_filler(self):
         db_name = 'test'
         abs_path = os.path.dirname(os.path.abspath(__file__))
