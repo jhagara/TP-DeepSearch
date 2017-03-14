@@ -2,10 +2,10 @@ import os
 import copy
 import sys
 import json
-from pprint import pprint
 from semantic import Semantic
 from elasticsearch import Elasticsearch
 
+# argument check print
 print('Issue name: ', str(sys.argv[1]))
 print('Path to XML file: ', str(sys.argv[2]))
 print('Path to JSON header conffile: ', str(sys.argv[3]))
@@ -16,6 +16,7 @@ header_conf_path = str(sys.argv[3])
 
 dirname, filename = os.path.split(os.path.abspath(xml_path))
 
+# loading of json templates from empty_jsons
 with open('helper/empty_jsons/issue.json') as issue_file:
     empty_issue = json.load(issue_file)
 
@@ -27,11 +28,14 @@ with open('helper/empty_jsons/article.json') as article_file:
 
 articles = []
 
+# establishment of connection
 es = Elasticsearch()
+
+# parse the issue
 semantic = Semantic(xml=xml_path, header_config=header_conf_path)
 
+# explicitly creating index to be sure
 es.indices.create(index='issues', ignore=400)
-
 
 # SETUP OF ISSUE DOCUMENT
 empty_issue['name'] = issue_name
@@ -65,8 +69,9 @@ for marcs in semantic.header['marc21']:
         # neviem
     """
 
-
+# index | PUT into ES
 some = es.index(index='issues',  doc_type='issue', body=empty_issue)
+
 print("Issue created with id: ", some['_id'])
 empty_issue_art['id'] = some['_id']
 
@@ -117,5 +122,7 @@ for page in semantic.articles:
         articles.append(new_article)
 
 for art in articles:
+    # index | PUT into ES
     some = es.index(index='issues',  doc_type='article', body=art)
+
     print("Article created with id: ", some['_id'])
