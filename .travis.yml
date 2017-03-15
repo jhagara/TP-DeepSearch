@@ -10,6 +10,8 @@ install:
     - pip install -r misc/test_requirements.txt
 before_script:
     - sleep 15
-script: python -m pytest tests
+script:
+    - python elastic_filler.py 'Slovak41' 'tests/slovak_1941_1_strana_1.xml' 'tests/page_header_conf_1941_1.json'
+    - python -m pytest tests
 notifications:
   slack: nautilusds:FU9mJgkONTb7Fpg8xD7qUACf
