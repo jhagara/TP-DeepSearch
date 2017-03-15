@@ -151,8 +151,8 @@ class Cleaner(object):
                 line2 = par2.getchildren()
                 if len(line2) == 0 or len(line2[0].getchildren()) == 0:
                     continue
-                if par1.getchildren()[0].getchildren()[0].text.lower() == \
-                        par2.getchildren()[0].getchildren()[0].text.lower():
+                if par1.getchildren()[0].getchildren()[0].text.lower().replace(",", ".") == \
+                        par2.getchildren()[0].getchildren()[0].text.lower().replace(",", "."):
                     to_remove.append(par1)
                     to_remove.append(par2)
                     continue

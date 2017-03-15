@@ -14,7 +14,7 @@ class TestCleaner(unittest.TestCase):
                     http://www.abbyy.com/FineReader_xml/FineReader6-schema-v1.xml"
                     pagesCount="8" mainLanguage="Slovak" languages="Slovak,Czech,EnglishUnitedStates">
                 <page width="3455" height="4871" resolution="400" originalCoords="true">
-                <block blockType="Text" l="180" t="10" r="566" b="100">
+                    <block blockType="Text" l="180" t="10" r="566" b="100">
                         <region>
                             <rect l="180" t="10" r="566" b="100">
                             </rect>
@@ -31,6 +31,28 @@ class TestCleaner(unittest.TestCase):
                                                 wordFromDictionary="true" wordNormal="true" wordNumeric="false"
                                                 wordIdentifier="false" wordPenalty="1" meanStrokeWidth="96"
                                                 charConfidence="38" serifProbability="26">H</charParams>
+                                    </formatting>
+                                </line>
+                            </par>
+                        </text>
+                    </block>
+                    <block blockType="Text" l="180" t="10" r="566" b="100">
+                        <region>
+                            <rect l="180" t="10" r="566" b="100">
+                            </rect>
+                        </region>
+                        <text>
+                            <par>
+                                <line baseline="156" l="30" t="10" r="549" b="100">
+                                    <formatting lang="Czech" ff="Arial" fs="10." spacing="-2">
+                                        <charParams l="195" t="10" r="229" b="100" wordStart="true"
+                                                wordFromDictionary="true" wordNormal="true" wordNumeric="false"
+                                                wordIdentifier="false" wordPenalty="1" meanStrokeWidth="96"
+                                                charConfidence="38" serifProbability="26">A</charParams>
+                                        <charParams l="195" t="10" r="229" b="100" wordStart="true"
+                                                wordFromDictionary="true" wordNormal="true" wordNumeric="false"
+                                                wordIdentifier="false" wordPenalty="1" meanStrokeWidth="96"
+                                                charConfidence="38" serifProbability="26">.</charParams>
                                     </formatting>
                                 </line>
                             </par>
@@ -140,7 +162,7 @@ class TestCleaner(unittest.TestCase):
                     </block>
                 </page>
                 <page width="3455" height="4871" resolution="400" originalCoords="true">
-                <block blockType="Text" l="180" t="10" r="566" b="100">
+                    <block blockType="Text" l="180" t="10" r="566" b="100">
                         <region>
                             <rect l="180" t="10" r="566" b="100">
                             </rect>
@@ -157,6 +179,28 @@ class TestCleaner(unittest.TestCase):
                                                 wordFromDictionary="true" wordNormal="true" wordNumeric="false"
                                                 wordIdentifier="false" wordPenalty="1" meanStrokeWidth="96"
                                                 charConfidence="38" serifProbability="26">H</charParams>
+                                    </formatting>
+                                </line>
+                            </par>
+                        </text>
+                    </block>
+                    <block blockType="Text" l="180" t="10" r="566" b="100">
+                        <region>
+                            <rect l="180" t="10" r="566" b="100">
+                            </rect>
+                        </region>
+                        <text>
+                            <par>
+                                <line baseline="156" l="30" t="10" r="549" b="100">
+                                    <formatting lang="Czech" ff="Arial" fs="10." spacing="-2">
+                                        <charParams l="195" t="10" r="229" b="100" wordStart="true"
+                                                wordFromDictionary="true" wordNormal="true" wordNumeric="false"
+                                                wordIdentifier="false" wordPenalty="1" meanStrokeWidth="96"
+                                                charConfidence="38" serifProbability="26">A</charParams>
+                                        <charParams l="195" t="10" r="229" b="100" wordStart="true"
+                                                wordFromDictionary="true" wordNormal="true" wordNumeric="false"
+                                                wordIdentifier="false" wordPenalty="1" meanStrokeWidth="96"
+                                                charConfidence="38" serifProbability="26">,</charParams>
                                     </formatting>
                                 </line>
                             </par>
