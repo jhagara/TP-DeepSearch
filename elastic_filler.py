@@ -123,6 +123,8 @@ for page in semantic.articles:
 
 for art in articles:
     # index | PUT into ES
-    some = es.index(index='issues',  doc_type='article', body=art)
+    some = es.index(index='issues', doc_type='article', body=art)
 
     print("Article created with id: ", some['_id'])
+
+es.indices.refresh(index="issues")
