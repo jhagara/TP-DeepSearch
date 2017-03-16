@@ -169,23 +169,16 @@
 		</group>
 	</page>
 	<page resolution="400" width="400" height="600">
-		<group type="headings" l="10" t="10" r="195" b="50">
-			<par type="heading" l="10" t="10" r="195" b="50">
-                <line baseline="156" l="10" t="10" r="195" b="50">
+		<group type="headings" l="50" t="50" r="350" b="100">
+			<par type="heading" l="50" t="50" r="350" b="100">
+                <line baseline="156" l="50" t="50" r="350" b="100">
                     <formatting lang="Slovak" ff="Times New Roman" fs="25.">strana 6 clanok 9 nadpis</formatting>
                 </line>
             </par>
 		</group>
-		<group type="fulltexts" l="10" t="60" r="195" b="500">
-			<par type="fulltext" l="10" t="60" r="195" b="500">
-                <line baseline="156" l="10" t="60" r="195" b="500">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 6 clanok 9</formatting>
-                </line>
-            </par>
-		</group>
-		<group type="fulltexts" l="200" t="10" r="390" b="500">
-			<par type="fulltext" l="200" t="10" r="390" b="500">
-                <line baseline="156" l="200" t="10" r="390" b="500">
+		<group type="fulltexts" l="50" t="105" r="350" b="500">
+			<par type="fulltext" l="50" t="105" r="350" b="500">
+                <line baseline="156" l="50" t="105" r="350" b="500">
                     <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 6 clanok 9</formatting>
                 </line>
             </par>
@@ -592,8 +585,16 @@
                 </line>
             </par>
 		</group>
-		<group type="separators" l="10" t="205" r="390" b="230">
-			<block blockType="Picture" l="10" t="205" r="390" b="230" type="separator">
+		<group type="separators" l="105" t="205" r="200" b="230">
+			<block blockType="Picture" l="105" t="205" r="200" b="230" type="separator">
+            </block>
+		</group>
+        <group type="separators" l="205" t="205" r="300" b="230">
+			<block blockType="Picture" l="205" t="205" r="300" b="230" type="separator">
+            </block>
+		</group>
+        <group type="separators" l="305" t="205" r="390" b="230">
+			<block blockType="Picture" l="305" t="205" r="390" b="230" type="separator">
             </block>
 		</group>
 	</page>
