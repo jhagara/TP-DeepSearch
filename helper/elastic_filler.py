@@ -1,14 +1,9 @@
 import copy
 import json
-from semantic import Semantic
 from elasticsearch import Elasticsearch
 
-# USAGE:
-# from helper.elastic_filler import Elastic_semantic
-# semantic = Elastic_semantic(## init same as in Semantic() ##)
 
-
-class Elastic_semantic(Semantic):
+class Elastic(object):
     def save_to_elastic(self, issue_name, dirname):
         # loading of json templates from empty_jsons
         with open('helper/empty_jsons/issue.json') as issue_file:
