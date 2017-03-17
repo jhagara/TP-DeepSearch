@@ -31,11 +31,12 @@ def main(dir, name):
         if config == '':
             sys.exit("Missing config file in dir and parent dirs: " + searched_dir)
 
-        files.append({'xml': xml, 'json': config})
+        files.append({'dir': current_dir, 'xml': xml, 'json': config})
 
     for file in files:
         semantic = Semantic(xml=file['xml'], header_config=file['json'])
         # call method with semantic and 'name' of journal
+        semantic.save_to_elastic(name, file['dir'])
 
 if __name__ == "__main__":
     main(sys.argv[1], sys.argv[2])
