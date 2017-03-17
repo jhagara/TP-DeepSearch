@@ -176,6 +176,13 @@ class Assembler(object):
         :param current_group:lxml.etree._Element
         :return: found possible chainable group element or None
         """
+        nearest_above = self.__find_nearest_above(current_group)
+        b = int(current_group.attrib['b'])
+        query = "group[@t >= " + str(b) + "]"
+        all_below = self.current_page.xpath(query)
+        if nearest_above is not None and nearest_above.attrib['type'] == 'separators' and len(all_below) == 0:
+            return self.__chainable_middle_alone(current_group)
+
         o = self.__find_middle_alone()
         last_mid = self.__find_last_middle()
 
