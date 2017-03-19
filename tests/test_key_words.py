@@ -1,6 +1,7 @@
 import unittest
 from semantic import Semantic
 from textblob import TextBlob as tB
+import pytest
 
 
 class TestKeyWords(unittest.TestCase):
@@ -38,8 +39,14 @@ class TestKeyWords(unittest.TestCase):
         for i, key_words in enumerate(key_words_art):
             self.assertEqual(len(key_words) > 0, True)
             print("Top words in document {}".format(i + 1))
-            for word, score in key_words:
-                print("Word: {}, TF-IDF: {}".format(word, round(score, 5)))
+            for word in key_words:
+                print("Word: {}".format(word))
+
+    @pytest.mark.skip(reason="not sure with this")
+    def test_key_words_elastic(self):
+
+        sem = Semantic()
+        sem.insert_key_words(1)
 
 
 if __name__ == '__main__':

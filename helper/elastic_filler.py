@@ -136,7 +136,10 @@ class Elastic(object):
         for i, blob in enumerate(bloblist):
             scores = {word: self.__tfidf(word, blob, bloblist) for word in blob.words}
             sorted_words = sorted(scores.items(), key=lambda x: x[1], reverse=True)
-            key_words_art.append(sorted_words[:10])
+            key_words = []
+            for word, score in sorted_words[:10]:
+                key_words.append(word)
+            key_words_art.append(key_words)
 
         return key_words_art
 
@@ -151,7 +154,7 @@ class Elastic(object):
             bloblist.append(tB(all_text))
 
         key_words_art = self.key_words(bloblist)
-        for i, article in jlist:
+        for i, article in enumerate(jlist):
             article['keywords'] = key_words_art[i]
 
         return
