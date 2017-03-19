@@ -15,7 +15,7 @@ class TestDB(unittest.TestCase):
 
         db = pymysql.connect(host="127.0.0.1",
                              user="root",
-                             password="rootroot",
+                             password="root",
                              database=db_name)
 
         print('Connection estalished')
@@ -34,7 +34,7 @@ class TestDB(unittest.TestCase):
 
         db = pymysql.connect(host="127.0.0.1",
                              user="root",
-                             password="rootroot",
+                             password="root",
                              database=db_name)
 
         print('Connection estalished')
@@ -59,7 +59,7 @@ class TestDB(unittest.TestCase):
 
         db = pymysql.connect(host="127.0.0.1",
                              user="root",
-                             password="rootroot",
+                             password="root",
                              database=db_name)
 
         print('Connection estalished')

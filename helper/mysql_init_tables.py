@@ -4,7 +4,7 @@ def init_tables(db_name):
     print('Preparing connection')
     db = pymysql.connect(host="127.0.0.1",
                          user="root",
-                         password="rootroot",
+                         password="root",
                          database=db_name)
 
     print('Connection estalished')

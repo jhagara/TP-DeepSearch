@@ -29,7 +29,7 @@ class Filler(object):
 
         db = pymysql.connect(host="127.0.0.1",
                              user="root",
-                             password="rootroot",
+                             password="root",
                              database=db_name,
                              charset='utf8')
 
@@ -94,7 +94,7 @@ class Filler(object):
 
         db = pymysql.connect(host="127.0.0.1",
                              user="root",
-                             password="rootroot",
+                             password="root",
                              database=db_name,
                              charset='utf8')
 

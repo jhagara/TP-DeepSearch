@@ -176,6 +176,14 @@ class Assembler(object):
         :param current_group:lxml.etree._Element
         :return: found possible chainable group element or None
         """
+        # new rule does not seems to help
+        # nearest_above = self.__find_nearest_above(current_group)
+        # b = int(current_group.attrib['b'])
+        # query = "group[@t >= " + str(b) + "]"
+        # all_below = self.current_page.xpath(query)
+        # if nearest_above is not None and nearest_above.attrib['type'] == 'separators' and len(all_below) == 0:
+        #     return self.__chainable_middle_alone(current_group)
+
         o = self.__find_middle_alone()
         last_mid = self.__find_last_middle()
 
@@ -222,7 +230,6 @@ class Assembler(object):
                 self.chains_mapper[id1] = chain_num
         # chain group not exist
         else:
-            # plus 1 - we're gonna create new chain group
             self.last_chain_num += 1
             # add groups to newly created group
             self.chains[self.current_page_num][self.last_chain_num] = [group1, group2] # NOQA

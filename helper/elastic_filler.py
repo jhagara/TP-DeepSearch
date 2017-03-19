@@ -1,15 +1,18 @@
 import copy
 import json
 from elasticsearch import Elasticsearch
+import config
 
 
 class Elastic(object):
     def save_to_elastic(self, issue_name, dirname):
+        elastic_index = config.elastic_index()
+
         # loading of json templates from empty_jsons
-        with open('helper/empty_jsons/issue.json') as issue_file:
+        with open(config.get_full_path('helper', 'empty_jsons', 'issue.json')) as issue_file:
             empty_issue = json.load(issue_file)
 
-        with open('helper/empty_jsons/article.json') as article_file:
+        with open(config.get_full_path('helper', 'empty_jsons', 'article.json')) as article_file:
             empty_article = json.load(article_file)
             groups = []
             empty_group = empty_article['groups'][0]
@@ -21,13 +24,13 @@ class Elastic(object):
         es = Elasticsearch()
 
         # explicitly creating index to be sure
-        es.indices.create(index='issues', ignore=400)
+        # es.indices.create(index=elastic_index, ignore=400)
 
         # SETUP OF ISSUE DOCUMENT
         empty_issue['name'] = issue_name
         empty_issue_art['name'] = issue_name
 
-        empty_issue['source_dirname'] = dirname
+        empty_issue['source_dir'] = dirname
 
         page_zero = self.xml.xpath("//page")[0]
         empty_issue['page_height'] = int(page_zero.attrib['height'])
@@ -56,9 +59,11 @@ class Elastic(object):
             """
 
         # index | PUT into ES
-        some = es.index(index='issues',  doc_type='issue', body=empty_issue)
+        # just print new index
+        some = es.index(index=elastic_index,  doc_type='issue', body=empty_issue)
 
-        print("Issue created with id: ", some['_id'])
+        print("Issue created, index: " + elastic_index +
+              ", type: issue, id: ", some['_id'])
         empty_issue_art['id'] = some['_id']
 
         # SETUP OF ARTICLE DOCUMENT
@@ -72,7 +77,7 @@ class Elastic(object):
                     if group.attrib['type'] == 'headings':
                         new_heading = copy.deepcopy(empty_group)
                         # print(new_heading)
-                        new_heading['type'] = 'heading'
+                        new_heading['type'] = 'headings'
                         new_heading['l'] = group.attrib['l']
                         new_heading['r'] = group.attrib['r']
                         new_heading['t'] = group.attrib['t']
@@ -88,7 +93,7 @@ class Elastic(object):
                         groups.append(new_heading)
                     elif group.attrib['type'] == 'fulltexts':
                         new_fulltext = copy.deepcopy(empty_group)
-                        new_fulltext['type'] = 'fulltext'
+                        new_fulltext['type'] = 'fulltexts'
                         new_fulltext['l'] = group.attrib['l']
                         new_fulltext['r'] = group.attrib['r']
                         new_fulltext['t'] = group.attrib['t']
@@ -107,10 +112,13 @@ class Elastic(object):
                 new_article['issue'] = empty_issue_art
                 articles.append(new_article)
 
+        ar_count = 0
         for art in articles:
             # index | PUT into ES
-            some = es.index(index='issues', doc_type='article', body=art)
+            some = es.index(index=elastic_index, doc_type='article', body=art)
+            ar_count += 1
 
-            print("Article created with id: ", some['_id'])
+        print("Article created " + str(ar_count) + ", index: " +
+              elastic_index + ", type: article")
 
-        es.indices.refresh(index="issues")
+        es.indices.refresh(index=elastic_index)
