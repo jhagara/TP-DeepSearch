@@ -59,6 +59,11 @@ Usage
 
 This script returns id of newly created entry in issues
 
+REQUISITES
+""""""""""
+* Database initialization
+  * execute script from python project TP-DeepSearch, with name helper/reset_elastic_indices.py (You need to check documentation for proper understanting)
+
 Basic orientation
 =================
 
