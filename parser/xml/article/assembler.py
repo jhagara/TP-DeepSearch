@@ -222,7 +222,6 @@ class Assembler(object):
                 self.chains_mapper[id1] = chain_num
         # chain group not exist
         else:
-            # plus 1 - we're gonna create new chain group
             self.last_chain_num += 1
             # add groups to newly created group
             self.chains[self.current_page_num][self.last_chain_num] = [group1, group2] # NOQA
