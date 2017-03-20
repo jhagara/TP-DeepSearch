@@ -121,38 +121,14 @@ class SeparatorId(object):
         new_line = None
 
         if upper.attrib.get('type') == 'fulltext' and current.attrib.get('type') == 'fulltext':
-            current_first_line = current.xpath("line[1]")
-            current_second_line = current.xpath("line[2]")
-            upper_last_line = upper.xpath("line[last()]")
-            upper_belast_line = upper.xpath("line[last()-1]")
-
-            if len(upper_last_line) > 0:
-                upper_last_line = upper_last_line[0]
-                if len(upper_belast_line) > 0:
-                    upper_belast_line = upper_belast_line[0]
-                    upper_line_h = int(upper_last_line.attrib.get('t')) - int(upper_belast_line.attrib.get('t'))
-                else:
-                    upper_line_h = int(upper_last_line.attrib.get('b')) - int(upper_last_line.attrib.get('t'))
+            first_line = current.xpath("line[1]")
+            if len(first_line) > 0:
+                first_line = first_line[0]
+                first_line_height = (int(first_line.attrib.get('b')) - int(first_line.attrib.get('t'))) * 2
             else:
-                upper_line_h = gap
+                first_line_height = gap
 
-            if len(current_first_line) > 0:
-                current_first_line = current_first_line[0]
-                if len(current_second_line) > 0:
-                    current_second_line = current_second_line[0]
-                    current_line_h = int(current_second_line.attrib.get('t')) - int(current_first_line.attrib.get('t'))
-
-                else:
-                    current_line_h = int(current_first_line.attrib.get('b')) - int(current_first_line.attrib.get('t'))
-            else:
-                current_line_h = gap
-
-            if current_line_h>upper_line_h:
-                height_threshold = upper_line_h*1.5
-            else:
-                height_threshold = current_line_h*1.5
-
-            if int(current.attrib['t']) - int(upper.attrib['b']) > height_threshold:
+            if int(current.attrib['t']) - int(upper.attrib['b']) > first_line_height:
                 new_line = cls.__create_new_horizontal_line(
                         str(int(upper.attrib['b']) + 1),
                         upper.attrib['r'],
