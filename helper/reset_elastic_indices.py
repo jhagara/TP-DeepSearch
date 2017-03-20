@@ -57,7 +57,7 @@ for index in indices:
                             }
                         },
                         "authors": {"type": "string"},
-                        "keywords": {"type": "keyword"},
+                        "keywords": {"type": "keyword"}
                     }
                 }
             }
