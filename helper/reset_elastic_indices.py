@@ -8,6 +8,78 @@
 import sys
 from elasticsearch import Elasticsearch
 
+doc = {
+  "mappings": {
+    "issue": {
+      "properties": {
+        "name": {
+          "type": "text"
+        },
+        "content": {
+          "type": "text"
+        },
+        "publisher": {
+          "type": "text"
+        },
+        "release_from": {
+          "type": "text"
+        },
+        "release_date": {
+          "type": "text"
+        },
+        "number": {
+          "type": "text"
+        },
+        "source_dirname": {
+          "type": "text"
+        },
+        "page_height": {
+          "type": "short"
+        },
+        "page_width": {
+          "type": "short"
+        }
+      }
+    },
+    "article": {
+      "properties": {
+        "groups": {
+          "type": "nested",
+          "properties": {
+            "page": {
+              "type": "short"
+            },
+            "type": {
+              "type": "keyword"
+            },
+            "text": {
+              "type": "text"
+            },
+            "l": {
+              "type": "short"
+            },
+            "r": {
+              "type": "short"
+            },
+            "t": {
+              "type": "short"
+            },
+            "b": {
+              "type": "short"
+            }
+          }
+        },
+        "authors": {
+          "type": "string"
+        },
+        "keywords": {
+          "type": "keyword"
+        }
+      }
+    }
+  }
+}
+
 all_indices = ['deep_search_test', 'deep_search_dev',
                'deep_search_prod', 'deep_search_test_python']
 es = Elasticsearch()
@@ -27,41 +99,7 @@ for index in indices:
     # create index
     es.indices.create(
         index=index,
-        body={
-            "mappings": {
-                "issue": {
-                    "properties": {
-                        "name": { "type": "text" },
-                        "content": {"type": "text"},
-                        "publisher": {"type": "text"},
-                        "release_from": {"type": "text"},
-                        "release_date": {"type": "text"},
-                        "number": {"type": "text"},
-                        "source_dirname": {"type": "text"},
-                        "page_height": {"type": "short"},
-                        "page_width": {"type": "short"}
-                    }
-                },
-                "article": {
-                    "properties": {
-                        "groups": {
-                            "type": "nested",
-                            "properties": {
-                                "page": {"type": "short"},
-                                "type": {"type": "keyword"},
-                                "text": {"type": "text"},
-                                "l": {"type": "short"},
-                                "r": {"type": "short"},
-                                "t": {"type": "short"},
-                                "b": {"type": "short"}
-                            }
-                        },
-                        "authors": {"type": "string"},
-                        "keywords": {"type": "keyword"}
-                    }
-                }
-            }
-        }
+        body=doc
     )
 
 # create other indices if not exist
