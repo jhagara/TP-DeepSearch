@@ -1,6 +1,7 @@
 import math
 from elasticsearch import Elasticsearch
 from textblob import TextBlob as tB
+import config
 
 
 class Analyzer(object):
@@ -51,10 +52,12 @@ class Analyzer(object):
     # generate key words and insert then in to elastic
     def insert_key_words(self, id):
 
+        elastic_index = config.elastic_index()
+
         # establishment of connection
         es = Elasticsearch()
 
-        result = es.search(index="elastic_index", doc_type="article", body={"query": {"match": {"id": id}}})
+        result = es.search(index=elastic_index, doc_type="article", body={"query": {"match": {"id": id}}})
 
         article_ids = []
         article_bodies = []
@@ -66,9 +69,9 @@ class Analyzer(object):
         self.key_words_from_json(article_bodies)
 
         for i, article in enumerate(article_bodies):
-            updated = es.index(index='elastic_index', doc_type='article', body=article, id=article_ids[i])
+            updated = es.index(index=elastic_index, doc_type='article', body=article, id=article_ids[i])
             if updated['_id'] != article_ids[i]:
                 print("hlaska")  #TODO doplnit
                 return 1
 
-        es.indices.refresh(index="issues")
+        es.indices.refresh(index=elastic_index)
