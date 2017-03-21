@@ -51,7 +51,21 @@ class SeparatorId(object):
                                 near,
                                 parsed_xml)
                         if new_line is not None:
-                            page.append(new_line)
+
+                            # before adding horizontal line check font sizes of paragraphs
+                            fs1 = 0
+                            fs2 = 0
+                            for element in par.iter():
+                                if element.tag=='formatting':
+                                    fs1 = element.attrib['fs']
+                                    break
+
+                            for element in near.iter():
+                                if element.tag=='formatting':
+                                    fs2 = element.attrib['fs']
+                                    break
+                            if (fs1 >= fs2):
+                                page.append(new_line)
 
         return parsed_xml
 
