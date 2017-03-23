@@ -1,7 +1,10 @@
 import unittest
 from semantic import Semantic
 from textblob import TextBlob as tB
+import elastic_updater
 import pytest
+import config
+from tests.helper.helper_test_methods import HelperTestMethods
 
 
 class TestKeyWords(unittest.TestCase):
@@ -48,6 +51,11 @@ class TestKeyWords(unittest.TestCase):
         sem = Semantic()
         sem.insert_key_words(1)
 
+    def test_elastic_updater_script_call(self):
+        issue, articles = HelperTestMethods.create_custom_issue()
+        elastic_updater.main(issue['_id'], config.default_elastic_index)
+        self.assertGreater(len(articles[0]['_source']['keywords']), 0)
+        self.assert_
 
 if __name__ == '__main__':
     unittest.main()

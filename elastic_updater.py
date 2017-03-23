@@ -3,15 +3,20 @@ import sys
 from semantic import Semantic
 import re
 import config
+from elasticsearch import Elasticsearch
 
 
 def main(issue_id, environment):
-    print('Directory: ', dir)
-    files = []
-
     # set environment to new value
     config.set_environment(environment)
 
+    es = Elasticsearch()
+    articles = es.search(index='deep_search_test_python', doc_type="article",
+                         body={'query': {'bool': {'must': {
+                             'nested': {'path': 'issue', 'query': {'match': {'issue.id': issue_id}}}}}},
+                             'size': 10000})['hits']['hits']
+
+    # update articles key_words
     semantic = Semantic()
     semantic.insert_key_words(issue_id)
 
