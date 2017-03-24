@@ -43,35 +43,42 @@ class Analyzer(object):
                 all_text += group['text']
             bloblist.append(tB(all_text))
 
-        key_words_art = self.key_words(bloblist)
-        for i, article in enumerate(jlist):
-            article['keywords'] = key_words_art[i]
-
-        return
+        return self.key_words(bloblist)
 
     # generate key words and insert then in to elastic
-    def insert_key_words(self, id):
+    def insert_key_words(self, issue_id):
 
         elastic_index = config.elastic_index()
 
         # establishment of connection
         es = Elasticsearch()
 
-        result = es.search(index=elastic_index, doc_type="article", body={"query": {"match": {"id": id}}})
+        articles = es.search(index='deep_search_test_python', doc_type="article",
+                             body={'query': {'bool': {'must': {
+                                 'nested': {'path': 'issue', 'query': {'match': {'issue.id': issue_id}}}}}},
+                                 'size': 1000})['hits']['hits']
 
         article_ids = []
         article_bodies = []
 
-        for hit in result['hits']['hits']:
+        for hit in articles:
             article_bodies.append(hit['_source'])
             article_ids.append(hit['_id'])
 
-        self.key_words_from_json(article_bodies)
+        art_key_words = self.key_words_from_json(article_bodies)
 
-        for i, article in enumerate(article_bodies):
-            updated = es.index(index=elastic_index, doc_type='article', body=article, id=article_ids[i])
-            if updated['_id'] != article_ids[i]:
-                print("hlaska")  #TODO doplnit
-                return 1
+        for i, article_id in enumerate(article_ids):
+            updated = es.update(index=elastic_index,
+                                doc_type='article',
+                                id=article_id,
+                                body={
+                                    "script": {
+                                        "inline": "ctx._source.keywords = params.keywords",
+                                        "lang": "painless",
+                                        "params": {
+                                            "keywords": art_key_words[i]
+                                            }
+                                        }
+                                    })
 
         es.indices.refresh(index=elastic_index)
