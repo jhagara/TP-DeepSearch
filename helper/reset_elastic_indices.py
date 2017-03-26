@@ -58,6 +58,12 @@ for index in indices:
                         },
                         "authors": {"type": "string"},
                         "keywords": {"type": "keyword"},
+                        "issue": {
+                            "type": "nested",
+                            "properties": {
+                                "id": {"type": "keyword"}
+                            }
+                        }
                     }
                 }
             }

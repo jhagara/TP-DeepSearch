@@ -40,6 +40,7 @@ def main(parser_dir, dir, name, environment):
     for file in files:
         semantic = Semantic(xml=file['xml'], header_config=file['json'])
         # call method with semantic and 'name' of journal
+        print('xml: ', file['xml'])
         semantic.save_to_elastic(name, file['dir'])
 
     # set environment to default
