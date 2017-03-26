@@ -2,9 +2,10 @@ from parser.xml.xml_parser import XmlParser
 from lxml import etree
 
 from helper.elastic_filler import Elastic
+from helper.semantic_analyzer import Analyzer
 
 
-class Semantic(Elastic):
+class Semantic(Elastic, Analyzer):
     def __init__(self, **args):
         default = {'pdf': None, 'xml': None, 'header_config': None}
         args = {**default, **args}
