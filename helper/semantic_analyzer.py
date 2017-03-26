@@ -53,7 +53,7 @@ class Analyzer(object):
         # establishment of connection
         es = Elasticsearch()
 
-        articles = es.search(index='deep_search_test_python', doc_type="article",
+        articles = es.search(index=elastic_index, doc_type="article",
                              body={'query': {'bool': {'must': {
                                  'nested': {'path': 'issue', 'query': {'match': {'issue.id': issue_id}}}}}},
                                  'size': 1000})['hits']['hits']
