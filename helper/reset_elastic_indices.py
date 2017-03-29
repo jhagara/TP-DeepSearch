@@ -38,6 +38,7 @@ for index in indices:
                         "release_date": {"type": "text"},
                         "number": {"type": "text"},
                         "source_dirname": {"type": "text"},
+                        "journal_marc21": {"type": "text"},
                         "page_height": {"type": "short"},
                         "page_width": {"type": "short"}
                     }
