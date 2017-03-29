@@ -5,7 +5,7 @@ import config
 
 
 class Elastic(object):
-    def save_to_elastic(self, issue_name, dirname):
+    def save_to_elastic(self, issue_name, dirname, journalpath):
         elastic_index = config.elastic_index()
 
         # loading of json templates from empty_jsons
@@ -31,6 +31,7 @@ class Elastic(object):
         empty_issue_art['name'] = issue_name
 
         empty_issue['source_dir'] = dirname
+        empty_issue['journal_marc21'] = journalpath
 
         page_zero = self.xml.xpath("//page")[0]
         empty_issue['page_height'] = int(page_zero.attrib['height'])
