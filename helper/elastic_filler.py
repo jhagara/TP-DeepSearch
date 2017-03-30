@@ -9,14 +9,12 @@ class Elastic(object):
         elastic_index = config.elastic_index()
 
         # loading of json templates from empty_jsons
-        with open(config.get_full_path('helper', 'empty_jsons', 'issue.json')) as issue_file:
-            empty_issue = json.load(issue_file)
+        empty_issue = {}
 
-        with open(config.get_full_path('helper', 'empty_jsons', 'article.json')) as article_file:
-            empty_article = json.load(article_file)
-            groups = []
-            empty_group = empty_article['groups'][0]
-            empty_issue_art = empty_article['issue']
+        empty_article = {}
+        groups = []
+        empty_group = {}
+        empty_issue_art = {}
 
         articles = []
 
@@ -28,27 +26,29 @@ class Elastic(object):
 
         # SETUP OF ISSUE DOCUMENT
         empty_issue['name'] = issue_name
-        empty_issue_art['name'] = issue_name
+        # empty_issue_art['name'] = issue_name
 
         empty_issue['source_dir'] = dirname
         empty_issue['journal_marc21_path'] = journalpath
 
         page_zero = self.xml.xpath("//page")[0]
         empty_issue['page_height'] = int(page_zero.attrib['height'])
-        empty_issue_art['page_height'] = int(page_zero.attrib['height'])
+        # empty_issue_art['page_height'] = int(page_zero.attrib['height'])
         empty_issue['page_width'] = int(page_zero.attrib['width'])
-        empty_issue_art['page_width'] = int(page_zero.attrib['width'])
+        # empty_issue_art['page_width'] = int(page_zero.attrib['width'])
 
         for marcs in self.header['marc21']:
+            """
             if marcs['key'] == 'Annual_set':
                 empty_issue['release_from'] = marcs['value']
-            elif marcs['key'] == 'Number':
-                empty_issue['number'] = marcs['value']
-                empty_issue_art['number'] = marcs['value']
             elif marcs['key'] == 'Date_Location':
                 empty_issue['release_date'] = marcs['value']
             elif marcs['key'] == 'Founder':
                 empty_issue['publisher'] = marcs['value']
+            """
+            if marcs['key'] == 'Number':
+                empty_issue['number'] = marcs['value']
+                # empty_issue_art['number'] = marcs['value']
             elif marcs['key'] == 'Subscription':
                 empty_issue['content'] = marcs['value']
             """
