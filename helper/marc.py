@@ -51,11 +51,11 @@ class Marc(object):
         )
 
         # 264
-        place_of_release = None
+        place_of_release = ""
         if journal_marc['264']['a'] is not None:
             place_of_release = journal_marc['264']['a']
 
-        publisher = None
+        publisher = ""
         if issue['publisher'] is not None and len(issue['publisher']) > 0:
             publisher = issue['publisher']
         elif journal_marc['264']['b'] is not None:
@@ -160,13 +160,25 @@ class Marc(object):
         article_record.add_field(issue_marc['338'])
 
         # 100
-        article_record.add_field(
-            Field(
-                tag='100',
-                indicators=['1', '#'],
-                subfields=['a', article['authors'][0]]
+        if len(article['authors']) > 0:
+            article_record.add_field(
+                Field(
+                    tag='100',
+                    indicators=['1', '#'],
+                    subfields=['a', article['authors'][0]]
+                )
             )
-        )
+
+        # 700
+        if len(article['authors']) > 1:
+            for author in article['authors'][1:]:
+                article_record.add_field(
+                    Field(
+                        tag='700',
+                        indicators=['1', '#'],
+                        subfields=['a', author]
+                    )
+                )
 
         # 653
         for word in article['keywords']:
@@ -187,6 +199,9 @@ class Marc(object):
                            '7', 'nnas']
             )
         )
+
+        # 245c
+        # TODO
 
         path = ""  # TODO doplnit
         self.__save_marc(article_record, path)
