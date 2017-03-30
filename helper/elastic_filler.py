@@ -31,7 +31,7 @@ class Elastic(object):
         empty_issue_art['name'] = issue_name
 
         empty_issue['source_dir'] = dirname
-        empty_issue['journal_marc21'] = journalpath
+        empty_issue['journal_marc21_path'] = journalpath
 
         page_zero = self.xml.xpath("//page")[0]
         empty_issue['page_height'] = int(page_zero.attrib['height'])
