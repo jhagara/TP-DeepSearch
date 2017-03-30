@@ -39,6 +39,7 @@ for index in indices:
                         "number": {"type": "text"},
                         "source_dirname": {"type": "text"},
                         "journal_marc21_path": {"type": "text"},
+                        "issue_marc21_path": {"type": "text"},
                         "page_height": {"type": "short"},
                         "page_width": {"type": "short"}
                     }
@@ -59,6 +60,7 @@ for index in indices:
                         },
                         "authors": {"type": "string"},
                         "keywords": {"type": "keyword"},
+                        "article_marc21_path": {"type": "text"},
                         "issue": {
                             "type": "nested",
                             "properties": {
