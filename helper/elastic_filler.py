@@ -30,6 +30,8 @@ class Elastic(object):
         empty_issue['name'] = issue_name
         empty_issue_art['name'] = issue_name
 
+        empty_issue['pages_count'] = len(self.articles)
+
         empty_issue['source_dir'] = dirname
         empty_issue['journal_marc21_path'] = journalpath
 
