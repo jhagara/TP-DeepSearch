@@ -32,7 +32,7 @@ class Marc(object):
 
         # 245
         n_245 = issue['release_date'][0:3] + ", "
-        if issue['year'] is not None:  # TODO pozriet ako je year v elasticu
+        if issue['year'] is not None:
             n_245 += issue['year'] + ", "
         else:
             n_245 += " , "
@@ -70,10 +70,8 @@ class Marc(object):
             )
         )
 
-        # 300 $$a
-        # počet
-        # strán
-        #  TODO doplnit
+        # 300
+        issue_record.add_field(Field(tag='300', subfields=['a', str(issue['page_count'])]))
 
         # 336
         issue_record.add_field(
@@ -104,12 +102,95 @@ class Marc(object):
                            '2', 'rdacarrier']
             )
         )
+
+        # 773
+        issue_record.add_field(
+            Field(
+                tag='773',
+                subfields=['w', journal_marc.value(),
+                           't', journal_marc['245']['a'],
+                           '7', 'nnas']
+            )
+        )
+
         path = ""  # TODO doplnit
         self.__save_marc(issue_record, path)
+        # TODO ulozit cestu do elasticu
 
     #  export article into marc
     def __export_article(self, article, issue_marc, source_dirname):
-        print()
+        article_record = Record()
+
+        # 001
+        article_record.add_field(Field(tag='001', data=article['_id']))
+
+        # 003
+        article_record.add_field(Field(tag='003', data='VRT'))
+
+        # 005
+        time = self.__get_time()
+        article_record.add_field(Field(tag='005', data=time))
+
+        # 008
+        article_record.add_field(issue_marc['008'])
+
+        # 007
+        article_record.add_field(Field(tag='007', data="ta"))
+
+        # 245
+        heading, subheading = self.__heading_subheadings(article)
+        article_record.add_field(
+            Field(
+                tag='245',
+                subfields=['a', heading,
+                           'b', subheading]
+            )
+        )
+
+        # 264
+        article_record.add_field(issue_marc['264'])
+
+        # 336
+        article_record.add_field(issue_marc['336'])
+
+        # 337
+        article_record.add_field(issue_marc['337'])
+
+        # 338
+        article_record.add_field(issue_marc['338'])
+
+        # 100
+        article_record.add_field(
+            Field(
+                tag='100',
+                indicators=['1', '#'],
+                subfields=['a', article['authors'][0]]
+            )
+        )
+
+        # 653
+        for word in article['keywords']:
+            article_record.add_field(
+                Field(
+                    tag='653',
+                    indicators=['#', '#'],
+                    subfields=['a', word]
+                )
+            )
+
+        # 773
+        article_record.add_field(
+            Field(
+                tag='773',
+                subfields=['w', issue_marc.value(),
+                           't', issue_marc['245']['a'],
+                           '7', 'nnas']
+            )
+        )
+
+        path = ""  # TODO doplnit
+        self.__save_marc(article_record, path)
+        # TODO ulozit cestu do elasticu
 
     # get time in format  yyyymmddhhmmss.f
     def __get_time(self):
@@ -128,8 +209,25 @@ class Marc(object):
 
         return Field(tag='008', data=data_008)
 
+    def __heading_subheadings(self, article):
+        heading = ""
+        subheading = ""
+
+        for group in article['groups']:
+            if group['type'] == 'headings' and heading == "":
+                heading = group['text']
+            elif group['type'] == 'headings' and heading != "":
+                heading += " " + group['text']
+            elif group['type'] == 'subheadings' and subheading == "":
+                subheading = group['text']
+            elif group['type'] == 'subheadings' and subheading != "":
+                subheading += " " + group['text']
+
+        return heading, subheading
+
     #  save marc on path
     def __save_marc(self, marc, path):
+        # TODO
         print()
 
     def export_marc_for_issue(self, issue_id):
@@ -144,7 +242,7 @@ class Marc(object):
                                  'nested': {'path': 'issue', 'query': {'match': {'issue.id': issue_id}}}}}},
                                  'size': 1000})['hits']['hits']
 
-        journal_path = issue['journal_marc21']  # TODO skontrolovat v elasticu
+        journal_path = issue['journal_marc21_path']
         source_dirname = issue['source_dirname']
 
         #  get marc21 for jurnal
@@ -162,11 +260,40 @@ class Marc(object):
 # with open('/home/jakub/git/TP-DeepSeach/helper/marc.txt', 'rb') as fh:
 #     reader = MARCReader(fh)
 #     journal_marc = next(reader)
-#     e = journal_marc['245']
+#     e = journal_marc['001']
 #     print(e)
-#     new = Record()
-#     new.add_field(e)
-#     print(new)
+    # new = Record()
+    # new.add_field(e)
+    # print(new)
 
 # time = strftime("%Y%m%d%H%M%S", gmtime())
 # print(time[2:8])
+#
+# record = Record()
+# record.add_field(
+#     Field(
+#         tag='245',
+#         indicators=['0', ' '],
+#         subfields=[
+#             'a', 'The pragmatic programmer : ',
+#             'b', 'from journeyman to master /',
+#             'c', 'Andrew Hunt, David Thomas.'
+#         ]))
+# out = open('file1.dat', 'wb')
+# out.write(record.as_marc())
+# out.close()
+
+# new = Field(tag='001', data='aaaaa')
+# print(new.value())
+
+# record = Record()
+# record.add_field(
+#     Field(
+#         tag='245',
+#         indicators=['0', ' '],
+#         subfields=[
+#             'a', 'The pragmatic programmer : ',
+#             'b', 'from journeyman to master /',
+#             'c', 'Andrew Hunt, David Thomas.'
+#         ]))
+# print(record['245']['a'])
