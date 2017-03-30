@@ -11,6 +11,7 @@ install:
 before_script:
     - sleep 10
 script:
+    - python -m textblob.download_corpora
     - python -m pytest tests
 notifications:
   slack: nautilusds:FU9mJgkONTb7Fpg8xD7qUACf
