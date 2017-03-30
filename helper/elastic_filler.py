@@ -2,10 +2,11 @@ import copy
 import json
 from elasticsearch import Elasticsearch
 import config
+import re
 
 
 class Elastic(object):
-    def save_to_elastic(self, issue_name, dirname):
+    def save_to_elastic(self, issue_name, dirname, paths):
         elastic_index = config.elastic_index()
 
         # loading of json templates from empty_jsons
@@ -44,12 +45,13 @@ class Elastic(object):
             elif marcs['key'] == 'Number':
                 empty_issue['number'] = marcs['value']
                 empty_issue_art['number'] = marcs['value']
-            elif marcs['key'] == 'Date_Location':
-                empty_issue['release_date'] = marcs['value']
             elif marcs['key'] == 'Founder':
                 empty_issue['publisher'] = marcs['value']
             elif marcs['key'] == 'Subscription':
                 empty_issue['content'] = marcs['value']
+
+            xml_name = paths['xml'].split('/')[-1]
+            empty_issue['release_date'] = re.search('[0-9]{8}', xml_name).group(0)
             """
             elif marcs['key'] == 'Cost':
                 # neviem

@@ -30,12 +30,18 @@ class TestElastic(unittest.TestCase):
         xml=config.get_full_path('tests', 'slovak_1941_1_strana_1.xml'),
         header_config=config.get_full_path('tests', 'page_header_conf_1941_1.json'))
 
-        semantic.save_to_elastic('Slovak41452134894315486465216489319', '/tests')
-
+        semantic.save_to_elastic('Slovak41452134894315486465216489319', '/tests',
+                                 {'xml': config.get_full_path('tests', 'elastic_filler', 'slovak', '19390526',
+                                                              'XML', '1336-4464_1939_19390526_00001.xml')})
         es = Elasticsearch()
 
+        # check correct issue attributes values
+        issue = es.search(index=config.elastic_index(), doc_type="issue",
+                          body={"query": {"match": {'name': 'Slovak41452134894315486465216489319'}}})['hits']['hits'][0]
+        self.assertEqual('19390526', issue['_source']['release_date'])
+
         res = es.search(index=config.elastic_index(), doc_type="article",
-                        body={"query": {"match": {'issue.name': 'Slovak41452134894315486465216489319'}}})
+                        body={"query": {"match": {'issue.name': 'slovak/1966/19660526'}}})
         counter = 0
         print("Got %d Hits:" % res['hits']['total'])
         for hit in res['hits']['hits']:
