@@ -59,11 +59,11 @@ class TestMarcExport(unittest.TestCase):
         path = os.path.dirname(os.path.abspath(__file__)) + "/slovak/journal_marc21.txt"
         with open(path, 'wb') as f:
             f.write(journal_record.as_marc())
+        return path
 
     def test_export(self):
 
-        self.create_journal_marc()
-        return
+        path = self.create_journal_marc()
 
         path_issue = os.path.dirname(os.path.abspath(__file__)) + "/slovak/19400102"
 
@@ -71,7 +71,7 @@ class TestMarcExport(unittest.TestCase):
                  'publisher': 'CustomPublisher', 'release_from': 'CustomRelease',
                  'release_date': '19400202', 'number': '10',
                  'source_dirname': path_issue, 'page_height': 4000,
-                 'page_width': 6000, 'year': 'XX', 'page_count': 10}
+                 'page_width': 6000, 'year': 'XX', 'page_count': 10, 'journal_marc21_path': path}
 
         text1 = """Python is a 2000 made-for-TV horror movie directed by Richard
                 Clabaugh. The film features several cult favorite actors, including William
@@ -124,16 +124,18 @@ class TestMarcExport(unittest.TestCase):
         marc_exporter.main(issue['_id'], config.default_elastic_index)
 
         #  check if files exists
-        marc_issue = Path(path_issue + "/issue.txt")
-        self.assertEqual(True, marc_issue.is_file(), "No file " + path_issue + "/issue.txt")
-        marc1 = Path(path_issue + "/articles/1/1.txt")
-        self.assertEqual(True, marc1.is_file(), "No file " + path_issue + "/articles/1/1.txt")
-        marc2 = Path(path_issue + "/articles/2/2.txt")
-        self.assertEqual(True, marc2.is_file(), "No file " + path_issue + "/articles/2/2.txt")
+        marc_issue = Path(path_issue + "/issue_marc21.txt")
+        self.assertEqual(True, marc_issue.is_file(), "No file " + path_issue + "/issue_marc21.txt")
+        marc1 = Path(path_issue + "/articles/1/1_marc21.txt")
+        self.assertEqual(True, marc1.is_file(), "No file " + path_issue + "/articles/1/1_marc21.txt")
+        marc2 = Path(path_issue + "/articles/2/2_marc21.txt")
+        self.assertEqual(True, marc2.is_file(), "No file " + path_issue + "/articles/2/2_marc21.txt")
 
         #  delete files
-        os.remove(path_issue + "/issue.txt")
-        shutil.rmtree(path_issue + "/articles")
+        # os.remove(path_issue + "/issue.txt")
+        # shutil.rmtree(path_issue + "/articles")
+        # TODO delete journal marc
+        # TODO kontrola ci je cesta v elasticu, try, catch ayb sa vymazali subory
 
 
 if __name__ == '__main__':

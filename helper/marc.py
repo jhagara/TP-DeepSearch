@@ -36,14 +36,14 @@ class Marc(object):
                                          subfields=['a', journal_marc['022']['a']]))
 
         # 245
-        n_245 = issue['release_date'][0:3] + ", "
-        if issue['year'] is not None:
-            n_245 += issue['year'] + ", "
+        n_245 = issue['_source']['release_date'][0:3] + ", "
+        if issue['_source']['year'] is not None:
+            n_245 += issue['_source']['year'] + ", "
         else:
             n_245 += " , "
 
-        if issue['number'] is not None:
-            n_245 += issue['number']
+        if issue['_source']['number'] is not None:
+            n_245 += issue['_source']['number']
         else:
             n_245 += " "
 
@@ -51,7 +51,7 @@ class Marc(object):
             Field(
                 tag='245',
                 indicators=[' ', ' '],
-                subfields=['a', issue['name'],
+                subfields=['a', issue['_source']['name'],
                            'n', n_245]
             )
         )
@@ -62,8 +62,8 @@ class Marc(object):
             place_of_release = journal_marc['264']['a']
 
         publisher = ""
-        if issue['publisher'] is not None and len(issue['publisher']) > 0:
-            publisher = issue['publisher']
+        if issue['_source']['publisher'] is not None and len(issue['_source']['publisher']) > 0:
+            publisher = issue['_source']['publisher']
         elif journal_marc['264']['b'] is not None:
             publisher = journal_marc['264']['b']
 
@@ -73,12 +73,13 @@ class Marc(object):
                 indicators=[' ', ' '],
                 subfields=['a', place_of_release,
                            'b', publisher,
-                           'c', issue['release_date'][0:3]]
+                           'c', issue['_source']['release_date'][0:3]]
             )
         )
 
         # 300
-        issue_record.add_field(Field(tag='300', indicators=[' ', ' '], subfields=['a', str(issue['page_count'])]))
+        issue_record.add_field(Field(tag='300', indicators=[' ', ' '], subfields=['a',
+                                                                                  str(issue['_source']['page_count'])]))
 
         # 336
         issue_record.add_field(
@@ -139,6 +140,7 @@ class Marc(object):
                           }
                       }
                   })
+        return issue_record
 
     #  export article into marc
     def __export_article(self, article, issue_marc, source_dirname, order, es, index):
@@ -184,18 +186,18 @@ class Marc(object):
         article_record.add_field(issue_marc['338'])
 
         # 100
-        if len(article['authors']) > 0:
+        if len(article['_source']['authors']) > 0:
             article_record.add_ordered_field(
                 Field(
                     tag='100',
                     indicators=['1', ' '],
-                    subfields=['a', article['authors'][0]]
+                    subfields=['a', article['_source']['authors'][0]]
                 )
             )
-            article_record['245'].add_subfield('c', article['authors'][0])
+            article_record['245'].add_subfield('c', article['_source']['authors'][0])
 
         # 653
-        for word in article['keywords']:
+        for word in article['_source']['keywords']:
             article_record.add_field(
                 Field(
                     tag='653',
@@ -205,8 +207,8 @@ class Marc(object):
             )
 
         # 700
-        if len(article['authors']) > 1:
-            for author in article['authors'][1:]:
+        if len(article['_source']['authors']) > 1:
+            for author in article['_source']['authors'][1:]:
                 article_record.add_field(
                     Field(
                         tag='700',
@@ -220,7 +222,7 @@ class Marc(object):
             Field(
                 tag='773',
                 indicators=[' ', ' '],
-                subfields=['w', issue_marc.value(),
+                subfields=['w', issue_marc['001'].value(),
                            't', issue_marc['245']['a'],
                            '7', 'nnas']
             )
@@ -253,7 +255,7 @@ class Marc(object):
     def __get_008_issue(self, issue, journal_marc, time):
         data_008 = time[2:8]
         data_008 += 'e'
-        data_008 += issue['release_date']
+        data_008 += issue['_source']['release_date']
         data_008 += journal_marc['008'].value()[15:17]
         data_008 += "                 "
         data_008 += journal_marc['008'].value()[35:37]
@@ -266,7 +268,7 @@ class Marc(object):
         heading = ""
         subheading = ""
 
-        for group in article['groups']:
+        for group in article['_source']['groups']:
             if group['type'] == 'headings' and heading == "":
                 heading = group['text']
             elif group['type'] == 'headings' and heading != "":
@@ -295,8 +297,8 @@ class Marc(object):
                                  'nested': {'path': 'issue', 'query': {'match': {'issue.id': issue_id}}}}}},
                                  'size': 1000})['hits']['hits']
 
-        journal_path = issue['journal_marc21_path']
-        source_dirname = issue['source_dirname']
+        journal_path = issue['_source']['journal_marc21_path']
+        source_dirname = issue['_source']['source_dirname']
 
         #  get marc21 for jurnal
         with open(journal_path, 'rb') as fh:
@@ -306,9 +308,9 @@ class Marc(object):
         issue_marc = self.__export_issue(issue, journal_marc, source_dirname, es, elastic_index)
 
         for i, article in enumerate(articles):
-            self.__export_article(article, issue_marc, source_dirname, i, es, elastic_index)
+            self.__export_article(article, issue_marc, source_dirname, i+1, es, elastic_index)
 
-
+# TODO presun do github wiki
 # with open('/home/jakub/git/TP-DeepSeach/helper/marc.txt', 'rb') as fh:
 #     reader = MARCReader(fh)
 #     journal_marc = next(reader)
