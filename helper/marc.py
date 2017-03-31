@@ -310,41 +310,5 @@ class Marc(object):
         for i, article in enumerate(articles):
             self.__export_article(article, issue_marc, source_dirname, i+1, es, elastic_index)
 
-# TODO presun do github wiki
-# with open('/home/jakub/git/TP-DeepSeach/helper/marc.txt', 'rb') as fh:
-#     reader = MARCReader(fh)
-#     journal_marc = next(reader)
-#     e = journal_marc['LDR']
-#     print(e)
+        es.indices.refresh(index=elastic_index)
 
-# time = strftime("%Y%m%d%H%M%S", gmtime())
-# print(time[2:8])
-#
-# record = Record()
-# record.add_field(
-#     Field(
-#         tag='245',
-#         indicators=['0', ' '],
-#         subfields=[
-#             'a', 'The pragmatic programmer : ',
-#             'b', 'from journeyman to master /',
-#             'c', 'Andrew Hunt, David Thomas.'
-#         ]))
-# out = open('file1.dat', 'wb')
-# out.write(record.as_marc())
-# out.close()
-
-# new = Field(tag='001', data='aaaaa')
-# print(new.value())
-
-# record = Record()
-# record.add_field(
-#     Field(
-#         tag='245',
-#         indicators=['0', ' '],
-#         subfields=[
-#             'a', 'The pragmatic programmer : ',
-#             'b', 'from journeyman to master /',
-#         ]))
-# record['245'].add_subfield('c', 'Andrew Hunt, David Thomas.')
-# print(record['245']['c'])

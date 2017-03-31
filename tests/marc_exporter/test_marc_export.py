@@ -8,14 +8,12 @@ import config
 import shutil
 from pymarc import Record, Field
 from time import gmtime, strftime
+from elasticsearch import Elasticsearch
 
 
 class TestMarcExport(unittest.TestCase):
     def create_journal_marc(self):
         journal_record = Record(leader='     nas  22     uic4500', force_utf8=True)
-
-        # leader
-        # journal_record.add_field(Field(tag='leader', data='     nas  22     uic4500'))
 
         # 001
         journal_record.add_field(Field(tag='001', data='0123456'))
@@ -63,6 +61,7 @@ class TestMarcExport(unittest.TestCase):
 
     def test_export(self):
 
+        # create marc for journal
         path = self.create_journal_marc()
 
         path_issue = os.path.dirname(os.path.abspath(__file__)) + "/slovak/19400102"
@@ -131,11 +130,23 @@ class TestMarcExport(unittest.TestCase):
         marc2 = Path(path_issue + "/articles/2/2_marc21.txt")
         self.assertEqual(True, marc2.is_file(), "No file " + path_issue + "/articles/2/2_marc21.txt")
 
+        es = Elasticsearch()
+        issue = es.get(index='deep_search_test_python', doc_type='issue', id=issue['_id'])
+        articles = es.search(index='deep_search_test_python', doc_type="article",
+                             body={'query': {'bool': {'must': {
+                                 'nested': {'path': 'issue', 'query': {'match': {'issue.id': issue['_id']}}}}}},
+                                 'size': 1000})['hits']['hits']
+
+        self.assertEqual(True, issue['_source']['journal_marc21_path'] == path)
+        self.assertEqual(True, issue['_source']['issue_marc21_path'] == path_issue + "/issue_marc21.txt")
+        for article in articles:
+            self.assertEqual(True, article['_source']['article_marc21_path'] == path_issue + "/articles/1/1_marc21.txt"
+                             or article['_source']['article_marc21_path'] == path_issue + "/articles/2/2_marc21.txt")
+
         #  delete files
-        # os.remove(path_issue + "/issue.txt")
-        # shutil.rmtree(path_issue + "/articles")
-        # TODO delete journal marc
-        # TODO kontrola ci je cesta v elasticu, try, catch ayb sa vymazali subory
+        os.remove(path_issue + "/issue_marc21.txt")
+        shutil.rmtree(path_issue + "/articles")
+        os.remove(issue['_source']['journal_marc21_path'])
 
 
 if __name__ == '__main__':
