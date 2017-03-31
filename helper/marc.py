@@ -11,7 +11,7 @@ from time import gmtime, strftime
 class Marc(object):
     #  export issue into marc
     def __export_issue(self, issue, journal_marc, source_dirname, es, index):
-        issue_record = Record()
+        issue_record = Record(leader='     nas  22     uic4500', force_utf8=True)
 
         # 001
         issue_record.add_field(Field(tag='001', data=issue['_id']))
@@ -32,6 +32,7 @@ class Marc(object):
         # 022
         if journal_marc['022']['a'] is not None:
             issue_record.add_field(Field(tag='022',
+                                         indicators=[' ', ' '],
                                          subfields=['a', journal_marc['022']['a']]))
 
         # 245
@@ -49,6 +50,7 @@ class Marc(object):
         issue_record.add_field(
             Field(
                 tag='245',
+                indicators=[' ', ' '],
                 subfields=['a', issue['name'],
                            'n', n_245]
             )
@@ -68,6 +70,7 @@ class Marc(object):
         issue_record.add_field(
             Field(
                 tag='264',
+                indicators=[' ', ' '],
                 subfields=['a', place_of_release,
                            'b', publisher,
                            'c', issue['release_date'][0:3]]
@@ -75,12 +78,13 @@ class Marc(object):
         )
 
         # 300
-        issue_record.add_field(Field(tag='300', subfields=['a', str(issue['page_count'])]))
+        issue_record.add_field(Field(tag='300', indicators=[' ', ' '], subfields=['a', str(issue['page_count'])]))
 
         # 336
         issue_record.add_field(
             Field(
                 tag='336',
+                indicators=[' ', ' '],
                 subfields=['a', 'text',
                            'b', 'txt',
                            '2', 'rdacontent']
@@ -91,6 +95,7 @@ class Marc(object):
         issue_record.add_field(
             Field(
                 tag='337',
+                indicators=[' ', ' '],
                 subfields=['a', 'bez média',
                            'b', 'n',
                            '2', 'rdamedia']
@@ -101,6 +106,7 @@ class Marc(object):
         issue_record.add_field(
             Field(
                 tag='338',
+                indicators=[' ', ' '],
                 subfields=['a', 'zväzok',
                            'b', 'nc',
                            '2', 'rdacarrier']
@@ -111,6 +117,7 @@ class Marc(object):
         issue_record.add_field(
             Field(
                 tag='773',
+                indicators=[' ', ' '],
                 subfields=['w', journal_marc['001'].value(),
                            't', journal_marc['245']['a'],
                            '7', 'nnas']
@@ -135,7 +142,7 @@ class Marc(object):
 
     #  export article into marc
     def __export_article(self, article, issue_marc, source_dirname, order, es, index):
-        article_record = Record()
+        article_record = Record(leader='     nas  22     uic4500', force_utf8=True)
 
         # 001
         article_record.add_field(Field(tag='001', data=article['_id']))
@@ -158,6 +165,7 @@ class Marc(object):
         article_record.add_field(
             Field(
                 tag='245',
+                indicators=[' ', ' '],
                 subfields=['a', heading,
                            'b', subheading]
             )
@@ -180,7 +188,7 @@ class Marc(object):
             article_record.add_ordered_field(
                 Field(
                     tag='100',
-                    indicators=['1', '#'],
+                    indicators=['1', ' '],
                     subfields=['a', article['authors'][0]]
                 )
             )
@@ -191,7 +199,7 @@ class Marc(object):
             article_record.add_field(
                 Field(
                     tag='653',
-                    indicators=['#', '#'],
+                    indicators=[' ', ' '],
                     subfields=['a', word]
                 )
             )
@@ -202,7 +210,7 @@ class Marc(object):
                 article_record.add_field(
                     Field(
                         tag='700',
-                        indicators=['1', '#'],
+                        indicators=['1', ' '],
                         subfields=['a', author]
                     )
                 )
@@ -211,6 +219,7 @@ class Marc(object):
         article_record.add_field(
             Field(
                 tag='773',
+                indicators=[' ', ' '],
                 subfields=['w', issue_marc.value(),
                            't', issue_marc['245']['a'],
                            '7', 'nnas']
@@ -271,7 +280,7 @@ class Marc(object):
 
     #  save marc on path
     def __save_marc(self, marc, path):
-        with open(path, 'w+') as f:
+        with open(path, 'wb') as f:
             f.write(marc.as_marc())
 
     def export_marc_for_issue(self, issue_id):
@@ -303,11 +312,8 @@ class Marc(object):
 # with open('/home/jakub/git/TP-DeepSeach/helper/marc.txt', 'rb') as fh:
 #     reader = MARCReader(fh)
 #     journal_marc = next(reader)
-#     e = journal_marc['001']
+#     e = journal_marc['LDR']
 #     print(e)
-    # new = Record()
-    # new.add_field(e)
-    # print(new)
 
 # time = strftime("%Y%m%d%H%M%S", gmtime())
 # print(time[2:8])

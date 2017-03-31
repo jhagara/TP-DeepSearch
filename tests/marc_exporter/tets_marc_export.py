@@ -6,18 +6,72 @@ from tests.helper.helper_test_methods import HelperTestMethods
 import marc_exporter
 import config
 import shutil
+from pymarc import Record, Field
+from time import gmtime, strftime
 
 
 class TestMarcExport(unittest.TestCase):
+    def create_journal_marc(self):
+        journal_record = Record(leader='     nas  22     uic4500', force_utf8=True)
+
+        # leader
+        # journal_record.add_field(Field(tag='leader', data='     nas  22     uic4500'))
+
+        # 001
+        journal_record.add_field(Field(tag='001', data='0123456'))
+
+        # 003 VRT = organization code for UKB
+        journal_record.add_field(Field(tag='003', data='VRT'))
+
+        # 005
+        time = strftime("%Y%m%d%H%M%S", gmtime())
+        time += ".0"
+        journal_record.add_field(Field(tag='005', data=time))
+
+        # 008
+        journal_record.add_field(Field(tag='008', data="040701d19191945xo wr|p|||||||0|||a0slo|d"))
+
+        # 007
+        journal_record.add_field(Field(tag='007', data="ta"))
+
+        # 022
+        journal_record.add_field(Field(tag='022', indicators=[' ', ' '], subfields=['a', '1336-4464']))
+
+        # 245
+        journal_record.add_field(
+            Field(
+                tag='245',
+                indicators=[' ', ' '],
+                subfields=['a', 'Slovak']
+            )
+        )
+
+        # 264
+        journal_record.add_field(
+            Field(
+                tag='264',
+                indicators=['', ''],
+                subfields=['a', 'Bratislava',
+                           'b', 'Účastinná spoločnosť Slováka ',
+                           'c', '1919-1945']
+            )
+        )
+        path = os.path.dirname(os.path.abspath(__file__)) + "/slovak/journal_marc21.txt"
+        with open(path, 'wb') as f:
+            f.write(journal_record.as_marc())
+
     def test_export(self):
+
+        self.create_journal_marc()
+        return
 
         path_issue = os.path.dirname(os.path.abspath(__file__)) + "/slovak/19400102"
 
         issue = {'name': 'Slovak19400102', 'content': 'CustomContent',
                  'publisher': 'CustomPublisher', 'release_from': 'CustomRelease',
-                 'release_date': 'CustomRelease', 'number': 'CustomNumber',
+                 'release_date': '19400202', 'number': '10',
                  'source_dirname': path_issue, 'page_height': 4000,
-                 'page_width': 6000}
+                 'page_width': 6000, 'year': 'XX', 'page_count': 10}
 
         text1 = """Python is a 2000 made-for-TV horror movie directed by Richard
                 Clabaugh. The film features several cult favorite actors, including William
