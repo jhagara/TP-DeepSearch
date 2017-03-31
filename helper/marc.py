@@ -1,12 +1,16 @@
 from elasticsearch import Elasticsearch
 import config
+import os
 from pymarc import MARCReader, Record, Field
 from time import gmtime, strftime
+
+#  pymarc cheat sheets at :
+# https://github.com/ThursdayPythonCodeClub/Code-Examples/blob/master/ex-tab-delim-2-marc/pymarc-cheat-sheet.py
 
 
 class Marc(object):
     #  export issue into marc
-    def __export_issue(self, issue, journal_marc, source_dirname):
+    def __export_issue(self, issue, journal_marc, source_dirname, es, index):
         issue_record = Record()
 
         # 001
@@ -107,18 +111,30 @@ class Marc(object):
         issue_record.add_field(
             Field(
                 tag='773',
-                subfields=['w', journal_marc.value(),
+                subfields=['w', journal_marc['001'].value(),
                            't', journal_marc['245']['a'],
                            '7', 'nnas']
             )
         )
 
-        path = ""  # TODO doplnit
+        path = source_dirname + "/issue_marc21.txt"
         self.__save_marc(issue_record, path)
-        # TODO ulozit cestu do elasticu
+
+        es.update(index=index,
+                  doc_type='issue',
+                  id=issue['_id'],
+                  body={
+                      "script": {
+                          "inline": "ctx._source.issue_marc21_path = params.path",
+                          "lang": "painless",
+                          "params": {
+                              "path": path
+                          }
+                      }
+                  })
 
     #  export article into marc
-    def __export_article(self, article, issue_marc, source_dirname):
+    def __export_article(self, article, issue_marc, source_dirname, order, es, index):
         article_record = Record()
 
         # 001
@@ -161,11 +177,22 @@ class Marc(object):
 
         # 100
         if len(article['authors']) > 0:
-            article_record.add_field(
+            article_record.add_ordered_field(
                 Field(
                     tag='100',
                     indicators=['1', '#'],
                     subfields=['a', article['authors'][0]]
+                )
+            )
+            article_record['245'].add_subfield('c', article['authors'][0])
+
+        # 653
+        for word in article['keywords']:
+            article_record.add_field(
+                Field(
+                    tag='653',
+                    indicators=['#', '#'],
+                    subfields=['a', word]
                 )
             )
 
@@ -180,16 +207,6 @@ class Marc(object):
                     )
                 )
 
-        # 653
-        for word in article['keywords']:
-            article_record.add_field(
-                Field(
-                    tag='653',
-                    indicators=['#', '#'],
-                    subfields=['a', word]
-                )
-            )
-
         # 773
         article_record.add_field(
             Field(
@@ -200,12 +217,24 @@ class Marc(object):
             )
         )
 
-        # 245c
-        # TODO
-
-        path = ""  # TODO doplnit
+        path = source_dirname + "/articles/" + str(order)
+        if not os.path.exists(path):
+            os.makedirs(path)
+        path += "/" + str(order) + "_marc21.txt"
         self.__save_marc(article_record, path)
-        # TODO ulozit cestu do elasticu
+
+        es.update(index=index,
+                  doc_type='article',
+                  id=article['_id'],
+                  body={
+                      "script": {
+                          "inline": "ctx._source.article_marc21_path = params.path",
+                          "lang": "painless",
+                          "params": {
+                              "path": path
+                          }
+                      }
+                  })
 
     # get time in format  yyyymmddhhmmss.f
     def __get_time(self):
@@ -216,9 +245,9 @@ class Marc(object):
         data_008 = time[2:8]
         data_008 += 'e'
         data_008 += issue['release_date']
-        data_008 += journal_marc['008']['data'][15:17]
+        data_008 += journal_marc['008'].value()[15:17]
         data_008 += "                 "
-        data_008 += journal_marc['008']['data'][35:37]
+        data_008 += journal_marc['008'].value()[35:37]
         data_008 += " "
         data_008 += "d"
 
@@ -242,15 +271,15 @@ class Marc(object):
 
     #  save marc on path
     def __save_marc(self, marc, path):
-        # TODO
-        print()
+        with open(path, 'w+') as f:
+            f.write(marc.as_marc())
 
     def export_marc_for_issue(self, issue_id):
 
         elastic_index = config.elastic_index()
 
         #  get issue and article from elastic
-        es = es = Elasticsearch()
+        es = Elasticsearch()
         issue = es.get(index=elastic_index, doc_type='issue', id=issue_id)
         articles = es.search(index=elastic_index, doc_type="article",
                              body={'query': {'bool': {'must': {
@@ -261,15 +290,14 @@ class Marc(object):
         source_dirname = issue['source_dirname']
 
         #  get marc21 for jurnal
-
         with open(journal_path, 'rb') as fh:
             reader = MARCReader(fh)
             journal_marc = next(reader)
 
-        issue_marc = self.__export_issue(issue, journal_marc, source_dirname)
+        issue_marc = self.__export_issue(issue, journal_marc, source_dirname, es, elastic_index)
 
-        for article in articles:
-            self.__export_article(article, issue_marc, source_dirname)
+        for i, article in enumerate(articles):
+            self.__export_article(article, issue_marc, source_dirname, i, es, elastic_index)
 
 
 # with open('/home/jakub/git/TP-DeepSeach/helper/marc.txt', 'rb') as fh:
@@ -309,6 +337,6 @@ class Marc(object):
 #         subfields=[
 #             'a', 'The pragmatic programmer : ',
 #             'b', 'from journeyman to master /',
-#             'c', 'Andrew Hunt, David Thomas.'
 #         ]))
-# print(record['245']['a'])
+# record['245'].add_subfield('c', 'Andrew Hunt, David Thomas.')
+# print(record['245']['c'])
