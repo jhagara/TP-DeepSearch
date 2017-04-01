@@ -77,11 +77,19 @@ class Elastic(object):
                 new_article = copy.deepcopy(empty_article)
                 groups = []
                 article.sort(key= lambda group: int(group.attrib['t']))
+                heading_sizes = [] 
+                for group in article:
+                    if group.attrib['type'] == 'headings':
+                        for par in group.xpath('par'):
+                            for line in par.xpath('line'):
+                                for formatting in line.xpath('formatting'):
+                                    heading_sizes.append(formatting.get("fs"))
+                max_font = max([int(head[:-1]) for head in headings] or [0])
                 for group in article:
                     if group.attrib['type'] == 'headings':
                         new_heading = copy.deepcopy(empty_group)
                         # print(new_heading)
-                        new_heading['type'] = 'headings'
+                        new_heading['type'] = 'subheadings'
                         new_heading['l'] = group.attrib['l']
                         new_heading['r'] = group.attrib['r']
                         new_heading['t'] = group.attrib['t']
@@ -91,6 +99,8 @@ class Elastic(object):
                         for par in group.xpath('par'):
                             for line in par.xpath('line'):
                                 for formatting in line.xpath('formatting'):
+                                    if formatting.get("fs")[:-1] == max_font:
+                                        new_heading['type'] = 'headings'
                                     all_text += formatting.text + '\n'
                         new_heading['text'] = all_text
                         # print(new_heading)
