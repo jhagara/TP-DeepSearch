@@ -77,6 +77,7 @@ class Elastic(object):
                 new_article = copy.deepcopy(empty_article)
                 groups = []
                 article.sort(key= lambda group: int(group.attrib['t']))
+                # GETTING MAX FONT SIZE
                 heading_sizes = [] 
                 for group in article:
                     if group.attrib['type'] == 'headings':
@@ -84,7 +85,9 @@ class Elastic(object):
                             for line in par.xpath('line'):
                                 for formatting in line.xpath('formatting'):
                                     heading_sizes.append(formatting.get("fs"))
-                max_font = max([int(head[:-1]) for head in headings] or [0])
+                max_font = max([int(head[:-1]) for head in heading_sizes] or [0])
+
+                # MAIN PART
                 for group in article:
                     if group.attrib['type'] == 'headings':
                         new_heading = copy.deepcopy(empty_group)
@@ -99,7 +102,7 @@ class Elastic(object):
                         for par in group.xpath('par'):
                             for line in par.xpath('line'):
                                 for formatting in line.xpath('formatting'):
-                                    if formatting.get("fs")[:-1] == max_font:
+                                    if int(formatting.get("fs")[:-1]) == max_font:
                                         new_heading['type'] = 'headings'
                                     all_text += formatting.text + '\n'
                         new_heading['text'] = all_text
