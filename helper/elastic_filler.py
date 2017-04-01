@@ -76,6 +76,7 @@ class Elastic(object):
             for article in page:
                 new_article = copy.deepcopy(empty_article)
                 groups = []
+                article.sort(key= lambda group: int(group.attrib['t']))
                 for group in article:
                     if group.attrib['type'] == 'headings':
                         new_heading = copy.deepcopy(empty_group)
