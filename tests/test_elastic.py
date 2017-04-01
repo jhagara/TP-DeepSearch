@@ -24,17 +24,24 @@ class TestElastic(unittest.TestCase):
 [{'page': 1, 'b': '3487', 'l': '2528', 'type': 'heading', 't': '3423', 'text': 'Fiihrer - osloboditeľ Európy', 'r': '3266'}, {'page': 1, 'b': '4738', 'l': '2529', 'type': 'fulltext', 't': '3514', 'text': 'STK. Paríž, 30. júna.Mimoriadne zprávy hlavného veliteľstva bran¬nej moci o veľkých začiatočných úspechoch ne¬meckej brannej moci vzalo obyvateľstvo na ve¬domie už v nedeľu odpoludnia z mimoriadnychvydaní, jednako však časopisy, ktoré proti obvyk¬lému zvyku vyšly v pondelok ráno, malý veľkýodbyt. Časopis „Petit Parisien" podtrhuje v nad¬pisoch mimoriadne úspechy nemeckých zbraní navýchode a hovorí o bezpríkladných víťazstvách.Propagandisti Tretej Internacionály a plutokra-Francúzsko.Časopis „Vblkischer Beobachter" vyhlasuje,že zdržanlivosť vo zprávách nemeckej brannejmoci viedla k pravej záplave nepriateľskýchzpráv o údajnom stroskotaní nemeckých operácií.Avšak táto nemecká taktika mala svoj úspech užv tom, že v Moskve, ako vysvitalo zo sovietskychvojenských zpráv, si neboli na čistom, čo sa nasovietskom fronte v skutočnosti odohráva. Ne¬mecká ofenzíva vrazila s osvedčenou energiou dosovietskeho nástupu a nepriateľský plán poľnéhoťaženia radikálne zničila. Hneď na počiatku poľ¬ného ťaženia nemecké oddiely malý rozhodujúciúspech.Berlínska pondelňajšia tlač vyzdvihuje naúvodnom mieste pod veľkými nadpismi, ako na¬príklad „Európa zachránená", „Nástup soviet¬skych vojsk rozbitý", „Víťazné nemecké ťaženiena východe" včerajšie mimoriadne zprávy hlav¬ného veliteľstva nemeckej brannej moci. Časopi¬sy zdôrazňujú, že Je v pláne vojenného vedeniaponechávať nepriateľa dlho v neistote o svojichoperačných úmysloch.STK. Berlín, 30. júna.', 'r': '3266'}]
                 ]
 
-        journal_path = config.get_full_path('tests', 'journal_marc21.txt')
+        paths = {'xml': config.get_full_path('tests', 'elastic_filler', 'slovak', '19390526',
+                                             'XML', '1336-4464_1939_19390526_00001.xml'),
+                 'journal_marc21': config.get_full_path('tests', 'elastic_filler', 'slovak', 'journal_marc21.txt')}
         semantic = Semantic(
         xml=config.get_full_path('tests', 'slovak_1941_1_strana_1.xml'),
         header_config=config.get_full_path('tests', 'page_header_conf_1941_1.json'))
 
-        semantic.save_to_elastic('Slovak41452134894315486465216489319', '/tests', journal_path)
+        semantic.save_to_elastic('Slovak41452134894315486465216489319', '/tests', paths)
 
         es = Elasticsearch()
 
+        # check correct issue attributes values
+        issue = es.search(index=config.elastic_index(), doc_type="issue",
+                          body={"query": {"match": {'name': 'Slovak41452134894315486465216489319'}}})['hits']['hits'][0]
+        self.assertEqual('19390526', issue['_source']['release_date'])
+
         res = es.search(index=config.elastic_index(), doc_type="article",
-                        body={"query": {"match": {'issue.name': 'Slovak41452134894315486465216489319'}}})
+                        body={"query": {"match": {'issue.name': 'slovak/1966/19660526'}}})
         counter = 0
         print("Got %d Hits:" % res['hits']['total'])
         for hit in res['hits']['hits']:
@@ -49,5 +56,5 @@ class TestElastic(unittest.TestCase):
                         body={"query": {"match": {'name': 'Slovak41452134894315486465216489319'}}})
 
         for hit in res['hits']['hits']:
-            self.assertEqual(hit["_source"]["journal_marc21_path"], journal_path)
+            self.assertEqual(hit["_source"]["journal_marc21_path"], paths['journal_marc21'])
             self.assertGreater(hit["_source"]["pages_count"], 0)

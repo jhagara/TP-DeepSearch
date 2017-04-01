@@ -2,10 +2,11 @@ import copy
 import json
 from elasticsearch import Elasticsearch
 import config
+import re
 
 
 class Elastic(object):
-    def save_to_elastic(self, issue_name, dirname, journalpath):
+    def save_to_elastic(self, issue_name, dirname, paths):
         elastic_index = config.elastic_index()
 
         # loading of json templates from empty_jsons
@@ -31,7 +32,7 @@ class Elastic(object):
         empty_issue['pages_count'] = len(self.articles)
 
         empty_issue['source_dir'] = dirname
-        empty_issue['journal_marc21_path'] = journalpath
+        empty_issue['journal_marc21_path'] = paths['journal_marc21']
 
         page_zero = self.xml.xpath("//page")[0]
         empty_issue['page_height'] = int(page_zero.attrib['height'])
@@ -50,9 +51,13 @@ class Elastic(object):
             """
             if marcs['key'] == 'Number':
                 empty_issue['number'] = marcs['value']
-                # empty_issue_art['number'] = marcs['value']
+            elif marcs['key'] == 'Volume':
+                empty_issue['year'] = marcs['value']
             elif marcs['key'] == 'Subscription':
                 empty_issue['content'] = marcs['value']
+
+            xml_name = paths['xml'].split('/')[-1]
+            empty_issue['release_date'] = re.search('[0-9]{8}', xml_name).group(0)
             """
             elif marcs['key'] == 'Cost':
                 # neviem

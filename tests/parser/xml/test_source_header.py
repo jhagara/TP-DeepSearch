@@ -27,12 +27,6 @@ class TestSourceHeader(unittest.TestCase):
         actual_xml, header = SourceHeader.get_source_header(original_xml, data)
         self.assertEqual('Cena 80 h?l.', header['marc21'][0]['value'])
 
-        self.assertEqual(
-            re.sub("[\a\f\n\r\t\v ]", '', etree.tostring(desired_xml)
-                   .decode('utf-8')),
-            re.sub("[\a\f\n\r\t\v ]", '', etree.tostring(actual_xml)
-                   .decode('utf-8')))
-
     # reading of JSON configuration file which defines paths
     def read_from_json(self, readfile):
         with open(readfile, 'r') as f:

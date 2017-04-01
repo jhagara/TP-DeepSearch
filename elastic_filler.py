@@ -13,11 +13,15 @@ def main(parser_dir, dir, name, environment):
     config.set_environment(environment)
 
     for current_dir in os.popen("find " + dir + " -name '*.xml' -printf '%h\n' | sort -u").read().split('\n'):
-        current_dir = re.sub("[\n]", '', current_dir)
+        # xml path
+        xml = re.sub("[\n]", '', os.popen("find " + current_dir + " -maxdepth 1 -type f -name '*.xml'").read())
+
         if current_dir == '':
             continue
 
-        xml = re.sub("[\n]", '', os.popen("find " + current_dir + " -maxdepth 1 -type f -name '*.xml'").read())
+        # issue dir path
+        current_dir = re.sub("[\n]", '', os.popen("dirname '" + re.sub("[\n]", '', current_dir) + "'").read())
+
         config_path = ''
         searched_config_dir = current_dir
         searched_journal_marc21_dir = current_dir
@@ -52,10 +56,11 @@ def main(parser_dir, dir, name, environment):
 
     for file in files:
         semantic = Semantic(xml=file['xml'], header_config=file['json'])
+
         # call method with semantic and 'name' of journal
         print('# Loaded Files: ')
         print(file)
-        semantic.save_to_elastic(name, file['dir'], file['journal_marc21'])
+        semantic.save_to_elastic(name, file['dir'], file)
 
     # set environment to default
     config.set_environment(config.default_elastic_index)
