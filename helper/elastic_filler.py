@@ -91,7 +91,7 @@ class Elastic(object):
                         for par in group.xpath('par'):
                             for line in par.xpath('line'):
                                 for formatting in line.xpath('formatting'):
-                                    all_text += formatting.text
+                                    all_text += formatting.text + '\n'
                         new_heading['text'] = all_text
                         # print(new_heading)
                         groups.append(new_heading)
@@ -107,7 +107,7 @@ class Elastic(object):
                         for par in group.xpath('par'):
                             for line in par.xpath('line'):
                                 for formatting in line.xpath('formatting'):
-                                    all_text += formatting.text
+                                    all_text += formatting.text + '\n'
                         new_fulltext['text'] = all_text
                         # print(new_fulltext)
                         groups.append(new_fulltext)
