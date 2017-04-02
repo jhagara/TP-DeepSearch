@@ -30,7 +30,7 @@ class TestElasticFiller(unittest.TestCase):
                                  'size': 1000})['hits']['hits']
 
         for article in articles:
-            self.assertIsNotNone(article.get('keywords'))
+            self.assertIsNotNone(article['_source'].get('keywords'))
 
 
 
