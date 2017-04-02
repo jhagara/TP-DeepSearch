@@ -58,3 +58,4 @@ class TestElastic(unittest.TestCase):
         for hit in res['hits']['hits']:
             self.assertEqual(hit["_source"]["journal_marc21_path"], paths['journal_marc21'])
             self.assertGreater(hit["_source"]["pages_count"], 0)
+

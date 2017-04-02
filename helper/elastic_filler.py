@@ -33,7 +33,7 @@ class Elastic(object):
         empty_issue['pages_count'] = len(self.articles)
         empty_issue['created_at'] = strftime("%Y-%m-%d %H:%M:%S", gmtime())
 
-        empty_issue['source_dir'] = dirname
+        empty_issue['source_dirname'] = dirname
         empty_issue['journal_marc21_path'] = paths['journal_marc21']
 
         page_zero = self.xml.xpath("//page")[0]
@@ -146,3 +146,5 @@ class Elastic(object):
               elastic_index + ", type: article")
 
         es.indices.refresh(index=elastic_index)
+
+        return some['_id']

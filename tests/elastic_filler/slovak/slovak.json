@@ -35,6 +35,11 @@
                         "key": "Number",
                         "path": "/document/page[1]/block[6]//text()",
                         "value": ""
+                },
+                {
+                        "key": "Volume",
+                        "path": "/document/page[1]/block[6]//text()",
+                        "value": ""
                 }
         ],
         "articles": [
