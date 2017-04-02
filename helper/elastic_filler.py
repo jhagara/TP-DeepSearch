@@ -83,11 +83,23 @@ class Elastic(object):
             for article in page:
                 new_article = copy.deepcopy(empty_article)
                 groups = []
+                article.sort(key= lambda group: int(group.attrib['t']))
+                # GETTING MAX FONT SIZE
+                heading_sizes = [] 
+                for group in article:
+                    if group.attrib['type'] == 'headings':
+                        for par in group.xpath('par'):
+                            for line in par.xpath('line'):
+                                for formatting in line.xpath('formatting'):
+                                    heading_sizes.append(formatting.get("fs"))
+                max_font = max([int(head[:-1]) for head in heading_sizes] or [0])
+
+                # MAIN PART
                 for group in article:
                     if group.attrib['type'] == 'headings':
                         new_heading = copy.deepcopy(empty_group)
                         # print(new_heading)
-                        new_heading['type'] = 'headings'
+                        new_heading['type'] = 'subheadings'
                         new_heading['l'] = group.attrib['l']
                         new_heading['r'] = group.attrib['r']
                         new_heading['t'] = group.attrib['t']
@@ -97,7 +109,9 @@ class Elastic(object):
                         for par in group.xpath('par'):
                             for line in par.xpath('line'):
                                 for formatting in line.xpath('formatting'):
-                                    all_text += formatting.text
+                                    if int(formatting.get("fs")[:-1]) == max_font:
+                                        new_heading['type'] = 'headings'
+                                    all_text += formatting.text + '\n'
                         new_heading['text'] = all_text
                         # print(new_heading)
                         groups.append(new_heading)
@@ -113,7 +127,7 @@ class Elastic(object):
                         for par in group.xpath('par'):
                             for line in par.xpath('line'):
                                 for formatting in line.xpath('formatting'):
-                                    all_text += formatting.text
+                                    all_text += formatting.text + '\n'
                         new_fulltext['text'] = all_text
                         # print(new_fulltext)
                         groups.append(new_fulltext)

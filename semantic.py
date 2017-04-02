@@ -3,9 +3,10 @@ from lxml import etree
 
 from helper.elastic_filler import Elastic
 from helper.semantic_analyzer import Analyzer
+from helper.marc import Marc
 
 
-class Semantic(Elastic, Analyzer):
+class Semantic(Elastic, Analyzer, Marc):
     def __init__(self, **args):
         default = {'pdf': None, 'xml': None, 'header_config': None}
         args = {**default, **args}
