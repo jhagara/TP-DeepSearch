@@ -3,6 +3,7 @@ import json
 from elasticsearch import Elasticsearch
 import config
 import re
+from time import gmtime, strftime
 
 
 class Elastic(object):
@@ -30,6 +31,7 @@ class Elastic(object):
         # empty_issue_art['name'] = issue_name
 
         empty_issue['pages_count'] = len(self.articles)
+        empty_issue['created_at'] = strftime("%Y-%m-%d %H:%M:%S", gmtime())
 
         empty_issue['source_dir'] = dirname
         empty_issue['journal_marc21_path'] = paths['journal_marc21']

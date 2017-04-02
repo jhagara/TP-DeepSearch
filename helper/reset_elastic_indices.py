@@ -43,7 +43,8 @@ for index in indices:
                         "journal_marc21_path": {"type": "text"},
                         "issue_marc21_path": {"type": "text"},
                         "page_height": {"type": "short"},
-                        "page_width": {"type": "short"}
+                        "page_width": {"type": "short"},
+                        "created_at": {"type": "date", 'format': "yyyy-MM-dd HH:mm:ss"},
                     }
                 },
                 "article": {
@@ -69,6 +70,16 @@ for index in indices:
                                 "id": {"type": "keyword"}
                             }
                         }
+                    }
+                },
+                "history": {
+                    "properties": {
+                        "client": {"type": "string"},
+                        "target_type": {'type': 'keyword'},
+                        "target_id": {'type': 'keyword'},
+                        "updated_at": {"type": "date", 'format': "yyyy-MM-dd HH:mm:ss"},
+                        "action": {'type': "keyword"},
+                        "old_value": {'type': 'text'}
                     }
                 }
             }
