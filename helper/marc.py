@@ -38,12 +38,12 @@ class Marc(object):
         # 245
         n_245 = issue['_source']['release_date'][0:3] + ", "
         if issue['_source']['year'] is not None:
-            n_245 += issue['_source']['year'] + ", "
+            n_245 += str(issue['_source']['year']) + ", "
         else:
             n_245 += " , "
 
         if issue['_source']['number'] is not None:
-            n_245 += issue['_source']['number']
+            n_245 += str(issue['_source']['number'])
         else:
             n_245 += " "
 
@@ -51,7 +51,7 @@ class Marc(object):
             Field(
                 tag='245',
                 indicators=[' ', ' '],
-                subfields=['a', issue['_source']['name'],
+                subfields=['a', journal_marc['245']['a'],
                            'n', n_245]
             )
         )
@@ -62,7 +62,7 @@ class Marc(object):
             place_of_release = journal_marc['264']['a']
 
         publisher = ""
-        if issue['_source']['publisher'] is not None and len(issue['_source']['publisher']) > 0:
+        if issue['_source'].get('publisher') is not None and len(issue['_source']['publisher']) > 0:
             publisher = issue['_source']['publisher']
         elif journal_marc['264']['b'] is not None:
             publisher = journal_marc['264']['b']
@@ -79,7 +79,7 @@ class Marc(object):
 
         # 300
         issue_record.add_field(Field(tag='300', indicators=[' ', ' '], subfields=['a',
-                                                                                  str(issue['_source']['page_count'])]))
+                                                                                  str(issue['_source']['pages_count'])]))
 
         # 336
         issue_record.add_field(
@@ -186,7 +186,7 @@ class Marc(object):
         article_record.add_field(issue_marc['338'])
 
         # 100
-        if len(article['_source']['authors']) > 0:
+        if article['_source'].get('authors') and len(article['_source']['authors']) > 0:
             article_record.add_ordered_field(
                 Field(
                     tag='100',
@@ -207,7 +207,7 @@ class Marc(object):
             )
 
         # 700
-        if len(article['_source']['authors']) > 1:
+        if article['_source'].get('authors') and len(article['_source']['authors']) > 1:
             for author in article['_source']['authors'][1:]:
                 article_record.add_field(
                     Field(

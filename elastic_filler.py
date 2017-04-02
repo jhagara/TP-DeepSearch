@@ -3,11 +3,13 @@ import sys
 from semantic import Semantic
 import re
 import config
+from elasticsearch import Elasticsearch
 
 
 def main(parser_dir, dir, name, environment):
     print('Directory: ', dir)
     files = []
+    es = Elasticsearch()
 
     # set environment to new value
     config.set_environment(environment)
@@ -60,7 +62,8 @@ def main(parser_dir, dir, name, environment):
         # call method with semantic and 'name' of journal
         print('# Loaded Files: ')
         print(file)
-        semantic.save_to_elastic(name, file['dir'], file)
+        issue_id = semantic.save_to_elastic(name, file['dir'], file)
+        semantic.insert_key_words(issue_id)
 
     # set environment to default
     config.set_environment(config.default_elastic_index)

@@ -70,7 +70,7 @@ class TestMarcExport(unittest.TestCase):
                  'publisher': 'CustomPublisher', 'release_from': 'CustomRelease',
                  'release_date': '19400202', 'number': '10',
                  'source_dirname': path_issue, 'page_height': 4000,
-                 'page_width': 6000, 'year': 'XX', 'page_count': 10, 'journal_marc21_path': path}
+                 'page_width': 6000, 'year': 'XX', 'pages_count': 10, 'journal_marc21_path': path}
 
         text1 = """Python is a 2000 made-for-TV horror movie directed by Richard
                 Clabaugh. The film features several cult favorite actors, including William

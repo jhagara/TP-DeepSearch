@@ -111,7 +111,7 @@ class Analyzer(object):
             all_text = ''
             for group in article['groups']:
                 all_text += group['text']
-            all_text = ' '.join([word for word in article.split() if word not in stops and word.lower() not in stops])
+            all_text = ' '.join([word for word in all_text.split() if word not in stops and word.lower() not in stops])
             bloblist.append(tB(all_text))
 
         return self.key_words(bloblist)

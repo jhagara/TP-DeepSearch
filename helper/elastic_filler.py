@@ -3,6 +3,7 @@ import json
 from elasticsearch import Elasticsearch
 import config
 import re
+from time import gmtime, strftime
 
 
 class Elastic(object):
@@ -30,8 +31,9 @@ class Elastic(object):
         # empty_issue_art['name'] = issue_name
 
         empty_issue['pages_count'] = len(self.articles)
+        empty_issue['created_at'] = strftime("%Y-%m-%d %H:%M:%S", gmtime())
 
-        empty_issue['source_dir'] = dirname
+        empty_issue['source_dirname'] = dirname
         empty_issue['journal_marc21_path'] = paths['journal_marc21']
 
         page_zero = self.xml.xpath("//page")[0]
@@ -69,6 +71,7 @@ class Elastic(object):
         # index | PUT into ES
         # just print new index
         some = es.index(index=elastic_index,  doc_type='issue', body=empty_issue)
+        issue_id = some['_id']
 
         print("Issue created, index: " + elastic_index +
               ", type: issue, id: ", some['_id'])
@@ -144,3 +147,5 @@ class Elastic(object):
               elastic_index + ", type: article")
 
         es.indices.refresh(index=elastic_index)
+
+        return issue_id
