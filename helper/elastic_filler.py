@@ -71,6 +71,7 @@ class Elastic(object):
         # index | PUT into ES
         # just print new index
         some = es.index(index=elastic_index,  doc_type='issue', body=empty_issue)
+        issue_id = some['_id']
 
         print("Issue created, index: " + elastic_index +
               ", type: issue, id: ", some['_id'])
@@ -147,4 +148,4 @@ class Elastic(object):
 
         es.indices.refresh(index=elastic_index)
 
-        return some['_id']
+        return issue_id
