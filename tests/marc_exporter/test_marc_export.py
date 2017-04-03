@@ -6,7 +6,7 @@ from tests.helper.helper_test_methods import HelperTestMethods
 import marc_exporter
 import config
 import shutil
-from pymarc import Record, Field
+from pymarc import Record, Field, XMLWriter
 from time import gmtime, strftime
 from elasticsearch import Elasticsearch
 
@@ -54,9 +54,10 @@ class TestMarcExport(unittest.TestCase):
                            'c', '1919-1945']
             )
         )
-        path = os.path.dirname(os.path.abspath(__file__)) + "/slovak/journal_marc21.txt"
-        with open(path, 'wb') as f:
-            f.write(journal_record.as_marc())
+        path = os.path.dirname(os.path.abspath(__file__)) + "/slovak/journal_marc21.xml"
+        writer = XMLWriter(open(path, 'wb'))
+        writer.write(journal_record)
+        writer.close()
         return path
 
     def test_export(self):
@@ -124,12 +125,12 @@ class TestMarcExport(unittest.TestCase):
             marc_exporter.main(issue['_id'], config.default_elastic_index)
 
             #  check if files exists
-            marc_issue = Path(path_issue + "/issue_marc21.txt")
-            self.assertEqual(True, marc_issue.is_file(), "No file " + path_issue + "/issue_marc21.txt")
-            marc1 = Path(path_issue + "/articles/1/1_marc21.txt")
-            self.assertEqual(True, marc1.is_file(), "No file " + path_issue + "/articles/1/1_marc21.txt")
-            marc2 = Path(path_issue + "/articles/2/2_marc21.txt")
-            self.assertEqual(True, marc2.is_file(), "No file " + path_issue + "/articles/2/2_marc21.txt")
+            marc_issue = Path(path_issue + "/issue_marc21.xml")
+            self.assertEqual(True, marc_issue.is_file(), "No file " + path_issue + "/issue_marc21.xml")
+            marc1 = Path(path_issue + "/articles/1/1_marc21.xml")
+            self.assertEqual(True, marc1.is_file(), "No file " + path_issue + "/articles/1/1_marc21.xml")
+            marc2 = Path(path_issue + "/articles/2/2_marc21.xml")
+            self.assertEqual(True, marc2.is_file(), "No file " + path_issue + "/articles/2/2_marc21.xml")
 
             es = Elasticsearch()
             issue = es.get(index='deep_search_test_python', doc_type='issue', id=issue['_id'])
@@ -139,18 +140,20 @@ class TestMarcExport(unittest.TestCase):
                                      'size': 1000})['hits']['hits']
 
             self.assertEqual(True, issue['_source']['journal_marc21_path'] == path)
-            self.assertEqual(True, issue['_source']['issue_marc21_path'] == path_issue + "/issue_marc21.txt")
+            self.assertEqual(True, issue['_source']['issue_marc21_path'] == path_issue + "/issue_marc21.xml")
             for article in articles:
-                self.assertEqual(True, article['_source']['article_marc21_path'] == path_issue + "/articles/1/1_marc21.txt"
-                                 or article['_source']['article_marc21_path'] == path_issue + "/articles/2/2_marc21.txt")
+                self.assertEqual(True, article['_source']['article_marc21_path'] ==
+                                 path_issue + "/articles/1/1_marc21.xml"
+                                 or article['_source']['article_marc21_path'] ==
+                                 path_issue + "/articles/2/2_marc21.xml")
 
         finally:
             #  delete files
-            marc_issue = Path(path_issue + "/issue_marc21.txt")
+            marc_issue = Path(path_issue + "/issue_marc21.xml")
             if marc_issue.is_file():
-                os.remove(path_issue + "/issue_marc21.txt")
-            marc1 = Path(path_issue + "/articles/1/1_marc21.txt")
-            marc2 = Path(path_issue + "/articles/2/2_marc21.txt")
+                os.remove(path_issue + "/issue_marc21.xml")
+            marc1 = Path(path_issue + "/articles/1/1_marc21.xml")
+            marc2 = Path(path_issue + "/articles/2/2_marc21.xml")
             if marc1.is_file() or marc2.is_file():
                 shutil.rmtree(path_issue + "/articles")
             marc_journal = Path(issue['_source']['journal_marc21_path'])

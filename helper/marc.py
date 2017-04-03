@@ -1,7 +1,8 @@
 from elasticsearch import Elasticsearch
 import config
 import os
-from pymarc import MARCReader, Record, Field
+from pymarc import Record, Field, XMLWriter
+import pymarc
 from time import gmtime, strftime
 
 #  pymarc cheat sheets at :
@@ -78,8 +79,8 @@ class Marc(object):
         )
 
         # 300
-        issue_record.add_field(Field(tag='300', indicators=[' ', ' '], subfields=['a',
-                                                                                  str(issue['_source']['pages_count'])]))
+        issue_record.add_field(Field(tag='300', indicators=[' ', ' '],
+                                     subfields=['a', str(issue['_source']['pages_count'])]))
 
         # 336
         issue_record.add_field(
@@ -125,7 +126,7 @@ class Marc(object):
             )
         )
 
-        path = source_dirname + "/issue_marc21.txt"
+        path = source_dirname + "/issue_marc21.xml"
         self.__save_marc(issue_record, path)
 
         es.update(index=index,
@@ -231,7 +232,7 @@ class Marc(object):
         path = source_dirname + "/articles/" + str(order)
         if not os.path.exists(path):
             os.makedirs(path)
-        path += "/" + str(order) + "_marc21.txt"
+        path += "/" + str(order) + "_marc21.xml"
         self.__save_marc(article_record, path)
 
         es.update(index=index,
@@ -282,8 +283,9 @@ class Marc(object):
 
     #  save marc on path
     def __save_marc(self, marc, path):
-        with open(path, 'wb') as f:
-            f.write(marc.as_marc())
+        writer = XMLWriter(open(path, 'wb'))
+        writer.write(marc)
+        writer.close()
 
     def export_marc_for_issue(self, issue_id):
 
@@ -301,9 +303,8 @@ class Marc(object):
         source_dirname = issue['_source']['source_dirname']
 
         #  get marc21 for jurnal
-        with open(journal_path, 'rb') as fh:
-            reader = MARCReader(fh)
-            journal_marc = next(reader)
+        records = pymarc.parse_xml_to_array(journal_path)
+        journal_marc = records[0]
 
         issue_marc = self.__export_issue(issue, journal_marc, source_dirname, es, elastic_index)
 
