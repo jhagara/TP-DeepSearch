@@ -1,0 +1,18 @@
+language: python
+python:
+    - "3.5"
+services:
+    - elasticsearch
+before_install:
+    - sudo apt-get install python3-tk
+install:
+    - pip install -r misc/requirements.txt
+    - pip install -r misc/test_requirements.txt
+before_script:
+    - sleep 10
+script:
+    - python -m textblob.download_corpora
+    - python helper/reset_elastic_indices.py
+    - python -m pytest tests
+notifications:
+  slack: nautilusds:FU9mJgkONTb7Fpg8xD7qUACf

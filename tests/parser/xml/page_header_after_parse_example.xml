@@ -1,5 +1,23 @@
 <document version="1.0" producer="FineReader 8.0" xmlns="http://www.abbyy.com/FineReader_xml/FineReader6-schema-v1.xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pagesCount="8" mainLanguage="Slovak" languages="Slovak,Czech,EnglishUnitedStates">
 <page width="3455" height="4871" resolution="400" originalCoords="true">
+<block blockType="Text" l="180" t="98" r="566" b="164"><region><rect l="180" t="98" r="566" b="164"></rect></region>
+<text>
+<par>
+<line baseline="156" l="195" t="110" r="549" b="159"><formatting lang="Czech" ff="Arial" fs="10.">
+<charParams l="195" t="112" r="229" b="159" wordStart="true" wordFromDictionary="true" wordNormal="true" wordNumeric="false" wordIdentifier="false" wordPenalty="1" meanStrokeWidth="96" charConfidence="38" serifProbability="26">C</charParams>
+<charParams l="231" t="126" r="259" b="157" wordStart="false" wordFromDictionary="true" wordNormal="true" wordNumeric="false" wordIdentifier="false" wordPenalty="1" meanStrokeWidth="96" charConfidence="97" serifProbability="40">e</charParams>
+<charParams l="264" t="126" r="292" b="156" wordStart="false" wordFromDictionary="true" wordNormal="true" wordNumeric="false" wordIdentifier="false" wordPenalty="1" meanStrokeWidth="96" charConfidence="40" serifProbability="0">n</charParams>
+<charParams l="299" t="125" r="324" b="153" wordStart="false" wordFromDictionary="true" wordNormal="true" wordNumeric="false" wordIdentifier="false" wordPenalty="1" meanStrokeWidth="96" charConfidence="27" serifProbability="0">a</charParams>
+<charParams l="324" t="115" r="355" b="156"> </charParams></formatting><formatting lang="Slovak" ff="Arial" fs="10.">
+<charParams l="355" t="115" r="382" b="156" wordStart="true" wordFromDictionary="false" wordNormal="false" wordNumeric="true" wordIdentifier="false" wordPenalty="0" meanStrokeWidth="96" charConfidence="77" serifProbability="27">8</charParams>
+<charParams l="386" t="115" r="414" b="155" wordStart="false" wordFromDictionary="false" wordNormal="false" wordNumeric="true" wordIdentifier="false" wordPenalty="0" meanStrokeWidth="96" charConfidence="90" serifProbability="255">0</charParams>
+<charParams l="414" t="110" r="452" b="156"> </charParams></formatting><formatting lang="Czech" ff="Arial" fs="10.">
+<charParams l="452" t="110" r="482" b="156" suspicious="true" wordStart="true" wordFromDictionary="false" wordNormal="false" wordNumeric="false" wordIdentifier="false" wordPenalty="0" meanStrokeWidth="99" charConfidence="37" serifProbability="98">h</charParams>
+<charParams l="490" t="127" r="511" b="155" wordStart="false" wordFromDictionary="false" wordNormal="false" wordNumeric="false" wordIdentifier="false" wordPenalty="0" meanStrokeWidth="99" charConfidence="24" serifProbability="255">?</charParams>
+<charParams l="519" t="110" r="532" b="156" wordStart="false" wordFromDictionary="false" wordNormal="false" wordNumeric="false" wordIdentifier="false" wordPenalty="0" meanStrokeWidth="99" charConfidence="27" serifProbability="255">l</charParams>
+<charParams l="537" t="145" r="549" b="157" wordStart="false" wordFromDictionary="false" wordNormal="false" wordNumeric="false" wordIdentifier="false" wordPenalty="0" meanStrokeWidth="99" charConfidence="77" serifProbability="255">.</charParams></formatting></line></par>
+</text>
+</block>
 <block blockType="Text" l="176" t="210" r="566" b="520"><region><rect l="176" t="210" r="566" b="520"></rect></region>
 <text>
 <par align="Justified" lineSpacing="30">
