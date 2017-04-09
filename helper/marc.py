@@ -4,6 +4,7 @@ import os
 from pymarc import Record, Field, XMLWriter
 import pymarc
 from time import gmtime, strftime
+import shutil
 
 #  pymarc cheat sheets at :
 # https://github.com/ThursdayPythonCodeClub/Code-Examples/blob/master/ex-tab-delim-2-marc/pymarc-cheat-sheet.py
@@ -230,6 +231,20 @@ class Marc(object):
         )
 
         path = source_dirname + "/articles/" + str(order)
+
+        es.update(index=index,
+                  doc_type='article',
+                  id=article['_id'],
+                  body={
+                      "script": {
+                          "inline": "ctx._source.source_dirname = params.path",
+                          "lang": "painless",
+                          "params": {
+                              "path": path
+                          }
+                      }
+                  })
+
         if not os.path.exists(path):
             os.makedirs(path)
         path += "/" + str(order) + "_marc21.xml"
@@ -307,6 +322,9 @@ class Marc(object):
         journal_marc = records[0]
 
         issue_marc = self.__export_issue(issue, journal_marc, source_dirname, es, elastic_index)
+
+        if os.path.exists(source_dirname + "/articles"):
+            shutil.rmtree(source_dirname + "/articles")
 
         for i, article in enumerate(articles):
             self.__export_article(article, issue_marc, source_dirname, i+1, es, elastic_index)
