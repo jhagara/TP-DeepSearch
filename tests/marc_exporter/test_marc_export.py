@@ -63,7 +63,9 @@ class TestMarcExport(unittest.TestCase):
     def test_export(self):
 
         # create marc for journal
-        path = self.create_journal_marc()
+        # path = self.create_journal_marc()
+
+        path = os.path.dirname(os.path.abspath(__file__)) + "/slovak/journal_marc21.xml"
 
         path_issue = os.path.dirname(os.path.abspath(__file__)) + "/slovak/19400102"
 
@@ -156,9 +158,6 @@ class TestMarcExport(unittest.TestCase):
             marc2 = Path(path_issue + "/articles/2/2_marc21.xml")
             if marc1.is_file() or marc2.is_file():
                 shutil.rmtree(path_issue + "/articles")
-            marc_journal = Path(issue['_source']['journal_marc21_path'])
-            if marc_journal.is_file():
-                os.remove(issue['_source']['journal_marc21_path'])
 
 
 if __name__ == '__main__':

@@ -32,13 +32,13 @@ class Marc(object):
         issue_record.add_field(Field(tag='007', data="ta"))
 
         # 022
-        if journal_marc['022']['a'] is not None:
+        if journal_marc['022'] is not None and journal_marc['022']['a'] is not None:
             issue_record.add_field(Field(tag='022',
                                          indicators=[' ', ' '],
                                          subfields=['a', journal_marc['022']['a']]))
 
         # 245
-        n_245 = issue['_source']['release_date'][0:3] + ", "
+        n_245 = issue['_source']['release_date'][0:4] + ", "
         if issue['_source']['year'] is not None:
             n_245 += str(issue['_source']['year']) + ", "
         else:
@@ -49,25 +49,33 @@ class Marc(object):
         else:
             n_245 += " "
 
+        journal_name = ""
+        if journal_marc['245'] is not None and journal_marc['245']['a'] is not None:
+            journal_name = journal_marc['245']['a']
+
         issue_record.add_field(
             Field(
                 tag='245',
                 indicators=[' ', ' '],
-                subfields=['a', journal_marc['245']['a'],
+                subfields=['a', journal_name,
                            'n', n_245]
             )
         )
 
         # 264
         place_of_release = ""
-        if journal_marc['264']['a'] is not None:
+        if journal_marc['264'] is not None and journal_marc['264']['a'] is not None:
             place_of_release = journal_marc['264']['a']
+        elif journal_marc['260'] is not None and journal_marc['260']['a'] is not None:
+            place_of_release = journal_marc['260']['a']
 
         publisher = ""
         if issue['_source'].get('publisher') is not None and len(issue['_source']['publisher']) > 0:
             publisher = issue['_source']['publisher']
-        elif journal_marc['264']['b'] is not None:
+        elif journal_marc['264'] is not None and journal_marc['264']['b'] is not None:
             publisher = journal_marc['264']['b']
+        elif journal_marc['260'] is not None and journal_marc['260']['b'] is not None:
+            publisher = journal_marc['260']['b']
 
         issue_record.add_field(
             Field(
@@ -75,7 +83,7 @@ class Marc(object):
                 indicators=[' ', ' '],
                 subfields=['a', place_of_release,
                            'b', publisher,
-                           'c', issue['_source']['release_date'][0:3]]
+                           'c', issue['_source']['release_date'][0:4]]
             )
         )
 
@@ -122,7 +130,7 @@ class Marc(object):
                 tag='773',
                 indicators=[' ', ' '],
                 subfields=['w', journal_marc['001'].value(),
-                           't', journal_marc['245']['a'],
+                           't', journal_name,
                            '7', 'nnas']
             )
         )
@@ -272,10 +280,10 @@ class Marc(object):
         data_008 = time[2:8]
         data_008 += 'e'
         data_008 += issue['_source']['release_date']
-        data_008 += journal_marc['008'].value()[15:17]
-        data_008 += "                 "
-        data_008 += journal_marc['008'].value()[35:37]
-        data_008 += " "
+        data_008 += journal_marc['008'].value()[15:18]
+        data_008 += "------------"
+        data_008 += journal_marc['008'].value()[35:38]
+        data_008 += "-"
         data_008 += "d"
 
         return Field(tag='008', data=data_008)
@@ -330,4 +338,6 @@ class Marc(object):
             self.__export_article(article, issue_marc, source_dirname, i+1, es, elastic_index)
 
         es.indices.refresh(index=elastic_index)
+
+
 
