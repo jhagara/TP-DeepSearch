@@ -1,8 +1,10 @@
 from elasticsearch import Elasticsearch
 import config
 import os
-from pymarc import MARCReader, Record, Field
+from pymarc import Record, Field, XMLWriter
+import pymarc
 from time import gmtime, strftime
+import shutil
 
 #  pymarc cheat sheets at :
 # https://github.com/ThursdayPythonCodeClub/Code-Examples/blob/master/ex-tab-delim-2-marc/pymarc-cheat-sheet.py
@@ -30,13 +32,13 @@ class Marc(object):
         issue_record.add_field(Field(tag='007', data="ta"))
 
         # 022
-        if journal_marc['022']['a'] is not None:
+        if journal_marc['022'] is not None and journal_marc['022']['a'] is not None:
             issue_record.add_field(Field(tag='022',
                                          indicators=[' ', ' '],
                                          subfields=['a', journal_marc['022']['a']]))
 
         # 245
-        n_245 = issue['_source']['release_date'][0:3] + ", "
+        n_245 = issue['_source']['release_date'][0:4] + ", "
         if issue['_source']['year'] is not None:
             n_245 += str(issue['_source']['year']) + ", "
         else:
@@ -47,25 +49,33 @@ class Marc(object):
         else:
             n_245 += " "
 
+        journal_name = ""
+        if journal_marc['245'] is not None and journal_marc['245']['a'] is not None:
+            journal_name = journal_marc['245']['a']
+
         issue_record.add_field(
             Field(
                 tag='245',
                 indicators=[' ', ' '],
-                subfields=['a', journal_marc['245']['a'],
+                subfields=['a', journal_name,
                            'n', n_245]
             )
         )
 
         # 264
         place_of_release = ""
-        if journal_marc['264']['a'] is not None:
+        if journal_marc['264'] is not None and journal_marc['264']['a'] is not None:
             place_of_release = journal_marc['264']['a']
+        elif journal_marc['260'] is not None and journal_marc['260']['a'] is not None:
+            place_of_release = journal_marc['260']['a']
 
         publisher = ""
         if issue['_source'].get('publisher') is not None and len(issue['_source']['publisher']) > 0:
             publisher = issue['_source']['publisher']
-        elif journal_marc['264']['b'] is not None:
+        elif journal_marc['264'] is not None and journal_marc['264']['b'] is not None:
             publisher = journal_marc['264']['b']
+        elif journal_marc['260'] is not None and journal_marc['260']['b'] is not None:
+            publisher = journal_marc['260']['b']
 
         issue_record.add_field(
             Field(
@@ -73,13 +83,13 @@ class Marc(object):
                 indicators=[' ', ' '],
                 subfields=['a', place_of_release,
                            'b', publisher,
-                           'c', issue['_source']['release_date'][0:3]]
+                           'c', issue['_source']['release_date'][0:4]]
             )
         )
 
         # 300
-        issue_record.add_field(Field(tag='300', indicators=[' ', ' '], subfields=['a',
-                                                                                  str(issue['_source']['pages_count'])]))
+        issue_record.add_field(Field(tag='300', indicators=[' ', ' '],
+                                     subfields=['a', str(issue['_source']['pages_count'])]))
 
         # 336
         issue_record.add_field(
@@ -120,12 +130,12 @@ class Marc(object):
                 tag='773',
                 indicators=[' ', ' '],
                 subfields=['w', journal_marc['001'].value(),
-                           't', journal_marc['245']['a'],
+                           't', journal_name,
                            '7', 'nnas']
             )
         )
 
-        path = source_dirname + "/issue_marc21.txt"
+        path = source_dirname + "/issue_marc21.xml"
         self.__save_marc(issue_record, path)
 
         es.update(index=index,
@@ -229,9 +239,23 @@ class Marc(object):
         )
 
         path = source_dirname + "/articles/" + str(order)
+
+        es.update(index=index,
+                  doc_type='article',
+                  id=article['_id'],
+                  body={
+                      "script": {
+                          "inline": "ctx._source.source_dirname = params.path",
+                          "lang": "painless",
+                          "params": {
+                              "path": path
+                          }
+                      }
+                  })
+
         if not os.path.exists(path):
             os.makedirs(path)
-        path += "/" + str(order) + "_marc21.txt"
+        path += "/" + str(order) + "_marc21.xml"
         self.__save_marc(article_record, path)
 
         es.update(index=index,
@@ -256,10 +280,10 @@ class Marc(object):
         data_008 = time[2:8]
         data_008 += 'e'
         data_008 += issue['_source']['release_date']
-        data_008 += journal_marc['008'].value()[15:17]
-        data_008 += "                 "
-        data_008 += journal_marc['008'].value()[35:37]
-        data_008 += " "
+        data_008 += journal_marc['008'].value()[15:18]
+        data_008 += "------------"
+        data_008 += journal_marc['008'].value()[35:38]
+        data_008 += "-"
         data_008 += "d"
 
         return Field(tag='008', data=data_008)
@@ -282,8 +306,9 @@ class Marc(object):
 
     #  save marc on path
     def __save_marc(self, marc, path):
-        with open(path, 'wb') as f:
-            f.write(marc.as_marc())
+        writer = XMLWriter(open(path, 'wb'))
+        writer.write(marc)
+        writer.close()
 
     def export_marc_for_issue(self, issue_id):
 
@@ -301,14 +326,18 @@ class Marc(object):
         source_dirname = issue['_source']['source_dirname']
 
         #  get marc21 for jurnal
-        with open(journal_path, 'rb') as fh:
-            reader = MARCReader(fh)
-            journal_marc = next(reader)
+        records = pymarc.parse_xml_to_array(journal_path)
+        journal_marc = records[0]
 
         issue_marc = self.__export_issue(issue, journal_marc, source_dirname, es, elastic_index)
+
+        if os.path.exists(source_dirname + "/articles"):
+            shutil.rmtree(source_dirname + "/articles")
 
         for i, article in enumerate(articles):
             self.__export_article(article, issue_marc, source_dirname, i+1, es, elastic_index)
 
         es.indices.refresh(index=elastic_index)
+
+
 

@@ -26,7 +26,7 @@ class TestElastic(unittest.TestCase):
 
         paths = {'xml': config.get_full_path('tests', 'elastic_filler', 'slovak', '19390526',
                                              'XML', '1336-4464_1939_19390526_00001.xml'),
-                 'journal_marc21': config.get_full_path('tests', 'elastic_filler', 'slovak', 'journal_marc21.txt')}
+                 'journal_marc21': config.get_full_path('tests', 'elastic_filler', 'slovak', 'journal_marc21.xml')}
         semantic = Semantic(
         xml=config.get_full_path('tests', 'slovak_1941_1_strana_1.xml'),
         header_config=config.get_full_path('tests', 'page_header_conf_1941_1.json'))
