@@ -19,7 +19,15 @@ To activate newly created virtualenv, you can run
 
 Install all requirements
 ::
-        $ pip install -r misc/requirements.txt
+        $ pip3 install -r misc/requirements.txt
+
+Install Python3 external dependency
+::
+        $ sudo apt-get install python3-tk
+
+Install key words processing dependency
+::
+        $ pip3 install -m textblob.download_corpora
 
 More information about virtualenv can be found on documentation_. 
 
