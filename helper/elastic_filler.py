@@ -1,8 +1,10 @@
 import copy
 import json
+import logging
 from elasticsearch import Elasticsearch
 import config
 import re
+import datetime
 from time import gmtime, strftime
 
 
@@ -147,7 +149,22 @@ class Elastic(object):
             some = es.index(index=elastic_index, doc_type='article', body=art)
             ar_count += 1
 
-        print("Article created " + str(ar_count) + ", index: " +
+        date = str(datetime.date.today()) + '.log'
+
+        try:
+            file = open(date, 'r')
+        except IOError:
+            file = open(date, 'w')
+
+        formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+        logger = logging.getLogger()
+        logger.setLevel(logging.ERROR)
+
+        fileHandler = logging.FileHandler('logs/' + str(datetime.date.today()) + '.log')
+        fileHandler.setFormatter(formatter)
+        logger.addHandler(fileHandler)
+
+        logger.error("Article created " + str(ar_count) + ", index: " +
               elastic_index + ", type: article")
 
         es.indices.refresh(index=elastic_index)
