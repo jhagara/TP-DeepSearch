@@ -107,7 +107,9 @@ class Elastic(object):
                         new_heading['b'] = group.attrib['b']
                         new_heading['page'] = strana
                         all_text = ''
-                        for par in group.xpath('par'):
+                        pars = group.xpath('par')
+                        pars.sort(key=lambda x: x.attrib['t'])
+                        for par in pars:
                             for line in par.xpath('line'):
                                 for formatting in line.xpath('formatting'):
                                     if int(formatting.get("fs")[:-1]) == max_font:
@@ -125,7 +127,9 @@ class Elastic(object):
                         new_fulltext['b'] = group.attrib['b']
                         new_fulltext['page'] = strana
                         all_text = ''
-                        for par in group.xpath('par'):
+                        pars = group.xpath('par')
+                        pars.sort(key=lambda x: x.attrib['t'])
+                        for par in pars:
                             for line in par.xpath('line'):
                                 for formatting in line.xpath('formatting'):
                                     all_text += formatting.text + '\n'
