@@ -1,4 +1,5 @@
 import math
+import re
 from elasticsearch import Elasticsearch
 from textblob import TextBlob as tB
 import config
@@ -22,13 +23,14 @@ class Analyzer(object):
         return self.__tf(word, blob) * self.__idf(word, bloblist)
 
     # generate key words from bloblist
-    def key_words(self, bloblist):
+    def key_words(self, bloblist, list_of_starts):
 
         key_words_art = []
 
         for i, blob in enumerate(bloblist):
             scores = {word: self.__tfidf(word, blob, bloblist) for word in blob.words}
             sorted_words = sorted(scores.items(), key=lambda x: x[1], reverse=True)
+            start = list_of_starts[i]
             key_words = []
             position_index = {}
 
@@ -45,7 +47,6 @@ class Analyzer(object):
             connected_words = []
             nonconnected_words = []
             duplicate_index = position_index.copy()
-            ctrl = 0
 
             # find keywords which can be connected together
             for word in position_index:
@@ -60,13 +61,13 @@ class Analyzer(object):
                         ctrl = 1
                         for word2 in duplicate_index:
                             for pos2 in duplicate_index[word2]:
-                                if pos - pos2 == distance1:
+                                if pos - pos2 == distance1 and word not in start:
                                     new = word2 + " " + new
                                     distance1 = distance1 + 1
                                     ctrl = 2
                                     number_of_words = number_of_words + 1
                                     break
-                                if pos2 - pos == distance2:
+                                if pos2 - pos == distance2 and word2 not in start:
                                     new = new + " " + word2
                                     distance2 = distance2 + 1
                                     ctrl = 2
@@ -106,15 +107,20 @@ class Analyzer(object):
     def key_words_from_json(self, jlist):
 
         bloblist = []
+        list_of_starts = []
 
         for article in jlist:
             all_text = ''
             for group in article['groups']:
                 all_text += group['text']
+
+            # remove stop words and get list of sentence starters
             all_text = ' '.join([word for word in all_text.split() if word not in stops and word.lower() not in stops])
+            starts = re.findall('(?:^|(?:[.!?]\s))(\w+)', all_text)
+            list_of_starts.append(starts)
             bloblist.append(tB(all_text))
 
-        return self.key_words(bloblist)
+        return self.key_words(bloblist,list_of_starts)
 
     # generate key words and insert then in to elastic
     def insert_key_words(self, issue_id):
