@@ -21,7 +21,7 @@ class TestSlovakConfig(unittest.TestCase):
         # print(etree.tostring(original_xml).decode('utf-8'))
 
         actual_xml, header = SourceHeader.get_source_header(original_xml, config)
-        self.assertEqual('XXXIII.', header['marc21'][0]['value'])
+        self.assertEqual('XXIII.', header['marc21'][0]['value'])
         self.assertEqual('149', header['marc21'][1]['value'])
 
     # reading of JSON configuration file which defines paths

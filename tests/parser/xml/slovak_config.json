@@ -2,11 +2,11 @@
 	"type": "journal details",
 	"marc21": [{
 		"key": "Volume",
-		"path": "/document/page[1]/block[position() <= 20]//formatting[starts-with(.,'Ročník')][1]//text()",
+		"path": "substring-after(string(/document/page[1]/block[position() <= 20]//formatting[starts-with(.,'Ročník')][1]/..),'Ročník ')",
 		"value": ""
 	}, {
 		"key": "Number",
-		"path": "/document/page[1]/block[position() <= 20]//formatting[starts-with(.,'Číslo')][1]//text()",
+		"path": "substring-after(string(/document/page[1]/block[position() <= 20]//formatting[starts-with(.,'Číslo')][1]/..),'Číslo ')",
 		"value": ""
 	}],
 	"articles": [{
