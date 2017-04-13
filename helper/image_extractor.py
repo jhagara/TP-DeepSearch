@@ -11,6 +11,9 @@ class ImageExtractor(object):
 
         path = str(article['_source']['source_dirname']) + '/pictures'
 
+        if not os.path.exists(path):
+            os.makedirs(path)
+
         pages = []
 
         for group in article['_source']['groups']:
