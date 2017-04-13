@@ -4,6 +4,7 @@ from lxml import etree
 from helper.elastic_filler import Elastic
 from helper.semantic_analyzer import Analyzer
 from helper.marc import Marc
+from helper.image_extractor import ImageExtractor
 
 
 class Semantic(Elastic, Analyzer, Marc):
