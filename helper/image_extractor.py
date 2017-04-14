@@ -7,7 +7,7 @@ import glob
 
 class ImageExtractor(object):
     #  export image per article
-    def __export_article_image(self, article, pages_paths, es, index):
+    def export_article_image(article, pages_paths):
 
         path = str(article['_source']['source_dirname']) + '/pictures'
 
@@ -33,16 +33,16 @@ class ImageExtractor(object):
             top = int(group['t'])
             bottom = int(group['b'])
             ltrb = (left, top, right, bottom)
-            gps_groups[page].append(ltrb)
-            crop_groups[page].append(original.crop(ltrb))
+            gps_groups[pages.index(page)].append(ltrb)
+            crop_groups[pages.index(page)].append(original.crop(ltrb))
 
 
-        for i, crops, coordinates in enumerate(zip(crop_groups, gps_groups)):
-            width, height = Image.open(pages_paths[pages[i]]).size
+        for i, page in enumerate(pages):
+            width, height = Image.open(pages_paths[int(page)]).size
             black = Image.new('L', (width, height), 'black')
-            for cropped_block, gps in zip(crops, coordinates):
+            for cropped_block, gps in zip(crop_groups[i], gps_groups[i]):
                 black.paste(cropped_block, gps) 
-            image_path = path + '/article_extract_page' + str(pages[i] + 1) + '.jpg')
+            image_path = path + '/article_extract_page' + str(pages[i] + 1) + '.jpg'
             black.save(image_path)
 
 
@@ -61,6 +61,7 @@ class ImageExtractor(object):
 
         pics_dirname = issue['_source']['source_dirname'] + '/STR'
         pages_paths = glob.glob(pics_dirname + '/*.jpg')
+        pages_paths.sort()
 
         for article in articles:
-            self.__export_article_image(article, pages_paths, es, elastic_index)
+            self.export_article_image(article, pages_paths)
