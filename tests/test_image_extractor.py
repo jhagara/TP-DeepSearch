@@ -1,14 +1,13 @@
 import unittest
+import os
 from helper.image_extractor import ImageExtractor
-from tests.helper.helper_test_methods import HelperTestMethods
 from PIL import Image
-import config
 import glob
 
 
 class TestImageExport(unittest.TestCase):
-    def create_images(self):
 
+    def test_create_images(self):
         articles = [
                       {
                         "_index": "deep_search_test_python",
@@ -125,16 +124,25 @@ class TestImageExport(unittest.TestCase):
                         }
                       }
                     ]
-
         
-        path = os.path.dirname(os.path.abspath(__file__)) + "/tests/19430526/STR"
-
-
-        pics_dirname = '/home/floofy/School/TP/TP-DeepSeach'
+        pics_dirname = os.path.dirname(os.path.abspath(__file__)) + "/19430526/STR"
+        print(os.path.dirname(os.path.abspath(__file__)))
         pages_paths = glob.glob(pics_dirname + '/*.jpg')
         pages_paths.sort()
+        # print(len(pages_paths))
 
         for i, article in enumerate(articles):
-            article['_source']['source_dirname'] = os.path.dirname(os.path.abspath(__file__)) + "/tests/19430526/article" + str(i + 1)
-            ImageExtractor.export_article_image(article, pages_paths)
+            abs_path = os.path.dirname(os.path.abspath(__file__)) + "/19430526/article" + str(i + 1)
+            article['_source']['source_dirname'] = abs_path
+            name = ImageExtractor.export_article_image(article, pages_paths)
+
+            test_path = str(name[:-4] + '_true.jpg')
+            # print(test_path, name)
+            test = Image.open(test_path)
+            created = Image.open(name)
+            self.assertEqual(created, test)
+
+            test_hist = test.histogram()
+            created_hist = created.histogram()
+            self.assertEqual(created_hist, test_hist)
 
