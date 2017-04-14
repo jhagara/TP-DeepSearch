@@ -8,10 +8,10 @@ before_install:
 install:
     - pip install -r misc/requirements.txt
     - pip install -r misc/test_requirements.txt
+    - pip install -m textblob.download_corpora
 before_script:
     - sleep 10
 script:
-    - python -m textblob.download_corpora
     - python helper/reset_elastic_indices.py
     - python -m pytest tests
 notifications:
