@@ -1,15 +1,10 @@
 language: python
-sudo: required
+# sudo: required
 python:
     - "3.5"
-addons:
-    apt:
-        packages:
-            - oracle-java8-set-default
 before_install:
     - sudo apt-get install python3-tk
-    - curl -O https://download.elastic.co/downloads/elasticsearch/elasticsearch-5.3.0.deb && sudo dpkg -i --force-confnew elasticsearch-5.3.0.deb && sudo service elasticsearch start
-    - curl -v http://localhost:9200/
+    - curl -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.3.0.deb && sudo dpkg -i --force-confnew elasticsearch-5.3.0.deb && sudo service elasticsearch start
 install:
     - pip install -r misc/requirements.txt
     - pip install -r misc/test_requirements.txt
@@ -21,3 +16,8 @@ script:
     - python -m pytest tests
 notifications:
   slack: nautilusds:FU9mJgkONTb7Fpg8xD7qUACf
+  email: false
+addons:
+    apt:
+        packages:
+            - oracle-java8-set-default
