@@ -42,8 +42,10 @@ class ImageExtractor(object):
             black = Image.new('L', (width, height), 'black')
             for cropped_block, gps in zip(crop_groups[i], gps_groups[i]):
                 black.paste(cropped_block, gps) 
-            image_path = path + '/article_extract_page' + str(pages[i] + 1) + '.jpg'
-            black.save(image_path)
+        
+        image_path = path + '/article_extract_page' + str(pages[i] + 1) + '.jpg'
+        black.save(image_path)
+        return image_path
 
 
 
