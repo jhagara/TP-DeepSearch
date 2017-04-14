@@ -131,18 +131,26 @@ class TestImageExport(unittest.TestCase):
         pages_paths.sort()
         # print(len(pages_paths))
 
-        for i, article in enumerate(articles):
-            abs_path = os.path.dirname(os.path.abspath(__file__)) + "/19430526/article" + str(i + 1)
-            article['_source']['source_dirname'] = abs_path
-            name = ImageExtractor.export_article_image(article, pages_paths)
+        remove_paths = []
+        try:
+            for i, article in enumerate(articles):
+                abs_path = os.path.dirname(os.path.abspath(__file__)) + "/19430526/article" + str(i + 1)
+                article['_source']['source_dirname'] = abs_path
+                name = ImageExtractor.export_article_image(article, pages_paths)
 
-            test_path = str(name[:-4] + '_true.jpg')
-            # print(test_path, name)
-            test = Image.open(test_path)
-            created = Image.open(name)
-            self.assertEqual(created, test)
+                remove_paths.append(name)
 
-            test_hist = test.histogram()
-            created_hist = created.histogram()
-            self.assertEqual(created_hist, test_hist)
+                test_path = str(name[:-4] + '_true.jpg')
+                # print(test_path, name)
+                test = Image.open(test_path)
+                created = Image.open(name)
+                self.assertEqual(created, test)
+
+                test_hist = test.histogram()
+                created_hist = created.histogram()
+                self.assertEqual(created_hist, test_hist)
+
+        finally:
+            for path in remove_paths:
+                os.remove(path)
 
