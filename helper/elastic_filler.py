@@ -91,7 +91,7 @@ class Elastic(object):
                             for line in par.xpath('line'):
                                 for formatting in line.xpath('formatting'):
                                     heading_sizes.append(formatting.get("fs"))
-                max_font = max([int(head.split('.', 1)[1]) for head in heading_sizes] or [0])
+                max_font = max([int(head.split('.', 1)[0]) for head in heading_sizes] or [0])
 
                 # MAIN PART
                 for group in article:
