@@ -18,7 +18,7 @@ class ImageExtractor(object):
 
         for group in article['_source']['groups']:
             page = int(group['page']) - 1
-            if not page in pages:
+            if page not in pages:
                 pages.append(page)
 
         crop_groups = [[] for _ in range(len(pages))]
@@ -36,18 +36,15 @@ class ImageExtractor(object):
             gps_groups[pages.index(page)].append(ltrb)
             crop_groups[pages.index(page)].append(original.crop(ltrb))
 
-
         for i, page in enumerate(pages):
             width, height = Image.open(pages_paths[int(page)]).size
             black = Image.new('L', (width, height), 'black')
             for cropped_block, gps in zip(crop_groups[i], gps_groups[i]):
-                black.paste(cropped_block, gps) 
-        
-        image_path = path + '/article_extract_page' + str(pages[i] + 1) + '.jpg'
+                black.paste(cropped_block, gps)
+
+        image_path = path + '/article_extract_page' + str(pages[i]+1) + '.jpg'
         black.save(image_path)
         return image_path
-
-
 
     def export_image_for_issue(self, issue_id):
 
