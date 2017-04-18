@@ -63,7 +63,6 @@ def main(parser_dir, dir, name, environment):
         print('# Loaded Files: ')
         print(file)
         issue_id = semantic.save_to_elastic(name, file['dir'], file)
-        semantic.export_image_for_issue(issue_id)
         semantic.insert_key_words(issue_id)
 
     # set environment to default
