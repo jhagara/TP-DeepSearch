@@ -1,5 +1,6 @@
 from lxml import etree
 import copy
+from parser.xml.position_helper import PositionHelper
 
 # purpose of this class is to merge blocks of equal type
 # to groups of that type and set coordinates to the group
@@ -63,7 +64,7 @@ class Preprocessor(object):
                 group.getparent().remove(group)
             # set coordinates for groups
             else:
-                cls.__add_coordinates(group)
+                PositionHelper.add_coordinates_from_child(group)
 
         return parsed_xml
 
@@ -76,8 +77,8 @@ class Preprocessor(object):
     def __manage_group(cls, page, node, results):
         # if results exist
         if len(results) != 0:
-            nearest = cls.__get_nearest(results)
-            nearest_many = cls.__get_relative_nearest(nearest, results)
+            nearest = PositionHelper.get_nearest(results)
+            nearest_many = PositionHelper.get_relative_nearest(nearest, results)
 
             # if type matches
             if cls.__get_type(node, nearest_many):
@@ -173,54 +174,6 @@ class Preprocessor(object):
         result = page.xpath(query)
 
         return result
-
-    # method to calculate and set coordinates to established groups
-    @classmethod
-    def __add_coordinates(cls, node):
-        group_t = -1
-        group_b = -1
-        group_r = -1
-        group_l = -1
-        for child in node.getchildren():
-            if int(child.attrib['t']) < group_t or group_t == -1:
-                group_t = int(child.attrib['t'])
-            if int(child.attrib['b']) > group_b:
-                group_b = int(child.attrib['b'])
-            if int(child.attrib['r']) > group_r:
-                group_r = int(child.attrib['r'])
-            if int(child.attrib['l']) < group_l or group_l == -1:
-                group_l = int(child.attrib['l'])
-
-        node.attrib['l'] = str(group_l)
-        node.attrib['t'] = str(group_t)
-        node.attrib['r'] = str(group_r)
-        node.attrib['b'] = str(group_b)
-
-    # method to  get one nearest element
-    @classmethod
-    def __get_nearest(cls, results):
-        maximum = -1
-        max_elem = results[0]
-        for result in results:
-            val = int(result.attrib['b'])
-            if val > maximum:
-                maximum = val
-                max_elem = result
-
-        return max_elem
-
-    # method to get all nearest elements with usage of ERROR value
-    @classmethod
-    def __get_relative_nearest(cls, nearest, results):
-        b_max = int(nearest.attrib['b'])
-        b_min = b_max - ERROR
-        relative = []
-        for result in results:
-            b = int(result.attrib['b'])
-            if b_min <= b <= b_max:
-                relative.append(result)
-
-        return relative
 
     # method to calculate axis of element
     @classmethod

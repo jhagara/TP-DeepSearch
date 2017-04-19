@@ -4,6 +4,7 @@ from elasticsearch import Elasticsearch
 import config
 import re
 from time import gmtime, strftime
+from parser.xml.position_helper import PositionHelper
 
 
 class Elastic(object):
@@ -92,8 +93,9 @@ class Elastic(object):
                         for par in group.xpath('par'):
                             for line in par.xpath('line'):
                                 for formatting in line.xpath('formatting'):
-                                    heading_sizes.append(formatting.get("fs"))
-                max_font = max([int(head[:-1]) for head in heading_sizes] or [0])
+                                    heading_sizes.append(PositionHelper.get_fs(formatting))
+
+                max_font = max([int(head) for head in heading_sizes] or [0])
 
                 # MAIN PART
                 for group in article:
@@ -112,7 +114,7 @@ class Elastic(object):
                         for par in pars:
                             for line in par.xpath('line'):
                                 for formatting in line.xpath('formatting'):
-                                    if int(formatting.get("fs")[:-1]) == max_font:
+                                    if int(PositionHelper.get_fs(formatting)) == max_font:
                                         new_heading['type'] = 'headings'
                                     all_text += formatting.text + '\n'
                         new_heading['text'] = all_text
