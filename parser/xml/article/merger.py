@@ -2,73 +2,79 @@ from lxml import etree
 import copy
 from parser.xml.position_helper import PositionHelper
 
+ERROR = 3
+
 # purpose of this class is to merge blocks of equal type
 # to groups of that type and set coordinates to the group
-
-ERROR = 3
 
 
 class Preprocessor(object):
 
     # main method for preprocessing elements for assembling
-
+    # joins vertical affined elements and removes unused
     @classmethod
     def preprocess(cls, parsed_xml):
-
-        # search document for pages
         for page in parsed_xml.xpath("/document/page"):
-            # search every page for blocks
             for node in page.xpath("block"):
-                # if block type is separator
                 if node.attrib.get('type') == "separator":
-                    l = int(node.attrib['l'])
-                    if l >= ERROR:
-                        l -= ERROR
-                    r = int(node.attrib['r']) + ERROR
-                    t = int(node.attrib['t'])
-
-                    # De Morgan's law - check intersection
-                    # (StartA <= EndB)  and  (EndA >= StartB)
-                    # find all matching blocks
-                    query = "block[@l <= " + str(r) + \
-                            " and @r >= " + str(l) + \
-                            " and @b <= " + str(t) + "]"
-                    results = page.xpath(query)
+                    results = cls.__search_blocks_below_separator(page, node)
                     cls.__manage_group(page, node, results)
                 else:
                     for par in node.xpath("par"):
-                        l = int(par.attrib['l'])
-                        if l >= ERROR:
-                            l -= ERROR
-                        r = int(par.attrib['r']) + ERROR
-                        t = int(par.attrib['t'])
-
-                        # De Morgan's law - check intersection
-                        # (StartA <= EndB)  and  (EndA >= StartB)
-                        # find all matching blocks and paragraphs
-                        query = "block[@type ='separator' and @l <= " +\
-                                str(r) + " and @r >= " +\
-                                str(l) + " and @b <= " +\
-                                str(t) + "] | block/par[@l <= " +\
-                                str(r) + " and @r >= " +\
-                                str(l) + " and @b <= " +\
-                                str(t) + "]"
-                        results = page.xpath(query)
+                        results = cls.__search_blocks_and_pars_below_non_separator(page, par)
                         cls.__manage_group(page, par, results)
-        # delete all unused block
-        for block in parsed_xml.xpath("/document/page/block"):
-            block.getparent().remove(block)
-        for group in parsed_xml.xpath("/document/page/group"):
-            # delete all unused groups
-            if not group.getchildren():
-                group.getparent().remove(group)
-            # set coordinates for groups
-            else:
-                PositionHelper.add_coordinates_from_child(group)
+
+        cls.__detele_unused_blocks_and_groups(parsed_xml)
 
         return parsed_xml
 
-    # PRIVATE METHODS
+    # search blocks in area below separator
+    # using De Morgan's law
+    @classmethod
+    def __search_blocks_below_separator(cls, page, node):
+        l = int(node.attrib['l'])
+        if l >= ERROR:
+            l -= ERROR
+        r = int(node.attrib['r']) + ERROR
+        t = int(node.attrib['t'])
+
+        query = "block[@l <= " + str(r) + \
+                " and @r >= " + str(l) + \
+                " and @b <= " + str(t) + "]"
+
+        return page.xpath(query)
+
+    # search blocks and paragraphs in area below fulltexts
+    # and headings using De Morgan's law
+    @classmethod
+    def __search_blocks_and_pars_below_non_separator(cls, page, par):
+        l = int(par.attrib['l'])
+        if l >= ERROR:
+            l -= ERROR
+        r = int(par.attrib['r']) + ERROR
+        t = int(par.attrib['t'])
+
+        query = "block[@type ='separator' and @l <= " + \
+                str(r) + " and @r >= " + \
+                str(l) + " and @b <= " + \
+                str(t) + "] | block/par[@l <= " + \
+                str(r) + " and @r >= " + \
+                str(l) + " and @b <= " + \
+                str(t) + "]"
+
+        return page.xpath(query)
+
+    # delete all unused blocks and groups
+    # set coordinates for used groups
+    @classmethod
+    def __detele_unused_blocks_and_groups(cls, parsed_xml):
+        for block in parsed_xml.xpath("/document/page/block"):
+            block.getparent().remove(block)
+        for group in parsed_xml.xpath("/document/page/group"):
+            if not group.getchildren():
+                group.getparent().remove(group)
+            else:
+                PositionHelper.add_coordinates_from_child(group)
 
     # method to manage grouping
     # based on number of results and type of result
