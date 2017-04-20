@@ -85,6 +85,8 @@ class Assembler(object):
             self.current_page_num = i
 
             groups = page.xpath("group[not(@chained)]")
+            if groups is None or len(groups) == 0:
+                continue
             alone_article = groups[0]
 
             for group in groups[1:]:
