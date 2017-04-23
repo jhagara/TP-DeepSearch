@@ -18,7 +18,7 @@ class TestDB(unittest.TestCase):
                              password="root",
                              database=db_name)
 
-        print('Connection estalished')
+        # print('Connection estalished')
         with db.cursor() as cursor:
             sql = "show tables"
             cursor.execute(sql)
@@ -37,7 +37,7 @@ class TestDB(unittest.TestCase):
                              password="root",
                              database=db_name)
 
-        print('Connection estalished')
+        # print('Connection estalished')
         with db.cursor() as cursor:
             sql = "show tables"
             cursor.execute(sql)
@@ -62,7 +62,7 @@ class TestDB(unittest.TestCase):
                              password="root",
                              database=db_name)
 
-        print('Connection estalished')
+        # print('Connection estalished')
         with db.cursor() as cursor:
             sql = "select * from articles"
             cursor.execute(sql)
