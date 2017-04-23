@@ -35,10 +35,14 @@ class TestKeyWords(unittest.TestCase):
         collectors and writers such as Jeff Cooper, Ian V. Hogg, Chuck Hawks, Leroy
         Thompson, Renee Smeets and Martin Dougherty have described the Python as the
         finest production revolver ever made.""")
-
+        
+        list_of_starts = ["Python, The, The, It, It, Python",
+                  "Python, A",
+                  "The, It, It, The, Some"]
+        
         bloblist = [document1, document2, document3]
         sem = Semantic()
-        key_words_art = sem.key_words(bloblist)
+        key_words_art = sem.key_words(bloblist,list_of_starts)
         self.assertEqual(key_words_art is None, False)
         for i, key_words in enumerate(key_words_art):
             self.assertEqual(len(key_words) > 0, True)
