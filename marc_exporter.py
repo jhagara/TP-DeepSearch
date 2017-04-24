@@ -10,7 +10,6 @@ def main(issue_id, environment):
     # update articles key_words
     semantic = Semantic()
     semantic.export_marc_for_issue(issue_id)
-    semantic.export_image_for_issue(issue_id)
 
     # set environment to default
     config.set_environment(config.default_elastic_index)
