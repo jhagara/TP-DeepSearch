@@ -64,6 +64,7 @@ for index in indices:
                         "authors": {"type": "string"},
                         "keywords": {"type": "keyword"},
                         "article_marc21_path": {"type": "text"},
+                        "source_dirname": {"type": "text"},
                         "issue": {
                             "type": "nested",
                             "properties": {

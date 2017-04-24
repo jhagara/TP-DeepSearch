@@ -14,7 +14,7 @@ def main(parser_dir, dir, name, environment):
     # set environment to new value
     config.set_environment(environment)
 
-    for current_dir in os.popen("find " + dir + " -name '*.xml' -printf '%h\n' | sort -u").read().split('\n'):
+    for current_dir in os.popen("find " + dir + " -path '*/XML/*.xml' -printf '%h\n' | sort -u").read().split('\n'):
         # xml path
         xml = re.sub("[\n]", '', os.popen("find " + current_dir + " -maxdepth 1 -type f -name '*.xml'").read())
 
@@ -41,7 +41,7 @@ def main(parser_dir, dir, name, environment):
         # search for main journal marc21 path
         journal_marc21_path = ''
         while True:
-            journal_marc21_path = os.popen("find " + searched_journal_marc21_dir + " -maxdepth 1 -type f -name '*journal_marc21.txt'").read()
+            journal_marc21_path = os.popen("find " + searched_journal_marc21_dir + " -maxdepth 1 -type f -name '*journal_marc21.xml'").read()
             journal_marc21_path = re.sub("[\n]", '', journal_marc21_path)
 
             if journal_marc21_path != '' or searched_journal_marc21_dir == parser_dir:
@@ -71,6 +71,3 @@ def main(parser_dir, dir, name, environment):
 if __name__ == "__main__":
     main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
     sys.exit()
-
-
-
