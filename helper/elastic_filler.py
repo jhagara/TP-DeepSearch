@@ -110,7 +110,7 @@ class Elastic(object):
                         for par in pars:
                             for line in par.xpath('line'):
                                 for formatting in line.xpath('formatting'):
-                                    if int(formatting.get("fs")[:-1]) == max_font:
+                                    if int(formatting.get("fs").split('.', 1)[0]) == max_font:
                                         new_heading['type'] = 'headings'
                                     all_text += formatting.text + '\n'
                         new_heading['text'] = all_text
