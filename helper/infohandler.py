@@ -6,6 +6,6 @@ class InfoHandler(logging.FileHandler):
         logging.FileHandler.__init__(self, filename, mode, encoding, delay)
 
     def emit(self, record):
-        if not record.levelno == logging.INFO:
+        if not record.levelno == logging.DEBUG:
             return
         logging.FileHandler.emit(self, record)
