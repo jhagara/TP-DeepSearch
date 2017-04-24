@@ -153,7 +153,7 @@ class Elastic(object):
 
         try:
             e_file = open(error_name, 'r')
-        except IOError:
+        except (FileNotFoundError, IOError):
             e_file = open(error_name, 'w')
 
         error_handler = logging.FileHandler(error_name)
@@ -165,7 +165,7 @@ class Elastic(object):
 
         try:
             i_file = open(info_name, 'r')
-        except IOError:
+        except (FileNotFoundError, IOError):
             i_file = open(info_name, 'w')
 
         info_handler = InfoHandler(info_name)
