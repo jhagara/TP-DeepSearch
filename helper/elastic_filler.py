@@ -2,9 +2,11 @@ import copy
 import json
 import logging
 from elasticsearch import Elasticsearch, ElasticsearchException
+from helper.infohandler import InfoHandler
 import config
 import re
 import datetime
+import os
 from time import gmtime, strftime
 
 
@@ -143,19 +145,32 @@ class Elastic(object):
 
         ar_count = 0
 
+        abs_path = os.path.dirname(os.path.abspath(__file__))
         formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
         error_logger = logging.getLogger()
         error_logger.setLevel(logging.ERROR)
-        error_name = str(datetime.date.today()) + '_ERROR.log'
+        error_name = abs_path + '/logs/error.log'
 
         try:
-            file = open(error_name, 'r')
+            e_file = open(error_name, 'r')
         except IOError:
-            file = open(error_name, 'w')
+            e_file = open(error_name, 'w')
 
-        error_handler = logging.FileHandler('logs/' + error_name)
+        error_handler = logging.FileHandler(error_name)
         error_handler.setFormatter(formatter)
         error_logger.addHandler(error_handler)
+
+        info_logger = logging.getLogger()
+        info_name = abs_path + '/logs/info.log'
+
+        try:
+            i_file = open(info_name, 'r')
+        except IOError:
+            i_file = open(info_name, 'w')
+
+        info_handler = InfoHandler(info_name)
+        info_handler.setFormatter(formatter)
+        info_logger.addHandler(info_handler)
 
         for art in articles:
             # index | PUT into ES
@@ -165,31 +180,12 @@ class Elastic(object):
             except ElasticsearchException:
                 pass
 
-        info_logger = logging.getLogger()
-        info_name = str(datetime.date.today()) + '_INFO.log'
-
-        try:
-            file = open(info_name, 'r')
-        except IOError:
-            file = open(info_name, 'w')
-
-        info_handler = InfoHandler('logs/' + info_name)
-        info_logger.addHandler(info_handler)
-
-        info_logger.info("Journal " + issue_name + ", issue num. " + str(empty_issue['number']) + " of year "
-                         + str(empty_issue['year']) + " was parsed.")
-        info_logger.info("Articles created: " + str(ar_count) + "/" + str(len(articles)) + ".")
+        info_logger.info(str(datetime.date.today()) + "Journal " + issue_name + ", issue num. " +
+                         str(empty_issue['number']) + " of year " + str(empty_issue['year']) + " was parsed.")
+        info_logger.info(str(datetime.date.today()) + "Articles created: " + str(ar_count) +
+                         "/" + str(len(articles)) + ".")
 
         es.indices.refresh(index=elastic_index)
 
         return issue_id
 
-
-class InfoHandler(logging.FileHandler):
-    def __init__(self, filename, mode='a', encoding=None, delay=False):
-        logging.FileHandler.__init__(self, filename, mode, encoding, delay)
-
-    def emit(self, record):
-        if not record.levelno == logging.INFO:
-            return
-        logging.FileHandler.emit(self, record)
