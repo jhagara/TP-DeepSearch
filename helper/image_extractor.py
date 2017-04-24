@@ -7,7 +7,8 @@ import glob
 
 class ImageExtractor(object):
     #  export image per article
-    def export_article_image(self, article, pages_paths):
+    @classmethod
+    def export_article_image(cls, article, pages_paths):
 
         path = str(article['_source']['source_dirname']) + '/pictures'
 
