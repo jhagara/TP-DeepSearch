@@ -575,8 +575,8 @@ class TestPreprocess(unittest.TestCase):
             block.attrib['type'] = 'text'
         actual_xml = SeparatorId.discriminant_separators(actual_xml)
         actual_xml = Preprocessor.preprocess(actual_xml)
-        #print('1: ', re.sub("[\a\f\n\r\t\v ]", '', etree.tostring(desired_xml).decode('utf-8')))
-        print('2: ', re.sub("[\a\f\n\r\t\v ]", ' ', etree.tostring(actual_xml).decode('utf-8')))
+        # print('1: ', re.sub("[\a\f\n\r\t\v ]", '', etree.tostring(desired_xml).decode('utf-8')))
+        # print('2: ', re.sub("[\a\f\n\r\t\v ]", ' ', etree.tostring(actual_xml).decode('utf-8')))
         self.assertEqual(
             re.sub("[\a\f\n\r\t\v ]", '', etree.tostring(desired_xml).decode('utf-8')),
             re.sub("[\a\f\n\r\t\v ]", '', etree.tostring(actual_xml).decode('utf-8')))

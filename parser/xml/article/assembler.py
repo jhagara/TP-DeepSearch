@@ -74,6 +74,26 @@ class Assembler(object):
 
             self.previous_page = page
 
+        self.previous_page = None
+        self.current_page_num = None
+
+        i = 0
+        # third cycle of all ALONE in the dark groups, just grouped in one article on page
+        for page in self.parsed_xml.xpath("/document/page"):
+            self.current_page = page
+            i += 1
+            self.current_page_num = i
+
+            groups = page.xpath("group[not(@chained)]")
+            if groups is None or len(groups) == 0:
+                continue
+            alone_article = groups[0]
+
+            for group in groups[1:]:
+                self.__chain_groups(alone_article, group)
+
+            self.previous_page = page
+
         self.__order_groups_and_create_array()
 
     # PRIVATE
