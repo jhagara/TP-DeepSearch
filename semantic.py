@@ -10,6 +10,7 @@ class Semantic(Elastic, Analyzer, Marc):
     def __init__(self, **args):
         default = {'pdf': None, 'xml': None, 'header_config': None}
         args = {**default, **args}
+        print(args)
 
         if args['xml'] is not None:
             self.xml, self.header, self.articles = XmlParser.parse(args['header_config'], args['xml'])

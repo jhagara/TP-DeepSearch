@@ -86,7 +86,7 @@ class TestSeparator(unittest.TestCase):
         actual_xml = SeparatorId.discriminant_separators(
                 etree.fromstring(original_xml))
         desired_xml = etree.fromstring(desired_xml)
-        print(etree.tostring(actual_xml).decode('utf-8'))
+        # print(etree.tostring(actual_xml).decode('utf-8'))
         self.assertEqual(
                 re.sub("[\a\f\n\r\t\v ]", '', etree.tostring(desired_xml)
                        .decode('utf-8')),

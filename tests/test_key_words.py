@@ -46,9 +46,9 @@ class TestKeyWords(unittest.TestCase):
         self.assertEqual(key_words_art is None, False)
         for i, key_words in enumerate(key_words_art):
             self.assertEqual(len(key_words) > 0, True)
-            print("Top words in document {}".format(i + 1))
-            for word in key_words:
-                print("Word: {}".format(word))
+            # print("Top words in document {}".format(i + 1))
+            # for word in key_words:
+            #     print("Word: {}".format(word))
 
     def test_elastic_updater_script_call(self):
 

@@ -80,9 +80,7 @@ class Elastic(object):
         empty_issue_art['id'] = some['_id']
 
         # SETUP OF ARTICLE DOCUMENT
-        strana = 0
         for page in self.articles:
-            strana = strana + 1
             for article in page:
                 new_article = copy.deepcopy(empty_article)
                 groups = []
@@ -95,7 +93,7 @@ class Elastic(object):
                             for line in par.xpath('line'):
                                 for formatting in line.xpath('formatting'):
                                     heading_sizes.append(formatting.get("fs"))
-                max_font = max([int(head[:-1]) for head in heading_sizes] or [0])
+                max_font = max([int(head.split('.', 1)[0]) for head in heading_sizes] or [0])
 
                 # MAIN PART
                 for group in article:
@@ -107,7 +105,7 @@ class Elastic(object):
                         new_heading['r'] = group.attrib['r']
                         new_heading['t'] = group.attrib['t']
                         new_heading['b'] = group.attrib['b']
-                        new_heading['page'] = strana
+                        new_heading['page'] = group.attrib['page']
                         all_text = ''
                         pars = group.xpath('par')
                         pars.sort(key=lambda x: x.attrib['t'])
@@ -127,7 +125,7 @@ class Elastic(object):
                         new_fulltext['r'] = group.attrib['r']
                         new_fulltext['t'] = group.attrib['t']
                         new_fulltext['b'] = group.attrib['b']
-                        new_fulltext['page'] = strana
+                        new_fulltext['page'] = group.attrib['page']
                         all_text = ''
                         pars = group.xpath('par')
                         pars.sort(key=lambda x: x.attrib['t'])
