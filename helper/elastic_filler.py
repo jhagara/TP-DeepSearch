@@ -151,9 +151,7 @@ class Elastic(object):
         error_logger.setLevel(logging.ERROR)
         error_name = abs_path + '/logs/error.log'
 
-        try:
-            e_file = open(error_name, 'r')
-        except (FileNotFoundError, IOError):
+        if not os.path.exists(error_name):
             e_file = open(error_name, 'w')
 
         error_handler = logging.FileHandler(error_name)
@@ -163,9 +161,7 @@ class Elastic(object):
         info_logger = logging.getLogger()
         info_name = abs_path + '/logs/info.log'
 
-        try:
-            i_file = open(info_name, 'r')
-        except (FileNotFoundError, IOError):
+        if not os.path.exists(info_name):
             i_file = open(info_name, 'w')
 
         info_handler = InfoHandler(info_name)
