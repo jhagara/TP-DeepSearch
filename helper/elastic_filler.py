@@ -175,8 +175,10 @@ class Elastic(object):
             except ElasticsearchException:
                 pass
 
+        number = str(xml_name)
+
         info_logger.info(str(datetime.date.today()) + "Journal " + issue_name + ", issue num. " +
-                         str(empty_issue['number']) + " of year " + str(empty_issue['year']) + " was parsed.")
+                         number + " was parsed.")
         info_logger.info(str(datetime.date.today()) + "Articles created: " + str(ar_count) +
                          "/" + str(len(articles)) + ".")
 
