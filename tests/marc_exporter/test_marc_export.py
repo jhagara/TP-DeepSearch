@@ -3,12 +3,12 @@ import os
 from pathlib import Path
 
 from tests.helper.helper_test_methods import HelperTestMethods
-import marc_exporter
 import config
 import shutil
 from pymarc import Record, Field, XMLWriter
 from time import gmtime, strftime
 from elasticsearch import Elasticsearch
+from semantic import Semantic
 
 
 class TestMarcExport(unittest.TestCase):
@@ -124,7 +124,8 @@ class TestMarcExport(unittest.TestCase):
         try:
             # export marc
             issue, articles = HelperTestMethods.create_custom_issue(issue, [article1, article2])
-            marc_exporter.main(issue['_id'], config.default_elastic_index)
+            semantic = Semantic()
+            semantic.export_marc_for_issue(issue['_id'])
 
             #  check if files exists
             marc_issue = Path(path_issue + "/issue_marc21.xml")
