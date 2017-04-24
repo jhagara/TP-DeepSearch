@@ -145,11 +145,10 @@ class Elastic(object):
 
         ar_count = 0
 
-        abs_path = os.path.dirname(os.path.abspath(__file__))
+        error_name = config.get_full_path('logs', 'error.log')
         formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
         error_logger = logging.getLogger()
         error_logger.setLevel(logging.ERROR)
-        error_name = abs_path + '/logs/error.log'
 
         if not os.path.exists(error_name):
             e_file = open(error_name, 'w')
@@ -159,7 +158,7 @@ class Elastic(object):
         error_logger.addHandler(error_handler)
 
         info_logger = logging.getLogger()
-        info_name = abs_path + '/logs/info.log'
+        info_name = config.get_full_path('logs', 'info.log')
 
         if not os.path.exists(info_name):
             i_file = open(info_name, 'w')
