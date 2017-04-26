@@ -1,8 +1,12 @@
 import copy
 import json
-from elasticsearch import Elasticsearch
+import logging
+from elasticsearch import Elasticsearch, ElasticsearchException
+from helper.infohandler import InfoHandler
 import config
 import re
+import datetime
+import os
 from time import gmtime, strftime
 
 
@@ -140,14 +144,45 @@ class Elastic(object):
                 articles.append(new_article)
 
         ar_count = 0
+
+        error_name = config.get_full_path('logs', 'error.log')
+        formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+        error_logger = logging.getLogger()
+        error_logger.setLevel(logging.ERROR)
+
+        if not os.path.exists(error_name):
+            e_file = open(error_name, 'w')
+
+        error_handler = logging.FileHandler(error_name)
+        error_handler.setFormatter(formatter)
+        error_logger.addHandler(error_handler)
+
+        info_logger = logging.getLogger()
+        info_name = config.get_full_path('logs', 'info.log')
+
+        if not os.path.exists(info_name):
+            i_file = open(info_name, 'w')
+
+        info_handler = InfoHandler(info_name)
+        info_handler.setFormatter(formatter)
+        info_logger.addHandler(info_handler)
+
         for art in articles:
             # index | PUT into ES
-            some = es.index(index=elastic_index, doc_type='article', body=art)
-            ar_count += 1
+            try:
+                some = es.index(index=elastic_index, doc_type='article', body=art)
+                ar_count += 1
+            except ElasticsearchException:
+                pass
 
-        print("Article created " + str(ar_count) + ", index: " +
-              elastic_index + ", type: article")
+        number = str(xml_name)
+
+        info_logger.info(str(datetime.date.today()) + "Journal " + issue_name + ", issue num. " +
+                         number + " was parsed.")
+        info_logger.info(str(datetime.date.today()) + "Articles created: " + str(ar_count) +
+                         "/" + str(len(articles)) + ".")
 
         es.indices.refresh(index=elastic_index)
 
         return issue_id
+
