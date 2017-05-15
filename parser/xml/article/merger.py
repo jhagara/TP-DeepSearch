@@ -9,7 +9,6 @@ ERROR = 3
 
 
 class Preprocessor(object):
-
     # main method for preprocessing elements for assembling
     # joins vertical affined elements and removes unused
     @classmethod
