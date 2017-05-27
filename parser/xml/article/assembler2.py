@@ -39,21 +39,13 @@ class Assembler2(object):
             i += 1
             self.current_page_num = i
             self.chains[i] = {}
-            chainable_equal_heading = ChainableEqualHeading(self)
-            chainable_equal_ratio_heading = ChainableEqualRatioHeading(self)
-            chainable_major_ratio_heading = ChainableMajorRatioHeading(self)
+            chainable = self.__get_chain_of_first_chainable_rules
 
             for group in page.xpath("group"):
                 group.attrib['page'] = str(i)
                 group.attrib['column_position'] = \
                     self.__find_column_position(group)
-
-                chained = chainable_equal_heading.is_valid(group)
-                if chained is None:
-                    chained = chainable_equal_ratio_heading.is_valid(group)
-                    if chained is None:
-                        chained = chainable_major_ratio_heading.is_valid(group)
-
+                chained = chainable.find_chain(group.attrib['column_position'], group)
                 if chained is not None:
                     self.__chain_groups(group, chained)
 
@@ -68,25 +60,40 @@ class Assembler2(object):
             self.current_page = page
             i += 1
             self.current_page_num = i
-            chainable_left_alone = ChainableLeftAlone(self)
-            chainable_middle_alone = ChainableMiddleAlone(self)
-            chainable_right_alone = ChainableRightAlone(self)
+            chainable = self.__get_chain_of_alone_chainable_rules
 
             for group in page.xpath("group[not(@chained)]"):
-
-                if group.attrib['column_position'] == 'left':
-                    chained = chainable_left_alone.is_valid(group)
-                elif group.attrib['column_position'] == 'middle':
-                    chained = chainable_middle_alone.is_valid(group)
-                elif group.attrib['column_position'] == 'right':
-                    chained = chainable_right_alone.is_valid(group)
-
+                chained = chainable.find_chain(group.attrib['column_position'], group)
                 if chained is not None:
                     self.__chain_groups(group, chained)
 
             self.previous_page = page
 
         self.__order_groups_and_create_array()
+
+    # initialize first chainable rules to:
+    #   equal_heading -> equal_ratio_heading -> major_ratio_heading
+    def __get_chain_of_first_chainable_rules(self):
+        chainable_equal_heading = ChainableEqualHeading(self)
+        chainable_equal_ratio_heading = ChainableEqualRatioHeading(self)
+        chainable_major_ratio_heading = ChainableMajorRatioHeading(self)
+
+        chainable_equal_ratio_heading.set_next_chainable(chainable_major_ratio_heading)
+        chainable_equal_heading.set_next_chainable(chainable_equal_ratio_heading)
+
+        return chainable_equal_heading
+
+    # initialize alone chainable rules to:
+    #   left_alone -> middle_alone -> alone_alone
+    def __get_chain_of_alone_chainable_rules(self):
+        chainable_left_alone = ChainableLeftAlone(self, 'left')
+        chainable_middle_alone = ChainableMiddleAlone(self, 'middle')
+        chainable_right_alone = ChainableRightAlone(self, 'right')
+
+        chainable_middle_alone.set_next_chainable(chainable_right_alone)
+        chainable_left_alone.set_next_chainable(chainable_middle_alone)
+
+        return chainable_left_alone
 
     # chain together two groups, creat associations between them
     def __chain_groups(self, group1, group2):
