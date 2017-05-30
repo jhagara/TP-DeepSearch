@@ -99,47 +99,10 @@ class Elastic(object):
 
                 # MAIN PART
                 for group in article:
-                    if group.attrib['type'] == 'headings':
-                        new_heading = copy.deepcopy(empty_group)
-                        # print(new_heading)
-                        new_heading['type'] = 'subheadings'
-                        new_heading['l'] = group.attrib['l']
-                        new_heading['r'] = group.attrib['r']
-                        new_heading['t'] = group.attrib['t']
-                        new_heading['b'] = group.attrib['b']
-                        new_heading['page'] = group.attrib['page']
-                        all_text = ''
-                        pars = group.xpath('par')
-                        pars.sort(key=lambda x: x.attrib['t'])
-                        for par in pars:
-                            for line in par.xpath('line'):
-                                for formatting in line.xpath('formatting'):
-                                    if int(formatting.get("fs").split('.', 1)[0]) == max_font:
-                                        new_heading['type'] = 'headings'
-                                    all_text += formatting.text + '\n'
-                        new_heading['text'] = all_text
-                        # print(new_heading)
-                        groups.append(new_heading)
-                    elif group.attrib['type'] == 'fulltexts':
-                        new_fulltext = copy.deepcopy(empty_group)
-                        new_fulltext['type'] = 'fulltexts'
-                        new_fulltext['l'] = group.attrib['l']
-                        new_fulltext['r'] = group.attrib['r']
-                        new_fulltext['t'] = group.attrib['t']
-                        new_fulltext['b'] = group.attrib['b']
-                        new_fulltext['page'] = group.attrib['page']
-                        all_text = ''
-                        pars = group.xpath('par')
-                        pars.sort(key=lambda x: x.attrib['t'])
-                        for par in pars:
-                            for line in par.xpath('line'):
-                                for formatting in line.xpath('formatting'):
-                                    all_text += formatting.text + '\n'
-                        new_fulltext['text'] = all_text
-                        # print(new_fulltext)
-                        groups.append(new_fulltext)
+                    for additional_group in self.__clone_groups(group, max_font):
+                        groups.append(additional_group)
+
                 new_article['groups'] = groups
-                # print(groups)
                 new_article['issue'] = empty_issue_art
                 articles.append(new_article)
 
@@ -186,3 +149,23 @@ class Elastic(object):
 
         return issue_id
 
+    def __clone_groups(self, group, max_font):
+        redundant_groups = []
+
+        for par in group.xpath('par'):
+            redundant_group = {'l': par.attrib['l'], 'r': par.attrib['r'],
+                               't': par.attrib['t'], 'b': par.attrib['b'],
+                               'page': group.attrib['page'], 'type': group.attrib['type']}
+
+            # get text and true type
+            all_text = ''
+            for line in par.xpath('line'):
+                for formatting in line.xpath('formatting'):
+                    if redundant_group['type'] == 'headings' and int(formatting.get("fs").split('.', 1)[0]) != max_font:
+                        redundant_group['type'] = 'subheadings'
+                    all_text += formatting.text + '\n'
+
+            redundant_group['text'] = all_text
+            redundant_groups.append(redundant_group)
+
+        return redundant_groups
