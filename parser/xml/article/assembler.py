@@ -38,7 +38,7 @@ class Assembler(object):
             i += 1
             self.current_page_num = i
             self.chains[i] = {}
-            chainable = self.__get_chain_of_first_chainable_rules
+            chainable = self.__get_chain_of_first_chainable_rules()
 
             for group in page.xpath("group"):
                 group.attrib['page'] = str(i)
@@ -59,12 +59,32 @@ class Assembler(object):
             self.current_page = page
             i += 1
             self.current_page_num = i
-            chainable = self.__get_chain_of_alone_chainable_rules
+            chainable = self.__get_chain_of_alone_chainable_rules()
 
             for group in page.xpath("group[not(@chained)]"):
                 chained = chainable.find_chain(group.attrib['column_position'], group)
                 if chained is not None:
                     self.__chain_groups(group, chained)
+
+            self.previous_page = page
+
+        self.previous_page = None
+        self.current_page_num = None
+
+        i = 0
+        # third cycle of all ALONE in the dark groups, just grouped in one article on page
+        for page in self.parsed_xml.xpath("/document/page"):
+            self.current_page = page
+            i += 1
+            self.current_page_num = i
+
+            groups = page.xpath("group[not(@chained)]")
+            if groups is None or len(groups) == 0:
+                continue
+            alone_article = groups[0]
+
+            for group in groups[1:]:
+                self.__chain_groups(alone_article, group)
 
             self.previous_page = page
 

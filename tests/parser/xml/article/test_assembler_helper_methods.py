@@ -1,6 +1,13 @@
 import unittest
 from lxml import etree
 from parser.xml.article.assembler import Assembler
+from parser.xml.article.chainable import Chainable
+from parser.xml.article.chainable_equal_heading import ChainableEqualHeading
+from parser.xml.article.chainable_equal_ratio_heading import ChainableEqualRatioHeading
+from parser.xml.article.chainable_left_alone import ChainableLeftAlone
+from parser.xml.article.chainable_middle_alone import ChainableMiddleAlone
+from parser.xml.article.chainable_right_alone import ChainableRightAlone
+from parser.xml.article.chainable_major_ratio_heading import ChainableMajorRatioHeading
 
 
 class TestAssemblerHelperMethods(unittest.TestCase):
@@ -63,7 +70,9 @@ class TestAssemblerHelperMethods(unittest.TestCase):
         current_page = original_xml.xpath("/document/page[1]")[0]
 
         assembler = Assembler(None, current_page=current_page, ERROR=3)
-        found_group = assembler._Assembler__find_nearest_left(group_E)
+        chainable = Chainable(assembler)
+
+        found_group = chainable._Chainable__find_nearest_left(group_E)
         self.assertIsNotNone(found_group)
         self.assertEqual('C', found_group.attrib['name'])
 
@@ -84,9 +93,10 @@ class TestAssemblerHelperMethods(unittest.TestCase):
         original_xml = etree.fromstring(original_xml)
         group_E = original_xml.xpath("/document/page/group[@name='E'][1]")[0]
         current_page = original_xml.xpath("/document/page[1]")[0]
-
         assembler = Assembler(None, current_page=current_page, ERROR=3)
-        found_group = assembler._Assembler__find_nearest_right(group_E)
+        chainable = Chainable(assembler)
+
+        found_group = chainable._Chainable__find_nearest_right(group_E)
         self.assertIsNotNone(found_group)
         self.assertEqual('G', found_group.attrib['name'])
 
@@ -163,7 +173,8 @@ class TestAssemblerHelperMethods(unittest.TestCase):
         original_xml = etree.fromstring(original_xml)
         current_page = original_xml.xpath("/document/page[1]")[0]
         assembler = Assembler(None, current_page=current_page, ERROR=3)
-        found_group = assembler._Assembler__find_middle_alone()
+        chainable = Chainable(assembler)
+        found_group = chainable._Chainable__find_middle_alone()
 
         # should return alone middle group, do not care if D or E
         self.assertIsNotNone(found_group)
@@ -186,7 +197,8 @@ class TestAssemblerHelperMethods(unittest.TestCase):
         original_xml = etree.fromstring(original_xml)
         current_page = original_xml.xpath("/document/page[1]")[0]
         assembler = Assembler(None, current_page=current_page, ERROR=3)
-        found_group = assembler._Assembler__find_last_middle()
+        chainable = Chainable(assembler)
+        found_group = chainable._Chainable__find_last_middle()
 
         # find last element in middle column, should return element with name H
         self.assertIsNotNone(found_group)

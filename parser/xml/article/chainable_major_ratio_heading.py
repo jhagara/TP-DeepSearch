@@ -9,13 +9,13 @@ class ChainableMajorRatioHeading(Chainable):
         :return: found heading as group element or None
         """
 
-        header = self.__find_nearest_above(current_group)
+        header = self._Chainable__find_nearest_above(current_group)
         if header is None:
             return None
         elif header.attrib['type'] != 'headings':
             return None
         else:
-            result = self.__find_all_nearest_below(header)
+            result = self._Chainable__find_all_nearest_below(header)
             if result is None:
                 return None
             elif len(result) == 1:

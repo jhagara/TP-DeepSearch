@@ -9,10 +9,10 @@ class ChainableLeftAlone(Chainable):
                 :return: found possible chainable group element or None
                 """
 
-        nearest_above = self.__find_nearest_above(current_group)
+        nearest_above = self._Chainable__find_nearest_above(current_group)
         if (nearest_above is None
             or nearest_above.attrib['type'] == 'separators'):
-            parent_group = self.__find_last_from_previous_page()
+            parent_group = self._Chainable__find_last_from_previous_page()
             return parent_group
         else:
             return None

@@ -3,18 +3,25 @@ from parser.xml.article.chainable import Chainable
 
 class ChainableEqualRatioHeading(Chainable):
     def is_valid(self, current_group):
-        """2A, equal width of current_group and nearest heading above
+        """2B, equal ratio of groups below heading, this heading is above current_group
         :param current_group:lxml.etree._Element
         :return: found heading as group element or None
         """
 
-        result = self.__find_nearest_above(current_group)
-        if result is None:
+        header = self._Chainable__find_nearest_above(current_group)
+        if header is None:
             return None
-        elif result.attrib['type'] != 'headings':
+        elif header.attrib['type'] != 'headings':
             return None
         else:
-            return self.__is_equal_2a(current_group, result)
+            result = self._Chainable__find_all_nearest_below(header)
+            if result is None:
+                return None
+            elif len(result) > 1:
+                if self.__all_groups_width_same(result, header):
+                    return header
+                else:
+                    return None
 
     def __all_groups_width_same(self, all_groups, header):
         l = int(header.attrib['l'])

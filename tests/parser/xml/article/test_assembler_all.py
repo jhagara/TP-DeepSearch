@@ -4,10 +4,10 @@ from parser.xml.article.assembler import Assembler
 import re
 import os
 
-desired_numbers = [2, 3, 4, 2, 2, 4, 2, 3, 2, 2, 3, 2, 3, 3, 3, 2, 6, 2, 2, 3, 2, 3, 3, 2, 4, 4, 5]
+desired_numbers = [2, 3, 4, 2, 2, 4, 2, 3, 2, 2, 3, 2, 3, 3, 3, 2, 6, 2, 2, 3, 2, 3, 3, 2]
 
 
-class Testassemblerall(unittest.TestCase):
+class TestAssemblerAll(unittest.TestCase):
     def test_assembler_all_success(self):
         abs_path = os.path.dirname(os.path.abspath(__file__))
         path = abs_path + "/input_test_assembler.xml"

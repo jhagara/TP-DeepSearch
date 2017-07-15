@@ -8,7 +8,7 @@ class ChainableEqualHeading(Chainable):
         :return: found heading as group element or None
         """
 
-        result = self.__find_nearest_above(current_group)
+        result = self._Chainable__find_nearest_above(current_group)
         if result is None:
             return None
         elif result.attrib['type'] != 'headings':

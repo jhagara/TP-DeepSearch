@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import json
 from lxml import etree
 from parser.xml.cleaner import Cleaner
@@ -53,9 +55,7 @@ class XmlParser(object):
     # reading of JSON configuration file which defines paths
     @classmethod
     def read_from_json(cls, readfile):
-        with open(readfile, 'r') as f:
-            try:
-                return json.load(f)
-            except ValueError:
-                print('Error! Unable to read file!')
-                return {}
+        with open(readfile, encoding='utf8') as f:
+            cnfg = json.load(f)
+            return cnfg
+                

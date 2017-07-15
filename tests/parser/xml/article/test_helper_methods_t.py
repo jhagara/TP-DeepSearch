@@ -1,7 +1,7 @@
 import unittest
 from lxml import etree
 from parser.xml.article.assembler import Assembler
-
+from parser.xml.article.chainable import Chainable
 
 class TestAssemblerHelperMethods(unittest.TestCase):
     def test_find_all_nearest_below(self):
@@ -27,12 +27,14 @@ class TestAssemblerHelperMethods(unittest.TestCase):
         current_page = original_xml.xpath("/document/page[1]")[0]
 
         assembler = Assembler(None, current_page=current_page, ERROR=3)
-        found_group = assembler._Assembler__find_all_nearest_below(group_A)
-        list = []
+        chainable = Chainable(assembler)
+
+        found_group = chainable._Chainable__find_all_nearest_below(group_A)
+        list_test = []
         self.assertIsNotNone(found_group)
         for x in found_group:
-            list.append(x.attrib['name'])
-        self.assertEqual(['B', 'C', 'D'], list)
+            list_test.append(x.attrib['name'])
+        self.assertEqual(['B', 'C', 'D'], list_test)
 
     def test_find_nearest_above(self):
         original_xml = """
@@ -56,8 +58,9 @@ class TestAssemblerHelperMethods(unittest.TestCase):
         original_xml = etree.fromstring(original_xml)
         group_F = original_xml.xpath("/document/page/group[@name='F'][1]")[0]
         current_page = original_xml.xpath("/document/page[1]")[0]
-
         assembler = Assembler(None, current_page=current_page, ERROR=3)
-        found_group = assembler._Assembler__find_nearest_above(group_F)
+        chainable = Chainable(assembler)
+
+        found_group = chainable._Chainable__find_nearest_above(group_F)
         self.assertIsNotNone(found_group)
         self.assertEqual('E', found_group.attrib['name'])

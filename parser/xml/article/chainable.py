@@ -60,7 +60,6 @@ class Chainable(object):
 
         return self.__get_min_or_max(results, -1, 'r', operator.gt)
 
-
     def __find_nearest_right(self, group):
         """find nearest right group
 
@@ -83,7 +82,6 @@ class Chainable(object):
 
         return self.__get_min_or_max(results, 100000, 'l', operator.lt)
 
-
     def __find_last_middle(self):
         """find last group element located in middle column
 
@@ -104,7 +102,6 @@ class Chainable(object):
         else:
             return None
 
-
     def __find_middle_alone(self):
         """find any ALONE group element located in middle column
 
@@ -119,8 +116,6 @@ class Chainable(object):
         else:
             return None
 
-
-    # Martina
     def __find_nearest_above(self, group):
         """find nearest group element located above current group element
         :param group:lxml.etree._Element
@@ -135,7 +130,6 @@ class Chainable(object):
                                           "@r >= " + str(l) + " and @b <= " + str(t) + "]"
         results = self.current_page.xpath(query)
         return self.__get_min_or_max(results, -1, 'b', operator.gt)
-
 
     def __find_last_from_previous_page(self):
         """find last group element from previous page
