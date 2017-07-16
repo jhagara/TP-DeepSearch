@@ -9,6 +9,9 @@ class ChainableMiddleAlone(Chainable):
         :return: found possible chainable group element or None
         """
 
+        if current_group.attrib['column_position'] != 'middle':
+            return None
+
         left = self._Chainable__find_nearest_left(current_group)
         if left is not None and left.attrib['type'] == 'separators':
             return None

@@ -9,6 +9,9 @@ class ChainableLeftAlone(Chainable):
                 :return: found possible chainable group element or None
                 """
 
+        if current_group.attrib['column_position'] != 'left':
+            return None
+
         nearest_above = self._Chainable__find_nearest_above(current_group)
         if (nearest_above is None
             or nearest_above.attrib['type'] == 'separators'):

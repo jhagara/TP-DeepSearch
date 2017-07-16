@@ -9,6 +9,9 @@ class ChainableRightAlone(Chainable):
         :return: found possible chainable group element or None
         """
 
+        if current_group.attrib['column_position'] != 'right':
+            return None
+
         o = self._Chainable__find_middle_alone()
         last_mid = self._Chainable__find_last_middle()
 

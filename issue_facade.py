@@ -1,21 +1,21 @@
 import os
-import sys
 from semantic import Semantic
 import re
 import config
-from elasticsearch import Elasticsearch
 import copy
+import sys
 
 
 class IssueFacade(object):
     @classmethod
-    def bulk_insert(cls, environment, parser_dir, dir, name):
-        cls.__set_env(environment)
-
+    def bulk_insert(cls, parser_dir, dir, name):
         print('PARSING Directory: ', dir)
         files = []
 
         for current_dir in os.popen("find " + dir + " -path '*/XML/*.xml' -printf '%h\n' | sort -u").read().split('\n'):
+            if current_dir == '':
+                break
+
             xml = re.sub("[\n]", '', os.popen("find " + current_dir + " -maxdepth 1 -type f -name '*.xml'").read())
 
             current_dir = re.sub("[\n]", '', os.popen("dirname '" + re.sub("[\n]", '', current_dir) + "'").read())
@@ -35,30 +35,27 @@ class IssueFacade(object):
             issue_id = semantic.save_to_elastic(name, file['dir'], file)
             semantic.insert_key_words(issue_id)
 
-        cls.__unset_env()
+        return 'Bulk insert was successful'
 
     @classmethod
-    def update_issue(cls, environment, issue_id):
-        cls.__set_env(environment)
-
-        es = Elasticsearch()
+    def update_issue(cls, issue_id):
         semantic = Semantic()
         semantic.insert_key_words(issue_id)
 
-        cls.__unset_env()
+        return 'Updating Issue with id: ' + str(issue_id) + ' was successful'
 
     @classmethod
-    def export_issue(cls, environment, issue_id):
-        cls.__set_env(environment)
-
-        es = Elasticsearch()
+    def export_issue(cls, issue_id):
         semantic = Semantic()
         semantic.export_marc_for_issue(issue_id)
         semantic.export_image_for_issue(issue_id)
 
-        cls.__unset_env()
+        return 'Exporting Issue with id: ' + str(issue_id) + ' was successful'
 
-    def __find_file(self, current_dir, parser_dir, name):
+    # PRIVATE
+
+    @classmethod
+    def __find_file(cls, current_dir, parser_dir, name):
         while True:
             path = os.popen("find " + current_dir + " -maxdepth 1 -type f -name '" + name + "'").read()
             path = re.sub("[\n]", '', path)
@@ -70,8 +67,27 @@ class IssueFacade(object):
 
         return path
 
-    def __set_env(self, environment):
-        config.set_environment(environment)
 
-    def __unset_env(self):
-        config.set_environment(config.default_elastic_index)
+def main(*attrs):
+    action = attrs[0]
+    environment = attrs[1]
+    prms = attrs[2:]
+
+    print(action)
+    print(environment)
+    print(prms)
+
+    config.set_environment(environment)
+
+    try:
+        print(getattr(IssueFacade, action)(*prms))
+        result_code = 0
+    except:
+        print(sys.exc_info()[0])
+        result_code = 1
+
+    config.set_environment(config.default_elastic_index)
+    return result_code
+
+if __name__ == "__main__":
+    sys.exit(main(*sys.argv[1:]))

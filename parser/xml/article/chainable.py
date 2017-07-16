@@ -8,18 +8,15 @@ class Chainable(object):
         self.current_page = assembler.current_page
         self.ERROR = assembler.ERROR
         self.next_chainable = None
-        self.column_position = column_position
 
     def set_next_chainable(self, next_chainable):
         self.next_chainable = next_chainable
 
-    def find_chain(self, column_position, current_group):
-        group = None
-
-        if self.column_position is None or self.column_position == column_position:
-            group = self.is_valid(current_group)
+    def find_chain(self, current_group):
+        group = self.is_valid(current_group)
         if group is None and self.next_chainable is not None:
-            group = self.next_chainable.find_chain(self, current_group)
+            group = self.next_chainable.find_chain(current_group)
+
         return group
 
     def is_valid(self, current_group):

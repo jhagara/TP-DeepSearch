@@ -44,7 +44,7 @@ class Assembler(object):
                 group.attrib['page'] = str(i)
                 group.attrib['column_position'] = \
                     self.__find_column_position(group)
-                chained = chainable.find_chain(group.attrib['column_position'], group)
+                chained = chainable.find_chain(group)
                 if chained is not None:
                     self.__chain_groups(group, chained)
 
@@ -62,7 +62,7 @@ class Assembler(object):
             chainable = self.__get_chain_of_alone_chainable_rules()
 
             for group in page.xpath("group[not(@chained)]"):
-                chained = chainable.find_chain(group.attrib['column_position'], group)
+                chained = chainable.find_chain(group)
                 if chained is not None:
                     self.__chain_groups(group, chained)
 
@@ -107,9 +107,9 @@ class Assembler(object):
     # initialize alone chainable rules to:
     #   left_alone -> middle_alone -> alone_alone
     def __get_chain_of_alone_chainable_rules(self):
-        chainable_left_alone = ChainableLeftAlone(self, 'left')
-        chainable_middle_alone = ChainableMiddleAlone(self, 'middle')
-        chainable_right_alone = ChainableRightAlone(self, 'right')
+        chainable_left_alone = ChainableLeftAlone(self)
+        chainable_middle_alone = ChainableMiddleAlone(self)
+        chainable_right_alone = ChainableRightAlone(self)
 
         chainable_middle_alone.set_next_chainable(chainable_right_alone)
         chainable_left_alone.set_next_chainable(chainable_middle_alone)
