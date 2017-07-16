@@ -139,9 +139,15 @@ class Elastic(object):
                 ar_count += 1
             except ElasticsearchException:
                 pass
+<<<<<<< HEAD
 
         number = str(xml_name)
 
+=======
+
+        number = str(xml_name)
+
+>>>>>>> development
         info_logger.info(str(datetime.date.today()) + "Journal " + issue_name + ", issue num. " +
                          number + " was parsed.")
         info_logger.info(str(datetime.date.today()) + "Articles created: " + str(ar_count) +
@@ -163,7 +169,11 @@ class Elastic(object):
             all_text = ''
             for line in par.xpath('line'):
                 for formatting in line.xpath('formatting'):
+<<<<<<< HEAD
                     if redundant_group['type'] == 'headings' and int(PositionHelper.get_fs(formatting)) != max_font:
+=======
+                    if redundant_group['type'] == 'headings' and int(formatting.get("fs").split('.', 1)[0]) != max_font:
+>>>>>>> development
                         redundant_group['type'] = 'subheadings'
                     all_text += formatting.text + '\n'
 
