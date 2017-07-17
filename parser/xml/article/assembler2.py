@@ -1,4 +1,5 @@
 import operator
+from lxml import etree
 from parser.xml.article.chainable_equal_heading import ChainableEqualHeading
 from parser.xml.article.chainable_equal_ratio_heading import ChainableEqualRatioHeading
 from parser.xml.article.chainable_left_alone import ChainableLeftAlone
@@ -7,7 +8,7 @@ from parser.xml.article.chainable_right_alone import ChainableRightAlone
 from parser.xml.article.chainable_major_ratio_heading import ChainableMajorRatioHeading
 
 
-class Assembler(object):
+class Assembler2(object):
     def __init__(self, parsed_xml, **args):
         default = {'previous_page': None,
                    'current_page': None,
@@ -38,13 +39,13 @@ class Assembler(object):
             i += 1
             self.current_page_num = i
             self.chains[i] = {}
-            chainable = self.__get_chain_of_first_chainable_rules()
+            chainable = self.__get_chain_of_first_chainable_rules
 
             for group in page.xpath("group"):
                 group.attrib['page'] = str(i)
                 group.attrib['column_position'] = \
                     self.__find_column_position(group)
-                chained = chainable.find_chain(group)
+                chained = chainable.find_chain(group.attrib['column_position'], group)
                 if chained is not None:
                     self.__chain_groups(group, chained)
 
@@ -59,38 +60,16 @@ class Assembler(object):
             self.current_page = page
             i += 1
             self.current_page_num = i
-            chainable = self.__get_chain_of_alone_chainable_rules()
+            chainable = self.__get_chain_of_alone_chainable_rules
 
             for group in page.xpath("group[not(@chained)]"):
-                chained = chainable.find_chain(group)
+                chained = chainable.find_chain(group.attrib['column_position'], group)
                 if chained is not None:
                     self.__chain_groups(group, chained)
 
             self.previous_page = page
 
-        self.previous_page = None
-        self.current_page_num = None
-
-        i = 0
-        # third cycle of all ALONE in the dark groups, just grouped in one article on page
-        for page in self.parsed_xml.xpath("/document/page"):
-            self.current_page = page
-            i += 1
-            self.current_page_num = i
-
-            groups = page.xpath("group[not(@chained)]")
-            if groups is None or len(groups) == 0:
-                continue
-            alone_article = groups[0]
-
-            for group in groups[1:]:
-                self.__chain_groups(alone_article, group)
-
-            self.previous_page = page
-
         self.__order_groups_and_create_array()
-
-    # PRIVATE
 
     # initialize first chainable rules to:
     #   equal_heading -> equal_ratio_heading -> major_ratio_heading
@@ -107,9 +86,9 @@ class Assembler(object):
     # initialize alone chainable rules to:
     #   left_alone -> middle_alone -> alone_alone
     def __get_chain_of_alone_chainable_rules(self):
-        chainable_left_alone = ChainableLeftAlone(self)
-        chainable_middle_alone = ChainableMiddleAlone(self)
-        chainable_right_alone = ChainableRightAlone(self)
+        chainable_left_alone = ChainableLeftAlone(self, 'left')
+        chainable_middle_alone = ChainableMiddleAlone(self, 'middle')
+        chainable_right_alone = ChainableRightAlone(self, 'right')
 
         chainable_middle_alone.set_next_chainable(chainable_right_alone)
         chainable_left_alone.set_next_chainable(chainable_middle_alone)
@@ -138,7 +117,7 @@ class Assembler(object):
         else:
             self.last_chain_num += 1
             # add groups to newly created group
-            self.chains[self.current_page_num][self.last_chain_num] = [group1, group2] # NOQA
+            self.chains[self.current_page_num][self.last_chain_num] = [group1, group2]  # NOQA
             # add knowledge of appending groups to chains mapper
             self.chains_mapper[id1] = [self.current_page_num, self.last_chain_num]
             self.chains_mapper[id2] = [self.current_page_num, self.last_chain_num]
@@ -160,6 +139,7 @@ class Assembler(object):
             return 'right'
         else:
             return 'left'
+
 
     def __exist_any_on_the_left(self, group):
         """find all groups on the left from current group
