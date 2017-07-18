@@ -2,7 +2,7 @@ from lxml import etree
 import os
 
 
-class Validator(object):
+class SchemaValidator(object):
     INPUT_SCHEMA = "/../../schemas/input_schema_v2.xsd"
 
     def validate(self, xml, schema):

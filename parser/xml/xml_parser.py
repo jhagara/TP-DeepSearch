@@ -8,7 +8,7 @@ from parser.xml.discriminator.heading import _Heading
 from parser.xml.discriminator.separatorsid import SeparatorId
 from parser.xml.article.merger import Preprocessor
 from parser.xml.article.assembler import Assembler
-from parser.xml.validator import Validator
+from parser.xml.schemavalidator import SchemaValidator
 
 
 class XmlParser(object):
@@ -18,8 +18,8 @@ class XmlParser(object):
         xml = etree.parse(xml_path)
 
         # validate xml
-        validator = Validator()
-        validator.validate_inputxml(xml)
+        schemavalidator = SchemaValidator()
+        schemavalidator.validate_inputxml(xml)
 
         # load header config json file
         header_config = cls.read_from_json(header_config_path)

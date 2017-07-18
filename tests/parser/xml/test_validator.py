@@ -1,12 +1,12 @@
 import unittest
 import os
 from lxml import etree
-from parser.xml.validator import Validator
+from parser.xml.schemavalidator import SchemaValidator
 
 
 class MyTestCase(unittest.TestCase):
     def test_validate_inputxml(self):
-        validator = Validator()
+        validator = SchemaValidator()
         valid_path = os.path.dirname(os.path.abspath(__file__)) + "/valid.xml"  # path to valid xml
         valid_xml = etree.parse(valid_path)
         result = validator.validate_inputxml(valid_xml)
