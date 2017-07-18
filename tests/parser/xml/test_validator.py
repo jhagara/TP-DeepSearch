@@ -14,8 +14,7 @@ class MyTestCase(unittest.TestCase):
 
         invalid_path = os.path.dirname(os.path.abspath(__file__)) + "/invalid.xml"  # path to invalid xml
         invalid_xml = etree.parse(invalid_path)
-        result = validator.validate_inputxml(invalid_xml)
-        self.assertEqual(False, result)
+        self.assertRaises(BaseException, validator.validate_inputxml, invalid_xml)
 
 if __name__ == '__main__':
     unittest.main()
