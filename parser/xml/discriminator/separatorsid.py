@@ -1,4 +1,5 @@
 from lxml import etree
+from parser.xml.position_helper import PositionHelper
 
 # purpose of this class is to identify separators (pictures, adds, horizontal
 # lines etc.) and rename blockTypes to "separator"
@@ -39,10 +40,10 @@ class SeparatorId(object):
 
                 results = page.xpath(query)
                 if len(results) != 0:
-                    nearest = cls.get_nearest(results)
+                    nearest = PositionHelper.get_nearest(results)
 
                     # nearest_many is RESULT
-                    nearest_many = cls.get_relative_nearest(nearest, results)
+                    nearest_many = PositionHelper.get_relative_nearest(nearest, results)
 
                     # check if horizontal line is needed
                     for near in nearest_many:
@@ -89,31 +90,6 @@ class SeparatorId(object):
         new_hr.attrib['type'] = 'separator'
 
         return new_hr
-
-    # get one nearest element
-    @classmethod
-    def get_nearest(cls, results):
-        maximum = -1
-        for result in results:
-            val = int(result.attrib['b'])
-            if val > maximum:
-                maximum = val
-                max_elem = result
-
-        return max_elem
-
-    # get all nearest elements with usage of ERROR value
-    @classmethod
-    def get_relative_nearest(cls, nearest, results):
-        b_max = int(nearest.attrib['b'])
-        b_min = b_max - ERROR
-        relative = []
-        for result in results:
-            b = int(result.attrib['b'])
-            if b >= b_min and b <= b_max:
-                    relative.append(result)
-
-        return relative
 
     # check if horizontal line needs to be added between two paragraphs
     @classmethod

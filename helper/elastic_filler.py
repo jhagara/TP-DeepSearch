@@ -8,6 +8,7 @@ import re
 import datetime
 import os
 from time import gmtime, strftime
+from parser.xml.position_helper import PositionHelper
 
 
 class Elastic(object):
@@ -94,8 +95,9 @@ class Elastic(object):
                         for par in group.xpath('par'):
                             for line in par.xpath('line'):
                                 for formatting in line.xpath('formatting'):
-                                    heading_sizes.append(formatting.get("fs"))
-                max_font = max([int(head.split('.', 1)[0]) for head in heading_sizes] or [0])
+                                    heading_sizes.append(PositionHelper.get_fs(formatting))
+
+                max_font = max([int(head) for head in heading_sizes] or [0])
 
                 # MAIN PART
                 for group in article:
@@ -161,7 +163,7 @@ class Elastic(object):
             all_text = ''
             for line in par.xpath('line'):
                 for formatting in line.xpath('formatting'):
-                    if redundant_group['type'] == 'headings' and int(formatting.get("fs").split('.', 1)[0]) != max_font:
+                    if redundant_group['type'] == 'headings' and int(PositionHelper.get_fs(formatting)) != max_font:
                         redundant_group['type'] = 'subheadings'
                     all_text += formatting.text + '\n'
 

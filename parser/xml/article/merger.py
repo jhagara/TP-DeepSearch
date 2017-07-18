@@ -1,73 +1,79 @@
 from lxml import etree
 import copy
+from parser.xml.position_helper import PositionHelper
+
+ERROR = 3
 
 # purpose of this class is to merge blocks of equal type
 # to groups of that type and set coordinates to the group
 
-ERROR = 3
-
 
 class Preprocessor(object):
-
     # main method for preprocessing elements for assembling
-
+    # joins vertical affined elements and removes unused
     @classmethod
     def preprocess(cls, parsed_xml):
-
-        # search document for pages
         for page in parsed_xml.xpath("/document/page"):
-            # search every page for blocks
             for node in page.xpath("block"):
-                # if block type is separator
                 if node.attrib.get('type') == "separator":
-                    l = int(node.attrib['l'])
-                    if l >= ERROR:
-                        l -= ERROR
-                    r = int(node.attrib['r']) + ERROR
-                    t = int(node.attrib['t'])
-
-                    # De Morgan's law - check intersection
-                    # (StartA <= EndB)  and  (EndA >= StartB)
-                    # find all matching blocks
-                    query = "block[@l <= " + str(r) + \
-                            " and @r >= " + str(l) + \
-                            " and @b <= " + str(t) + "]"
-                    results = page.xpath(query)
+                    results = cls.__search_blocks_below_separator(page, node)
                     cls.__manage_group(page, node, results)
                 else:
                     for par in node.xpath("par"):
-                        l = int(par.attrib['l'])
-                        if l >= ERROR:
-                            l -= ERROR
-                        r = int(par.attrib['r']) + ERROR
-                        t = int(par.attrib['t'])
-
-                        # De Morgan's law - check intersection
-                        # (StartA <= EndB)  and  (EndA >= StartB)
-                        # find all matching blocks and paragraphs
-                        query = "block[@type ='separator' and @l <= " +\
-                                str(r) + " and @r >= " +\
-                                str(l) + " and @b <= " +\
-                                str(t) + "] | block/par[@l <= " +\
-                                str(r) + " and @r >= " +\
-                                str(l) + " and @b <= " +\
-                                str(t) + "]"
-                        results = page.xpath(query)
+                        results = cls.__search_blocks_and_pars_below_non_separator(page, par)
                         cls.__manage_group(page, par, results)
-        # delete all unused block
-        for block in parsed_xml.xpath("/document/page/block"):
-            block.getparent().remove(block)
-        for group in parsed_xml.xpath("/document/page/group"):
-            # delete all unused groups
-            if not group.getchildren():
-                group.getparent().remove(group)
-            # set coordinates for groups
-            else:
-                cls.__add_coordinates(group)
+
+        cls.__detele_unused_blocks_and_groups(parsed_xml)
 
         return parsed_xml
 
-    # PRIVATE METHODS
+    # search blocks in area below separator
+    # using De Morgan's law
+    @classmethod
+    def __search_blocks_below_separator(cls, page, node):
+        l = int(node.attrib['l'])
+        if l >= ERROR:
+            l -= ERROR
+        r = int(node.attrib['r']) + ERROR
+        t = int(node.attrib['t'])
+
+        query = "block[@l <= " + str(r) + \
+                " and @r >= " + str(l) + \
+                " and @b <= " + str(t) + "]"
+
+        return page.xpath(query)
+
+    # search blocks and paragraphs in area below fulltexts
+    # and headings using De Morgan's law
+    @classmethod
+    def __search_blocks_and_pars_below_non_separator(cls, page, par):
+        l = int(par.attrib['l'])
+        if l >= ERROR:
+            l -= ERROR
+        r = int(par.attrib['r']) + ERROR
+        t = int(par.attrib['t'])
+
+        query = "block[@type ='separator' and @l <= " + \
+                str(r) + " and @r >= " + \
+                str(l) + " and @b <= " + \
+                str(t) + "] | block/par[@l <= " + \
+                str(r) + " and @r >= " + \
+                str(l) + " and @b <= " + \
+                str(t) + "]"
+
+        return page.xpath(query)
+
+    # delete all unused blocks and groups
+    # set coordinates for used groups
+    @classmethod
+    def __detele_unused_blocks_and_groups(cls, parsed_xml):
+        for block in parsed_xml.xpath("/document/page/block"):
+            block.getparent().remove(block)
+        for group in parsed_xml.xpath("/document/page/group"):
+            if not group.getchildren():
+                group.getparent().remove(group)
+            else:
+                PositionHelper.add_coordinates_from_child(group)
 
     # method to manage grouping
     # based on number of results and type of result
@@ -76,8 +82,8 @@ class Preprocessor(object):
     def __manage_group(cls, page, node, results):
         # if results exist
         if len(results) != 0:
-            nearest = cls.__get_nearest(results)
-            nearest_many = cls.__get_relative_nearest(nearest, results)
+            nearest = PositionHelper.get_nearest(results)
+            nearest_many = PositionHelper.get_relative_nearest(nearest, results)
 
             # if type matches
             if cls.__get_type(node, nearest_many):
@@ -173,54 +179,6 @@ class Preprocessor(object):
         result = page.xpath(query)
 
         return result
-
-    # method to calculate and set coordinates to established groups
-    @classmethod
-    def __add_coordinates(cls, node):
-        group_t = -1
-        group_b = -1
-        group_r = -1
-        group_l = -1
-        for child in node.getchildren():
-            if int(child.attrib['t']) < group_t or group_t == -1:
-                group_t = int(child.attrib['t'])
-            if int(child.attrib['b']) > group_b:
-                group_b = int(child.attrib['b'])
-            if int(child.attrib['r']) > group_r:
-                group_r = int(child.attrib['r'])
-            if int(child.attrib['l']) < group_l or group_l == -1:
-                group_l = int(child.attrib['l'])
-
-        node.attrib['l'] = str(group_l)
-        node.attrib['t'] = str(group_t)
-        node.attrib['r'] = str(group_r)
-        node.attrib['b'] = str(group_b)
-
-    # method to  get one nearest element
-    @classmethod
-    def __get_nearest(cls, results):
-        maximum = -1
-        max_elem = results[0]
-        for result in results:
-            val = int(result.attrib['b'])
-            if val > maximum:
-                maximum = val
-                max_elem = result
-
-        return max_elem
-
-    # method to get all nearest elements with usage of ERROR value
-    @classmethod
-    def __get_relative_nearest(cls, nearest, results):
-        b_max = int(nearest.attrib['b'])
-        b_min = b_max - ERROR
-        relative = []
-        for result in results:
-            b = int(result.attrib['b'])
-            if b_min <= b <= b_max:
-                relative.append(result)
-
-        return relative
 
     # method to calculate axis of element
     @classmethod
