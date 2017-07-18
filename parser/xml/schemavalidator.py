@@ -3,7 +3,7 @@ import os
 
 
 class SchemaValidator(object):
-    INPUT_SCHEMA = "/../../schemas/input_schema_v2.xsd"
+    INPUT_SCHEMA = "/schemas/input_schema.xsd"
 
     def validate(self, xml, schema):
         if xml is None or schema is None:
