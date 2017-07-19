@@ -81,7 +81,8 @@ class TestKeyWords(unittest.TestCase):
             "keywords": [],
             "issue": {
                 "id": 0
-            }
+            },
+            'is_ignored': False
         }
 
         article2 = {
@@ -94,7 +95,8 @@ class TestKeyWords(unittest.TestCase):
             "keywords": [],
             "issue": {
                 "id": 0
-            }
+            },
+            'is_ignored': False
         }
         issue, articles = HelperTestMethods.create_custom_issue(articles=[article1, article2])
         issue_facade.main('update_issue', config.default_elastic_index, issue['_id'])
