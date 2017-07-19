@@ -86,15 +86,6 @@ class TestMarcExport(unittest.TestCase):
                  California and Malibu, California. Python was followed by two sequels: Python
                  II (2002) and Boa vs. Python (2004), both also made-for-TV films."""
 
-        text2 = """The Colt Python is a .357 Magnum caliber revolver formerly
-                manufactured by Colt's Manufacturing Company of Hartford, Connecticut.
-                It is sometimes referred to as a "Combat Magnum".[1] It was first introduced
-                in 1955, the same year as Smith & Wesson's M29 .44 Magnum. The now discontinued
-                Colt Python targeted the premium revolver market segment. Some firearm
-                collectors and writers such as Jeff Cooper, Ian V. Hogg, Chuck Hawks, Leroy
-                Thompson, Renee Smeets and Martin Dougherty have described the Python as the
-                finest production revolver ever made."""
-
         article1 = {
             'groups': [
                 {'page': 1, 'type': 'headings', 'text': 'Some Heading', 'l': 45, 'r': 100, 't': 10, 'b': 100},
@@ -103,21 +94,7 @@ class TestMarcExport(unittest.TestCase):
             ],
             "authors": ['Miro', 'Jano', 'Prdo'],
             "keywords": ['word1', 'anothorword1'],
-            "is_ignored": False,
-            "issue": {
-                "id": 0
-            }
-        }
-
-        article2 = {
-            'groups': [
-                {'page': 1, 'type': 'headings', 'text': 'Some Heading', 'l': 45, 'r': 100, 't': 10, 'b': 100},
-                {'page': 1, 'type': 'fulltexts', 'text': text2, 'l': 45, 'r': 100, 't': 120,
-                 'b': 200}
-            ],
-            "authors": ['Miro', 'Jano', 'Prdo'],
-            "keywords": ['word2'],
-            "is_ignored": False,
+            "is_ignored": True,
             "issue": {
                 "id": 0
             }
@@ -125,32 +102,14 @@ class TestMarcExport(unittest.TestCase):
 
         try:
             # export marc
-            issue, articles = HelperTestMethods.create_custom_issue(issue, [article1, article2])
+            issue, articles = HelperTestMethods.create_custom_issue(issue, [article1])
             semantic = Semantic()
             semantic.export_marc_for_issue(issue['_id'])
 
-            #  check if files exists
-            marc_issue = Path(path_issue + "/issue_marc21.xml")
-            self.assertEqual(True, marc_issue.is_file(), "No file " + path_issue + "/issue_marc21.xml")
+
+            #  check if files does not exist for ignored article
             marc1 = Path(path_issue + "/articles/1/1_marc21.xml")
-            self.assertEqual(True, marc1.is_file(), "No file " + path_issue + "/articles/1/1_marc21.xml")
-            marc2 = Path(path_issue + "/articles/2/2_marc21.xml")
-            self.assertEqual(True, marc2.is_file(), "No file " + path_issue + "/articles/2/2_marc21.xml")
-
-            es = Elasticsearch()
-            issue = es.get(index='deep_search_test_python', doc_type='issue', id=issue['_id'])
-            articles = es.search(index='deep_search_test_python', doc_type="article",
-                                 body={'query': {'bool': {'must': {
-                                     'nested': {'path': 'issue', 'query': {'match': {'issue.id': issue['_id']}}}}}},
-                                     'size': 1000})['hits']['hits']
-
-            self.assertEqual(True, issue['_source']['journal_marc21_path'] == path)
-            self.assertEqual(True, issue['_source']['issue_marc21_path'] == path_issue + "/issue_marc21.xml")
-            for article in articles:
-                self.assertEqual(True, article['_source']['article_marc21_path'] ==
-                                 path_issue + "/articles/1/1_marc21.xml"
-                                 or article['_source']['article_marc21_path'] ==
-                                 path_issue + "/articles/2/2_marc21.xml")
+            self.assertNotEqual(True, marc1.is_file(), "No file " + path_issue + "/articles/1/1_marc21.xml")
 
         finally:
             #  delete files
@@ -158,8 +117,7 @@ class TestMarcExport(unittest.TestCase):
             if marc_issue.is_file():
                 os.remove(path_issue + "/issue_marc21.xml")
             marc1 = Path(path_issue + "/articles/1/1_marc21.xml")
-            marc2 = Path(path_issue + "/articles/2/2_marc21.xml")
-            if marc1.is_file() or marc2.is_file():
+            if marc1.is_file():
                 shutil.rmtree(path_issue + "/articles")
 
 
