@@ -70,7 +70,8 @@ for index in indices:
                             "properties": {
                                 "id": {"type": "keyword"}
                             }
-                        }
+                        },
+                        "is_ignored": {"type": "boolean"}
                     }
                 },
                 "history": {

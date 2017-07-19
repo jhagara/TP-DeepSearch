@@ -8,6 +8,7 @@ class Filler(object):
         heads = []
         ftexts = []
         issue_id = 9999
+        is_ignored = False
 
         for element in self.articles:
             for elem in element:
@@ -71,8 +72,8 @@ class Filler(object):
         for index in range(len(heads)):
             with db.cursor() as cursor:
                 # Create a new record
-                sql = "INSERT INTO `articles` (`heading`, `ftext`, `issue_id`) VALUES (%s, %s, %s)"
-                cursor.execute(sql, (heads[index], ftexts[index], issue_id))
+                sql = "INSERT INTO `articles` (`heading`, `ftext`, `issue_id`, `is_ignored`) VALUES (%s, %s, %s, %s)"
+                cursor.execute(sql, (heads[index], ftexts[index], issue_id, is_ignored))
 
                 # connection is not autocommit by default. So you must commit
                 # to save your changes.

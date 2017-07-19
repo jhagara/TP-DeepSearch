@@ -23,6 +23,7 @@ def init_tables(db_name):
                 heading TEXT CHARACTER SET utf8,
                 ftext TEXT CHARACTER SET utf8,
                 issue_id INT,
+                is_ignored BOOL,
                 PRIMARY KEY (id),
                 FOREIGN KEY (issue_id) REFERENCES issues(id)
                 ON DELETE SET NULL

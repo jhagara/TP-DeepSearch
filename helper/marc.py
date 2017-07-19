@@ -154,111 +154,112 @@ class Marc(object):
 
     #  export article into marc
     def __export_article(self, article, issue_marc, source_dirname, order, es, index):
-        article_record = Record(leader='     nas  22     uic4500', force_utf8=True)
+        if article['_source']['is_ignored'] is False:
+            article_record = Record(leader='     nas  22     uic4500', force_utf8=True)
 
-        # 001
-        article_record.add_field(Field(tag='001', data=article['_id']))
+            # 001
+            article_record.add_field(Field(tag='001', data=article['_id']))
 
-        # 003
-        article_record.add_field(Field(tag='003', data='VRT'))
+            # 003
+            article_record.add_field(Field(tag='003', data='VRT'))
 
-        # 005
-        time = self.__get_time()
-        article_record.add_field(Field(tag='005', data=time))
+            # 005
+            time = self.__get_time()
+            article_record.add_field(Field(tag='005', data=time))
 
-        # 008
-        article_record.add_field(issue_marc['008'])
+            # 008
+            article_record.add_field(issue_marc['008'])
 
-        # 007
-        article_record.add_field(Field(tag='007', data="ta"))
+            # 007
+            article_record.add_field(Field(tag='007', data="ta"))
 
-        # 245
-        heading, subheading = self.__heading_subheadings(article)
-        article_record.add_field(
-            Field(
-                tag='245',
-                indicators=[' ', ' '],
-                subfields=['a', heading,
-                           'b', subheading]
-            )
-        )
-
-        # 264
-        article_record.add_field(issue_marc['264'])
-
-        # 336
-        article_record.add_field(issue_marc['336'])
-
-        # 337
-        article_record.add_field(issue_marc['337'])
-
-        # 338
-        article_record.add_field(issue_marc['338'])
-
-        # 100
-        if article['_source'].get('authors') and len(article['_source']['authors']) > 0:
-            article_record.add_ordered_field(
-                Field(
-                    tag='100',
-                    indicators=['1', ' '],
-                    subfields=['a', article['_source']['authors'][0]]
-                )
-            )
-            article_record['245'].add_subfield('c', article['_source']['authors'][0])
-
-        # 653
-        for word in article['_source']['keywords']:
+            # 245
+            heading, subheading = self.__heading_subheadings(article)
             article_record.add_field(
                 Field(
-                    tag='653',
+                    tag='245',
                     indicators=[' ', ' '],
-                    subfields=['a', word]
+                    subfields=['a', heading,
+                               'b', subheading]
                 )
             )
 
-        # 700
-        if article['_source'].get('authors') and len(article['_source']['authors']) > 1:
-            for author in article['_source']['authors'][1:]:
+            # 264
+            article_record.add_field(issue_marc['264'])
+
+            # 336
+            article_record.add_field(issue_marc['336'])
+
+            # 337
+            article_record.add_field(issue_marc['337'])
+
+            # 338
+            article_record.add_field(issue_marc['338'])
+
+            # 100
+            if article['_source'].get('authors') and len(article['_source']['authors']) > 0:
+                article_record.add_ordered_field(
+                    Field(
+                        tag='100',
+                        indicators=['1', ' '],
+                        subfields=['a', article['_source']['authors'][0]]
+                    )
+                )
+                article_record['245'].add_subfield('c', article['_source']['authors'][0])
+
+            # 653
+            for word in article['_source']['keywords']:
                 article_record.add_field(
                     Field(
-                        tag='700',
-                        indicators=['1', ' '],
-                        subfields=['a', author]
+                        tag='653',
+                        indicators=[' ', ' '],
+                        subfields=['a', word]
                     )
                 )
 
-        # 773
-        article_record.add_field(
-            Field(
-                tag='773',
-                indicators=[' ', ' '],
-                subfields=['w', issue_marc['001'].value(),
-                           't', issue_marc['245']['a'],
-                           '7', 'nnas']
+            # 700
+            if article['_source'].get('authors') and len(article['_source']['authors']) > 1:
+                for author in article['_source']['authors'][1:]:
+                    article_record.add_field(
+                        Field(
+                            tag='700',
+                            indicators=['1', ' '],
+                            subfields=['a', author]
+                        )
+                    )
+
+            # 773
+            article_record.add_field(
+                Field(
+                    tag='773',
+                    indicators=[' ', ' '],
+                    subfields=['w', issue_marc['001'].value(),
+                               't', issue_marc['245']['a'],
+                               '7', 'nnas']
+                )
             )
-        )
 
-        path = source_dirname + "/articles/" + str(order)
+            path = source_dirname + "/articles/" + str(order)
 
-        es.update(index=index,
-                  doc_type='article',
-                  id=article['_id'],
-                  body={
-                      "script": {
-                          "inline": "ctx._source.source_dirname = params.path",
-                          "lang": "painless",
-                          "params": {
-                              "path": path
+            es.update(index=index,
+                      doc_type='article',
+                      id=article['_id'],
+                      body={
+                          "script": {
+                              "inline": "ctx._source.source_dirname = params.path",
+                              "lang": "painless",
+                              "params": {
+                                  "path": path
+                              }
                           }
-                      }
-                  })
+                      })
 
-        if not os.path.exists(path):
-            os.makedirs(path)
-        path += "/" + str(order) + "_marc21.xml"
-        self.__save_marc(article_record, path)
+            if not os.path.exists(path):
+                os.makedirs(path)
+            path += "/" + str(order) + "_marc21.xml"
+            self.__save_marc(article_record, path)
 
-        es.update(index=index,
+            es.update(index=index,
                   doc_type='article',
                   id=article['_id'],
                   body={

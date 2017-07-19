@@ -110,15 +110,16 @@ class Analyzer(object):
         list_of_starts = []
 
         for article in jlist:
-            all_text = ''
-            for group in article['groups']:
-                all_text += group['text']
+            if article['is_ignored'] is False:
+                all_text = ''
+                for group in article['groups']:
+                    all_text += group['text']
 
-            # remove stop words and get list of sentence starters
-            all_text = ' '.join([word for word in all_text.split() if word not in stops and word.lower() not in stops])
-            starts = re.findall('(?:^|(?:[.!?]\s))(\w+)', all_text)
-            list_of_starts.append(starts)
-            bloblist.append(tB(all_text))
+                # remove stop words and get list of sentence starters
+                all_text = ' '.join([word for word in all_text.split() if word not in stops and word.lower() not in stops])
+                starts = re.findall('(?:^|(?:[.!?]\s))(\w+)', all_text)
+                list_of_starts.append(starts)
+                bloblist.append(tB(all_text))
 
         return self.key_words(bloblist, list_of_starts)
 
