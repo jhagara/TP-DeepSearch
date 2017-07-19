@@ -8,7 +8,7 @@ from parser.xml.discriminator.heading import _Heading
 from parser.xml.discriminator.separatorsid import SeparatorId
 from parser.xml.article.merger import Preprocessor
 from parser.xml.article.assembler import Assembler
-from parser.xml.schemavalidator import SchemaValidator
+from parser.xml.schema_validator import SchemaValidator
 
 
 class XmlParser(object):

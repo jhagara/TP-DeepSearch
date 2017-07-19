@@ -8,10 +8,7 @@ class SchemaValidator(object):
     def validate(self, xml, schema):
         if xml is None or schema is None:
             return -1
-        validation = schema.validate(xml)
-        if validation is False:
-            raise BaseException("Invalid XML")
-        return validation
+        schema.assertValid(xml)
 
     def validate_xml_schema(self, xml_path, schema_path):
         # load xml file to init stage
