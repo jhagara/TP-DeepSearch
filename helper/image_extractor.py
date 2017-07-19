@@ -19,9 +19,9 @@ class ImageExtractor(object):
             pages = []
 
             for group in article['_source']['groups']:
-                    page = int(group['page']) - 1
-                    if page not in pages:
-                        pages.append(page)
+                page = int(group['page']) - 1
+                if page not in pages:
+                    pages.append(page)
 
             crop_groups = [[] for _ in range(len(pages))]
             gps_groups = [[] for _ in range(len(pages))]
@@ -67,4 +67,4 @@ class ImageExtractor(object):
         pages_paths.sort()
 
         for article in articles:
-                self.export_article_image(article, pages_paths)
+            self.export_article_image(article, pages_paths)
