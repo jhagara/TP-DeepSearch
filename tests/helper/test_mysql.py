@@ -7,10 +7,12 @@ from helper import mysql_filler
 from helper import mysql_init_tables
 from helper import mysql_drop_tables
 
+
 class TestDB(unittest.TestCase):
     @pytest.mark.skip(reason="no way of currently testing this")
     def test_tables(self):
         db_name = 'test'
+        mysql_drop_tables.drop_tables(db_name)
         mysql_init_tables.init_tables(db_name)
 
         db = pymysql.connect(host="127.0.0.1",
@@ -24,11 +26,10 @@ class TestDB(unittest.TestCase):
             cursor.execute(sql)
             db.commit()
             row = cursor.fetchall()
-        
+
         self.assertEqual(row[0][0], 'articles')
         self.assertEqual(row[1][0], 'issues')
         self.assertEqual(row[2][0], 'marc21')
-
 
         mysql_drop_tables.drop_tables(db_name)
 
@@ -69,7 +70,8 @@ class TestDB(unittest.TestCase):
             db.commit()
             row = cursor.fetchall()
 
-        self.assertEqual(len(row), 6)
-        self.assertEqual(len(row[0]), 4)
+        self.assertEqual(len(row), 7)
+        self.assertEqual(len(row[0]), 5)
         self.assertEqual(len(row[2][1]), len(' Prielom slovenského vojska cez nepriate?ské opevnené línie'))
         self.assertEqual(row[2][1], ' Prielom slovenského vojska cez nepriate?ské opevnené línie')
+        self.assertEqual(row[2][4], 0)
