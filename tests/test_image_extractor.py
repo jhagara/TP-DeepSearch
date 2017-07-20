@@ -1,6 +1,6 @@
 import unittest
 import os
-from helper.image_extractor import ImageExtractor
+from helper.image_processor import ImageProcessor
 from PIL import Image
 import glob
 
