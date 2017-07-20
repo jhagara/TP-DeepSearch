@@ -48,7 +48,6 @@ class ImageProcessor(object):
         return image_path
 
     def compress_images(self, source_dirname):
-
         # define path to original images
         path = str(source_dirname) + '/STR'
 
@@ -75,7 +74,6 @@ class ImageProcessor(object):
             compressed.save(new_page_path, optimize=True, quality=85)
 
         return len(pages_paths)
-
 
 
     def export_image_for_issue(self, issue_id):
