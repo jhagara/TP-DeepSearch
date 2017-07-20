@@ -7,7 +7,7 @@ from helper.marc import Marc
 from helper.image_processor import ImageProcessor
 
 
-class Semantic(Elastic, Analyzer, Marc, ImageExtractor):
+class Semantic(Elastic, Analyzer, Marc, ImageProcessor):
     def __init__(self, **args):
         default = {'pdf': None, 'xml': None, 'header_config': None}
         args = {**default, **args}
