@@ -18,7 +18,7 @@ class TestImageExport(unittest.TestCase):
         pages_paths_small.sort()
         
         try:
-            num_pics = ImageExtractor.compress_images(pics_dirname)
+            num_pics = ImageProcessor.compress_images(pics_dirname)
             self.assertEqual(len(pages_paths_small), num_pics)
 
             for test_path in pages_paths_small:
@@ -33,4 +33,4 @@ class TestImageExport(unittest.TestCase):
                 self.assertEqual(created_hist, test_hist)
 
         finally:
-            shutil.rmtree(rem_dir)
+            print('done')
