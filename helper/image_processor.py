@@ -55,8 +55,8 @@ class ImageProcessor(object):
         # define path to new folder for compressed images
         new_path = str(source_dirname) + '/STR_small'
         # create if doesnt exist
-        if not os.path.exists(path):
-            os.makedirs(path)
+        if not os.path.exists(new_path):
+            os.makedirs(new_path)
         
         # get all .jpgs from path dir
         pages_paths = glob.glob(path + '/*.jpg')
@@ -65,9 +65,10 @@ class ImageProcessor(object):
         # for all .jpgs do compression and save them to new_path
         for page in pages_paths:
             original = Image.open(page)
-            width, height = original.size
-            # 1/2 of FHD sliced vertically
-            width = int(width/2)
+            # int() because of future, if we want smalled, we can just make 
+            # fraction and dont have to make mistakes by forgoting to trasform
+            height = int(1920)
+            width = int(1080)
             compressed = original.resize((width, height), Image.ANTIALIAS)
             # create new path to folder with compressed files
             new_page_path = page.replace('STR','STR_small')
