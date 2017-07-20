@@ -6,9 +6,9 @@ from PIL import Image
 import glob
 
 
-class TestImageExport(unittest.TestCase):
+class TestImageCompress(unittest.TestCase):
 
-    def test_create_images(self):
+    def test_compress_images(self):
         source_dirname = os.path.dirname(os.path.abspath(__file__)) + "/19430526"
 
         # rem_dir = source_dirname + "/STR_small"
