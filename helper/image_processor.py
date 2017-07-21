@@ -47,7 +47,8 @@ class ImageProcessor(object):
         black.save(image_path)
         return image_path
 
-    def compress_images(self, source_dirname):
+    @classmethod
+    def compress_images(cls, source_dirname):
         # define path to original images
         path = str(source_dirname) + '/STR'
 
