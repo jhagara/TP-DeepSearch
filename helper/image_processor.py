@@ -5,7 +5,7 @@ import os
 import glob
 
 
-class ImageExtractor(object):
+class ImageProcessor(object):
     #  export image per article
     @classmethod
     def export_article_image(cls, article, pages_paths):
@@ -46,6 +46,33 @@ class ImageExtractor(object):
         image_path = path + '/article_extract_page' + str(pages[i]+1) + '.jpg'
         black.save(image_path)
         return image_path
+
+    @classmethod
+    def compress_images(cls, source_dirname):
+        # define path to original images
+        path = str(source_dirname) + '/STR'
+
+        # define path to new folder for compressed images
+        new_path = str(source_dirname) + '/STR_small'
+        # create if doesnt exist
+        if not os.path.exists(new_path):
+            os.makedirs(new_path)
+        # get all .jpgs from path dir
+        pages_paths = glob.glob(path + '/*.jpg')
+        pages_paths.sort()
+
+        # for all .jpgs do compression and save them to new_path
+        for page in pages_paths:
+            original = Image.open(page)
+            # int() because of future, if we want smalled, we can just make
+            # fraction and dont have to make mistakes by forgoting to trasform
+            height = int(1920)
+            width = int(1080)
+            compressed = original.resize((width, height), Image.ANTIALIAS)
+            # create new path to folder with compressed files
+            new_page_path = page.replace('STR', 'STR_small')
+            compressed.save(new_page_path, optimize=True, quality=85)
+        return len(pages_paths)
 
     def export_image_for_issue(self, issue_id):
 

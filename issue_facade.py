@@ -33,6 +33,7 @@ class IssueFacade(object):
             print('# Loaded Files: ', file)
             semantic = Semantic(xml=file['xml'], header_config=file['json'])
             issue_id = semantic.save_to_elastic(name, file['dir'], file)
+            semantic.compress_images(file['dir'])
             semantic.insert_key_words(issue_id)
 
         return 'Bulk insert was successful'
