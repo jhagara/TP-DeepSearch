@@ -57,7 +57,6 @@ class ImageProcessor(object):
         # create if doesnt exist
         if not os.path.exists(new_path):
             os.makedirs(new_path)
-        
         # get all .jpgs from path dir
         pages_paths = glob.glob(path + '/*.jpg')
         pages_paths.sort()
@@ -65,17 +64,15 @@ class ImageProcessor(object):
         # for all .jpgs do compression and save them to new_path
         for page in pages_paths:
             original = Image.open(page)
-            # int() because of future, if we want smalled, we can just make 
+            # int() because of future, if we want smalled, we can just make
             # fraction and dont have to make mistakes by forgoting to trasform
             height = int(1920)
             width = int(1080)
             compressed = original.resize((width, height), Image.ANTIALIAS)
             # create new path to folder with compressed files
-            new_page_path = page.replace('STR','STR_small')
+            new_page_path = page.replace('STR', 'STR_small')
             compressed.save(new_page_path, optimize=True, quality=85)
-
         return len(pages_paths)
-
 
     def export_image_for_issue(self, issue_id):
 
