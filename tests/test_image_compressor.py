@@ -17,6 +17,7 @@ class TestImageCompress(unittest.TestCase):
         pics_dirname_small = os.path.dirname(os.path.abspath(__file__)) + "/19430526/STR_small_true"
         pages_paths_small = glob.glob(pics_dirname_small + '/*.jpg')
         pages_paths_small.sort()
+
         try:
             num_pics = ImageProcessor.compress_images(source_dirname)
             self.assertEqual(len(pages_paths_small), num_pics)
@@ -24,7 +25,7 @@ class TestImageCompress(unittest.TestCase):
             for test_path in pages_paths_small:
                 new_path = deepcopy(test_path)
                 new_path = new_path.replace('STR_small_true', 'STR_small')
-                # print(test_path, name)
+                print(test_path, new_path)
                 test = Image.open(test_path)
                 created = Image.open(new_path)
                 self.assertEqual(created, test)
