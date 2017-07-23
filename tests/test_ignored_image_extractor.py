@@ -36,7 +36,7 @@ class TestImageExport(unittest.TestCase):
                               "page": 2
                             }
                           ],
-                            "is_ignored": False,
+                            "is_ignored": True,
                           "issue": {
                             "id": "AVtpuENYLK4gTCUnA1O0"
                           }
@@ -141,17 +141,21 @@ class TestImageExport(unittest.TestCase):
                 article['_source']['source_dirname'] = abs_path
                 name = ImageProcessor.export_article_image(article, pages_paths)
 
-                remove_paths.append(name)
+                # check if 1st article is really ignored
+                if i == 0:
+                    self.assertIsNone(name)
 
-                test_path = str(name[:-4] + '_true.jpg')
-                # print(test_path, name)
-                test = Image.open(test_path)
-                created = Image.open(name)
-                self.assertEqual(created, test)
+                else:
+                    remove_paths.append(name)
+                    test_path = str(name[:-4] + '_true.jpg')
 
-                test_hist = test.histogram()
-                created_hist = created.histogram()
-                self.assertEqual(created_hist, test_hist)
+                    test = Image.open(test_path)
+                    created = Image.open(name)
+
+                    test_hist = test.histogram()
+                    created_hist = created.histogram()
+
+                    self.assertEqual(created_hist, test_hist)
 
         finally:
             for path in remove_paths:

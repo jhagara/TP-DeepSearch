@@ -37,7 +37,8 @@ class HelperTestMethods(object):
                     "keywords": [],
                     "issue": {
                         "id": issue['_id']
-                    }
+                    },
+                    'is_ignored': False
                 }
                 ars.append(
                     es.index(index='deep_search_test_python', doc_type='article',

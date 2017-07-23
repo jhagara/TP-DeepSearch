@@ -104,6 +104,9 @@ class Elastic(object):
                     for additional_group in self.__clone_groups(group, max_font):
                         groups.append(additional_group)
 
+                #every article is defaultly set to be not ignored
+                new_article['is_ignored'] = False
+
                 new_article['groups'] = groups
                 new_article['issue'] = empty_issue_art
                 articles.append(new_article)
