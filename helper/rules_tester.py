@@ -1,4 +1,6 @@
 import config
+import os
+import re
 
 from elasticsearch import Elasticsearch
 from parser.xml.xml_parser import XmlParser
@@ -8,20 +10,24 @@ class RulesTester(object):
 
     # make testing on all test issues set as test_issue
     def test_all_test_issues(self):
-        test_issues = self.__find_all_test_issues()
+        elastic_index = config.elastic_index()
+
+        # establishment of connection
+        es = Elasticsearch()
+
+        test_issues = self.__find_all_test_issues(es, elastic_index)
 
         for issue in test_issues:
 
             # parse issue with new rules
-            xml_path = issue['_source']['source_dirname']
-            config_path = self.__find_config_path(xml_path)
+            source_path = issue['_source']['source_dirname']
+            xml_path = self.__find_xml(source_path)
+            config_path = self.__find_config(source_path)
+            if xml_path == '' or config_path == '':
+                print("Missing config file or xml file in dir and parent dirs:" + source_path)
+                return -1
             parser = XmlParser()
             xml, header, parsed_articles = parser.parse(config_path, xml_path)
-
-            elastic_index = config.elastic_index()
-
-            # establishment of connection
-            es = Elasticsearch()
 
             test_articles = es.search(index=elastic_index, doc_type="article",
                                       body={'query': {'bool': {'must': {'nested': {'path': 'issue',
@@ -45,15 +51,35 @@ class RulesTester(object):
                 correct_blocks += cb
 
             # save statistics
-            self.__save_statistics(correct_articles, all_articles, correct_blocks, all_blocks)
+            self.__save_statistics(correct_articles, all_articles, correct_blocks, all_blocks, issue)
 
     # find all test issues set as test_issue
-    def __find_all_test_issues(self):
-        return
+    def __find_all_test_issues(self, elastic, index):
+        test_issues = elastic.search(index=index, doc_type="issue",
+                                     body={'query': {'term': {'is_tested': 'true'}}, 'size': 1000})['hits']['hits']
+        return test_issues
+
+    # find xml path
+    def __find_xml(self, source_dir):
+        xml_dir = source_dir + "/XML"
+        path = os.popen("find " + xml_dir + " -maxdepth 1 -type f -name '*.xml'").read()
+        path = re.sub("[\n]", '', path)
+
+        return path
 
     # find header config for xml
-    def __find_config_path(self, xml_path):
-        return
+    def __find_config(self, source_dir):
+        current_dir = source_dir
+        while True:
+            path = os.popen("find " + current_dir + " -maxdepth 1 -type f -name '*.json'").read()
+            path = re.sub("[\n]", '', path)
+
+            if path != '' or current_dir == '/':
+                break
+            else:
+                current_dir = re.sub("[\n]", '', os.popen("dirname '" + current_dir + "'").read())
+
+        return path
 
     # find same article in newly parsed issue
     def __find_parsed_article(self, test_article, parsed_articles):
@@ -85,5 +111,5 @@ class RulesTester(object):
         return
 
     # sace statistics
-    def __save_statistics(self, correct_articles, all_articles, correct_blocks, all_blocks):
+    def __save_statistics(self, correct_articles, all_articles, correct_blocks, all_blocks, issue):
         return
