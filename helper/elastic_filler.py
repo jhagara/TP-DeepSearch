@@ -46,6 +46,7 @@ class Elastic(object):
         # empty_issue_art['page_height'] = int(page_zero.attrib['height'])
         empty_issue['page_width'] = int(page_zero.attrib['width'])
         # empty_issue_art['page_width'] = int(page_zero.attrib['width'])
+        empty_issue['is_tested'] = False
 
         for marcs in self.header['marc21']:
             """

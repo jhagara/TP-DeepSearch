@@ -83,13 +83,8 @@ class RulesTester(object):
 
     # find same article in newly parsed issue
     def __find_parsed_article(self, test_article, parsed_articles):
-        heading = None
-        for group in test_article['_source']['groups']:
-            if group['type'] == "headings":
-                heading = group
-                break
-
-        # heading = next((x for x in test_article['_source']['groups'] if x['type'] == "headings"), None)
+        # find heading in article
+        heading = next((group for group in test_article['_source']['groups'] if group['type'] == "headings"), None)
 
         if heading is None:
             return None
@@ -98,17 +93,33 @@ class RulesTester(object):
         r = str(heading['r'])
         t = str(heading['t'])
         b = str(heading['b'])
-        found = None
-        for article in parsed_articles[heading['page'] - 1]:
+        page = int(heading['page'])
+        for article in parsed_articles[page - 1]:
             for group in article:
                 found = group.xpath("par[@l = " + l + " and @r = " + r + " and @t = " + t + " and @b = " + b + "]")
-            if found is not None:
-                return article
+                if found is not None and len(found) != 0:
+                    return article
         return None
 
     # compare test article and newly parsed article and compute statistics for article
     def __compare_articles(self, test_article, parsed_article):
-        return
+        correct_blocks = 0
+        for test_group in test_article['_source']['groups']:
+            l = str(test_group['l'])
+            r = str(test_group['r'])
+            t = str(test_group['t'])
+            b = str(test_group['b'])
+            for parsed_group in parsed_article:
+                found = parsed_group.xpath("par[@l = " + l + " and @r = " + r + " and @t = " + t + " and @b = " +
+                                           b + "]")
+                if found is not None and len(found) != 0:
+                    correct_blocks += 1
+                    break
+
+        correct_article = False
+        if correct_blocks == len(test_article['_source']['groups']):
+            correct_article = True
+        return correct_article, correct_blocks
 
     # sace statistics
     def __save_statistics(self, correct_articles, all_articles, correct_blocks, all_blocks, issue):
