@@ -37,6 +37,7 @@ class TestRulesTester(unittest.TestCase):
                           }
                       }
                   })
+        es.indices.refresh(index=elastic_index)
         tester = RulesTester()
         tester.test_all_test_issues()
 

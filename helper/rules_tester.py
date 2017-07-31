@@ -17,6 +17,7 @@ class RulesTester(object):
 
         test_issues = self.__find_all_test_issues(es, elastic_index)
 
+        results = []
         for issue in test_issues:
 
             # parse issue with new rules
@@ -38,20 +39,28 @@ class RulesTester(object):
             all_articles = len(test_articles)
             correct_blocks = 0
             all_blocks = 0
+            missing_blocks = []
             for test_article in test_articles:
                 all_blocks += len(test_article['_source']['groups'])
                 # find article in newly parsed issue
                 parsed_article = self.__find_parsed_article(test_article, parsed_articles)
                 if parsed_article is None:
+                    missing_blocks.extend(test_article['_source']['groups'])
                     continue
                 # compare articles
-                ca, cb = self.__compare_articles(test_article, parsed_article)
+                ca, cb, mb = self.__compare_articles(test_article, parsed_article)
                 if ca:
                     correct_articles += 1
                 correct_blocks += cb
+                missing_blocks.extend(mb)
 
-            # save statistics
-            self.__save_statistics(correct_articles, all_articles, correct_blocks, all_blocks, issue)
+            result_issue = {'correct_articles': correct_articles, 'all_articles': all_articles,
+                            'correct_blocks': correct_blocks, 'all_blocks': all_blocks,
+                            'missing_blocks': missing_blocks, 'issue': issue}
+            results.append(result_issue)
+
+        # save statistics
+        self.__save_statistics(results)
 
     # find all test issues set as test_issue
     def __find_all_test_issues(self, elastic, index):
@@ -104,23 +113,41 @@ class RulesTester(object):
     # compare test article and newly parsed article and compute statistics for article
     def __compare_articles(self, test_article, parsed_article):
         correct_blocks = 0
+        missing_blocks = []
         for test_group in test_article['_source']['groups']:
             l = str(test_group['l'])
             r = str(test_group['r'])
             t = str(test_group['t'])
             b = str(test_group['b'])
+            page = str(test_group['page'])
+            is_found = False
             for parsed_group in parsed_article:
+                if page != parsed_group.attrib['page']:
+                    continue
                 found = parsed_group.xpath("par[@l = " + l + " and @r = " + r + " and @t = " + t + " and @b = " +
                                            b + "]")
                 if found is not None and len(found) != 0:
                     correct_blocks += 1
+                    is_found = True
                     break
+
+            if is_found is False:
+                missing_blocks.append(test_group)
 
         correct_article = False
         if correct_blocks == len(test_article['_source']['groups']):
             correct_article = True
-        return correct_article, correct_blocks
+        return correct_article, correct_blocks, missing_blocks
+
+    # print results
+    def __print_results(self, results):
+        for result in results:
+            print("Issue name: " + result['issue']['_source']['name'] + " correct articles: " +
+                  str(result['correct_articles']) + "/" + str(result['all_articles']) +
+                  " correct blocks: " + str(result['correct_blocks']) + "/" +
+                  str(result['all_blocks']))
 
     # sace statistics
-    def __save_statistics(self, correct_articles, all_articles, correct_blocks, all_blocks, issue):
+    def __save_statistics(self, results):
+        self.__print_results(results)
         return
