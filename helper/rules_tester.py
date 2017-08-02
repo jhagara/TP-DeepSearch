@@ -3,6 +3,7 @@ import os
 import re
 
 from elasticsearch import Elasticsearch
+import pymarc
 from parser.xml.xml_parser import XmlParser
 
 
@@ -30,6 +31,8 @@ class RulesTester(object):
             parser = XmlParser()
             xml, header, parsed_articles = parser.parse(config_path, xml_path)
 
+            journal_name = self.__get_journal_name(issue)
+
             test_articles = es.search(index=elastic_index, doc_type="article",
                                       body={'query': {'bool': {'must': {'nested': {'path': 'issue',
                                             'query': {'match': {'issue.id': issue['_id']}}}}}},
@@ -56,7 +59,7 @@ class RulesTester(object):
 
             result_issue = {'correct_articles': correct_articles, 'all_articles': all_articles,
                             'correct_blocks': correct_blocks, 'all_blocks': all_blocks,
-                            'missing_blocks': missing_blocks, 'issue': issue}
+                            'missing_blocks': missing_blocks, 'issue': issue, 'journal_name': journal_name}
             results.append(result_issue)
 
         # save statistics
@@ -89,6 +92,18 @@ class RulesTester(object):
                 current_dir = re.sub("[\n]", '', os.popen("dirname '" + current_dir + "'").read())
 
         return path
+
+    def __get_journal_name(self, issue):
+        #  get marc21 for jurnal
+        records = pymarc.parse_xml_to_array(issue["_source"]["journal_marc21_path"])
+        journal_marc = records[0]
+
+        # get journal name from journal_marc
+        journal_name = ""
+        if journal_marc['245'] is not None and journal_marc['245']['a'] is not None:
+            journal_name = journal_marc['245']['a']
+
+        return journal_name
 
     # find same article in newly parsed issue
     def __find_parsed_article(self, test_article, parsed_articles):
@@ -142,8 +157,8 @@ class RulesTester(object):
     # print results
     def __print_results(self, results):
         for result in results:
-            print("Issue name: " + result['issue']['_source']['name'] + " correct articles: " +
-                  str(result['correct_articles']) + "/" + str(result['all_articles']) +
+            print("Journal: " + result['journal_name'] + " issue name: " + result['issue']['_source']['name'] +
+                  " correct articles: " + str(result['correct_articles']) + "/" + str(result['all_articles']) +
                   " correct blocks: " + str(result['correct_blocks']) + "/" +
                   str(result['all_blocks']))
 
