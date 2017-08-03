@@ -1,10 +1,12 @@
 import os
+import sys
 from lxml import etree
 from parser.xml.cleaner import Cleaner
 
-
 class PathValidator(object):
     def validate_issues_in_path(self,path):
+        # make sure that path is absolute
+        path = os.path.abspath(path)
         for dirpath, dirnames, filenames in os.walk(path):
             for dirname in [d for d in dirnames if d == "XML"]:
                 xml_dir_path = os.path.join(dirpath, dirname)
@@ -14,8 +16,6 @@ class PathValidator(object):
                 if xml_path is None:
                     print("Error: .xml file of issue not found in: " + xml_dir_path)
                     return False
-                else:
-                    print("xml_path is: " + xml_path)
 
                 # get issue name
                 path, issue_name = os.path.split(xml_path)
@@ -83,12 +83,6 @@ class PathValidator(object):
             print("Error: STR Directory for issue: " + issue_name + " was not found")
             # return False
 
-            # get path to PDF
-            # pdf_path = self.__find_dir_path(issue_path, "PDF")
-            # if pdf_path is None:
-            # print("Error: PDF Directory for issue: " + issue_name + " was not found")
-            # return False
-
         # get path to main journal file
         year_path = os.path.abspath(os.path.join(issue_path, os.pardir))
         journal_path = os.path.abspath(os.path.join(year_path, os.pardir))
@@ -114,4 +108,21 @@ class PathValidator(object):
             # return False
 
 
+def main(*attrs):
+    path = attrs[0]
+    print("Validating path: " + path)
 
+    try:
+        path_validator = PathValidator()
+        path_validator.validate_issues_in_path(path)
+        # count errors, print errors TO DO
+        result_code = 0
+    except:
+        print("Invalid path")
+        result_code = 1
+
+    print(result_code)
+    return result_code
+
+if __name__ == "__main__":
+    sys.exit(main(*sys.argv[1:]))
