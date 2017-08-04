@@ -9,6 +9,7 @@ import datetime
 import os
 from time import gmtime, strftime
 from parser.xml.position_helper import PositionHelper
+import pymarc
 
 
 class Elastic(object):
@@ -34,6 +35,8 @@ class Elastic(object):
         # SETUP OF ISSUE DOCUMENT
         empty_issue['name'] = issue_name
         # empty_issue_art['name'] = issue_name
+
+        empty_issue['journal_name'] = self.__get_journal_name(paths['journal_marc21'])
 
         empty_issue['pages_count'] = len(self.articles)
         empty_issue['created_at'] = strftime("%Y-%m-%d %H:%M:%S", gmtime())
@@ -175,3 +178,15 @@ class Elastic(object):
             redundant_groups.append(redundant_group)
 
         return redundant_groups
+
+    def __get_journal_name(self, marc_path):
+        #  get marc21 for jurnal
+        records = pymarc.parse_xml_to_array(marc_path)
+        journal_marc = records[0]
+
+        # get journal name from journal_marc
+        journal_name = ""
+        if journal_marc['245'] is not None and journal_marc['245']['a'] is not None:
+            journal_name = journal_marc['245']['a']
+
+        return journal_name

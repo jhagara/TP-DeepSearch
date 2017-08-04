@@ -1,6 +1,9 @@
 import config
 import os
 import re
+from time import gmtime, strftime
+from operator import itemgetter
+import itertools
 
 from elasticsearch import Elasticsearch
 import pymarc
@@ -10,7 +13,7 @@ from parser.xml.xml_parser import XmlParser
 class RulesTester(object):
 
     # make testing on all test issues set as test_issue
-    def test_all_test_issues(self):
+    def test_all_test_issues(self, version):
         elastic_index = config.elastic_index()
 
         # establishment of connection
@@ -30,8 +33,6 @@ class RulesTester(object):
                 return -1
             parser = XmlParser()
             xml, header, parsed_articles = parser.parse(config_path, xml_path)
-
-            journal_name = self.__get_journal_name(issue)
 
             test_articles = es.search(index=elastic_index, doc_type="article",
                                       body={'query': {'bool': {'must': {'nested': {'path': 'issue',
@@ -59,11 +60,13 @@ class RulesTester(object):
 
             result_issue = {'correct_articles': correct_articles, 'all_articles': all_articles,
                             'correct_blocks': correct_blocks, 'all_blocks': all_blocks,
-                            'missing_blocks': missing_blocks, 'issue': issue, 'journal_name': journal_name}
+                            'missing_blocks': missing_blocks, 'issue': issue,
+                            'journal_name': issue['_source']['journal_name']}
+
             results.append(result_issue)
 
         # save statistics
-        self.__save_statistics(results)
+        self.__save_statistics(results, version, es, elastic_index)
 
     # find all test issues set as test_issue
     def __find_all_test_issues(self, elastic, index):
@@ -162,7 +165,42 @@ class RulesTester(object):
                   " correct blocks: " + str(result['correct_blocks']) + "/" +
                   str(result['all_blocks']))
 
-    # sace statistics
-    def __save_statistics(self, results):
+    # add new result into all issues
+    def __update_issues(self, results, version, elastic, index):
+        for result in results:
+            time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+            test = {'tested_at': time, 'version': version, 'correct_blocks': result['correct_blocks'],
+                    'all_blocks': result['all_blocks'], 'correct_articles': result['correct_articles'],
+                    'all_articles': result['all_articles']}
+
+            # update issue
+            elastic.update(index=index,
+                           doc_type='issue',
+                           id=result['issue']['_id'],
+                           body={
+                               "script": {
+                                   "inline": "ctx._source.tests += params.new_test",
+                                   "lang": "painless",
+                                   "params": {"new_test": test}
+                               }
+                           })
+
+    # save test
+    def __save_test(self, result, version, journal_name, elastic, index):
+        time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+        test_issues = []
+
+
+    # save statistics
+    def __save_statistics(self, results, version, elastic, index):
         self.__print_results(results)
-        return
+        self.__update_issues(results, version, elastic, index)
+
+        # save for all
+        self.__save_test(results, version, 'all', elastic, index)
+
+        # save for each journal
+        results.sort(key=itemgetter("journal_name"))
+
+        for key, group in itertools.groupby(results, lambda result: result["journal_name"]):
+            self.__save_test(group, version, key, elastic, index)
