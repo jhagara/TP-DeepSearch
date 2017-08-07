@@ -1,12 +1,12 @@
 import config
 import os
 import re
+import sys
 from time import gmtime, strftime
 from operator import itemgetter
 import itertools
 
 from elasticsearch import Elasticsearch
-import pymarc
 from parser.xml.xml_parser import XmlParser
 
 
@@ -96,18 +96,6 @@ class RulesTester(object):
 
         return path
 
-    def __get_journal_name(self, issue):
-        #  get marc21 for jurnal
-        records = pymarc.parse_xml_to_array(issue["_source"]["journal_marc21_path"])
-        journal_marc = records[0]
-
-        # get journal name from journal_marc
-        journal_name = ""
-        if journal_marc['245'] is not None and journal_marc['245']['a'] is not None:
-            journal_name = journal_marc['245']['a']
-
-        return journal_name
-
     # find same article in newly parsed issue
     def __find_parsed_article(self, test_article, parsed_articles):
         # find heading in article
@@ -174,22 +162,52 @@ class RulesTester(object):
                     'all_articles': result['all_articles']}
 
             # update issue
-            elastic.update(index=index,
-                           doc_type='issue',
-                           id=result['issue']['_id'],
-                           body={
-                               "script": {
-                                   "inline": "ctx._source.tests += params.new_test",
-                                   "lang": "painless",
-                                   "params": {"new_test": test}
-                               }
-                           })
+            if result['issue']['_source'].get('test') is None:
+                elastic.update(index=index,
+                               doc_type='issue',
+                               id=result['issue']['_id'],
+                               body={
+                                   "script": {
+                                       "inline": "ctx._source.tests = params.new_test",
+                                       "lang": "painless",
+                                       "params": {"new_test": test}
+                                   }
+                               })
+            else:
+                elastic.update(index=index,
+                               doc_type='issue',
+                               id=result['issue']['_id'],
+                               body={
+                                   "script": {
+                                       "inline": "ctx._source.tests += params.new_test",
+                                       "lang": "painless",
+                                       "params": {"new_test": test}
+                                   }
+                               })
 
     # save test
-    def __save_test(self, result, version, journal_name, elastic, index):
+    def __save_test(self, results, version, journal_name, elastic, index):
         time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+        correct_blocks = 0
+        all_blocks = 0
+        correct_articles = 0
+        all_articles = 0
         test_issues = []
+        for result in results:
+            correct_blocks += result['correct_blocks']
+            all_blocks += result['all_blocks']
+            correct_articles += result['correct_articles']
+            all_articles += result['all_articles']
+            test_issue = {'id': result['issue']['_id'], 'correct_blocks': result['correct_blocks'],
+                          'all_blocks': result['all_blocks'], 'correct_articles': result['correct_articles'],
+                          'all_articles': result['all_articles']}
+            test_issues.append(test_issue)
 
+        test = {'journal_name': journal_name, 'tested_at': time, 'version': version, 'correct_blocks': correct_blocks,
+                'all_blocks': all_blocks, 'correct_articles': correct_articles, 'all_articles': all_articles,
+                'test_issues': test_issues}
+
+        elastic.index(index=index, doc_type='test', body=test)
 
     # save statistics
     def __save_statistics(self, results, version, elastic, index):
@@ -204,3 +222,5 @@ class RulesTester(object):
 
         for key, group in itertools.groupby(results, lambda result: result["journal_name"]):
             self.__save_test(group, version, key, elastic, index)
+
+        elastic.indices.refresh(index=index)

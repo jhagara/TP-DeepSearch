@@ -1,7 +1,6 @@
 import unittest
 import os
 from helper.rules_tester import RulesTester
-from tests.helper.helper_test_methods import HelperTestMethods
 from semantic import Semantic
 from elasticsearch import Elasticsearch
 import config
@@ -39,7 +38,7 @@ class TestRulesTester(unittest.TestCase):
                   })
         es.indices.refresh(index=elastic_index)
         tester = RulesTester()
-        tester.test_all_test_issues()
+        tester.test_all_test_issues('test_version')
 
 
 if __name__ == '__main__':
