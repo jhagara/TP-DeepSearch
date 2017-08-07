@@ -1,6 +1,6 @@
 import unittest
 import os
-from helper.rules_tester import RulesTester
+import helper.rules_tester
 from semantic import Semantic
 from elasticsearch import Elasticsearch
 import config
@@ -37,7 +37,8 @@ class TestRulesTester(unittest.TestCase):
                       }
                   })
         es.indices.refresh(index=elastic_index)
-        tester = RulesTester()
+        helper.rules_tester.input = lambda: 'y'
+        tester = helper.rules_tester.RulesTester()
         tester.test_all_test_issues('test_version')
 
 
