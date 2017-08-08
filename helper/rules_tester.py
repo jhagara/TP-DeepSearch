@@ -1,5 +1,5 @@
-import config
 import os
+import getopt
 import re
 import sys
 from time import gmtime, strftime
@@ -13,9 +13,7 @@ from parser.xml.xml_parser import XmlParser
 class RulesTester(object):
 
     # make testing on all test issues set as test_issue
-    def test_all_test_issues(self, version):
-        elastic_index = config.elastic_index()
-
+    def test_all_test_issues(self, version, elastic_index):
         # establishment of connection
         es = Elasticsearch()
 
@@ -230,6 +228,19 @@ class RulesTester(object):
 
         return incorrect_article
 
+    def __find_latest_version(self, elastic, index):
+        latest_test = elastic.search(index=index, doc_type="test",
+                                     body={'query': {"match_all": {}}, 'size': 1,
+                                           'sort': [{'tested_at': {'order': 'desc'}}]})['hits']['hits']
+        if latest_test is None or len(latest_test) == 0:
+            print("No existing tests")
+        else:
+            print("Latest version is: " + latest_test[0]['_source']['version'])
+
+        sys.stdout.write("Enter actual version: ")
+        version = input()
+        return version
+
     # save statistics
     def __save_statistics(self, results, version, elastic, index):
         self.__print_results(results)
@@ -237,6 +248,9 @@ class RulesTester(object):
         respond = self.__query_yes_no("Do you want to save results to elastic?")
         if respond is False:
             return
+
+        if version is None:
+            version = self.__find_latest_version(elastic, index)
 
         # save for all
         self.__save_test(results, version, 'all', elastic, index)
@@ -248,3 +262,48 @@ class RulesTester(object):
             self.__save_test(group, version, key, elastic, index)
 
         elastic.indices.refresh(index=index)
+
+
+def usage():
+    print("TODO")
+    es = Elasticsearch()
+    indices = es.indices.get_alias().keys()
+    print("Elasticsearch indecies:")
+    for index in indices:
+        print(index)
+    return
+
+
+def main():
+    version = None
+    index = None
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], 'v:i:h', ['version=', 'index=', 'help'])
+    except getopt.GetoptError as err:
+        print(str(err))
+        usage()
+        sys.exit(2)
+
+    for opt, arg in opts:
+        if opt in ('-h', '--help'):
+            usage()
+            sys.exit()
+        elif opt in ('-v', '--version'):
+            version = arg
+            print(version)
+        elif opt in ('-i', '--index'):
+            index = arg
+            print(index)
+        else:
+            usage()
+            sys.exit(2)
+
+    if index is None:
+        usage()
+        sys.exit(2)
+
+    tester = RulesTester()
+    tester.test_all_test_issues(version, index)
+
+if __name__ == "__main__":
+    main()
