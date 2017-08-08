@@ -43,24 +43,27 @@ class RulesTester(object):
             all_articles = len(test_articles)
             correct_blocks = 0
             all_blocks = 0
-            missing_blocks = []
+            incorrect_articles = []
             for test_article in test_articles:
                 all_blocks += len(test_article['_source']['groups'])
                 # find article in newly parsed issue
                 parsed_article = self.__find_parsed_article(test_article, parsed_articles)
                 if parsed_article is None:
-                    missing_blocks.extend(test_article['_source']['groups'])
+                    incorrect_article = self.__get_incorrect_article(test_article, 0)
+                    incorrect_articles.append(incorrect_article)
                     continue
                 # compare articles
-                ca, cb, mb = self.__compare_articles(test_article, parsed_article)
+                ca, cb = self.__compare_articles(test_article, parsed_article)
                 if ca:
                     correct_articles += 1
+                else:
+                    incorrect_article = self.__get_incorrect_article(test_article, cb)
+                    incorrect_articles.append(incorrect_article)
                 correct_blocks += cb
-                missing_blocks.extend(mb)
 
             result_issue = {'correct_articles': correct_articles, 'all_articles': all_articles,
                             'correct_blocks': correct_blocks, 'all_blocks': all_blocks,
-                            'missing_blocks': missing_blocks, 'issue': issue,
+                            'incorrect_articles': incorrect_articles, 'issue': issue,
                             'journal_name': issue['_source']['journal_name']}
 
             results.append(result_issue)
@@ -119,7 +122,6 @@ class RulesTester(object):
     # compare test article and newly parsed article and compute statistics for article
     def __compare_articles(self, test_article, parsed_article):
         correct_blocks = 0
-        missing_blocks = []
         for test_group in test_article['_source']['groups']:
             l = str(test_group['l'])
             r = str(test_group['r'])
@@ -137,13 +139,10 @@ class RulesTester(object):
                     is_found = True
                     break
 
-            if is_found is False:
-                missing_blocks.append(test_group)
-
         correct_article = False
         if correct_blocks == len(test_article['_source']['groups']):
             correct_article = True
-        return correct_article, correct_blocks, missing_blocks
+        return correct_article, correct_blocks
 
     # print results
     def __print_results(self, results):
@@ -152,38 +151,6 @@ class RulesTester(object):
                   " correct articles: " + str(result['correct_articles']) + "/" + str(result['all_articles']) +
                   " correct blocks: " + str(result['correct_blocks']) + "/" +
                   str(result['all_blocks']))
-
-    # add new result into all issues
-    def __update_issues(self, results, version, elastic, index):
-        for result in results:
-            time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-            test = {'tested_at': time, 'version': version, 'correct_blocks': result['correct_blocks'],
-                    'all_blocks': result['all_blocks'], 'correct_articles': result['correct_articles'],
-                    'all_articles': result['all_articles']}
-
-            # update issue
-            if result['issue']['_source'].get('test') is None:
-                elastic.update(index=index,
-                               doc_type='issue',
-                               id=result['issue']['_id'],
-                               body={
-                                   "script": {
-                                       "inline": "ctx._source.tests = params.new_test",
-                                       "lang": "painless",
-                                       "params": {"new_test": test}
-                                   }
-                               })
-            else:
-                elastic.update(index=index,
-                               doc_type='issue',
-                               id=result['issue']['_id'],
-                               body={
-                                   "script": {
-                                       "inline": "ctx._source.tests += params.new_test",
-                                       "lang": "painless",
-                                       "params": {"new_test": test}
-                                   }
-                               })
 
     # save test
     def __save_test(self, results, version, journal_name, elastic, index):
@@ -200,7 +167,7 @@ class RulesTester(object):
             all_articles += result['all_articles']
             test_issue = {'id': result['issue']['_id'], 'correct_blocks': result['correct_blocks'],
                           'all_blocks': result['all_blocks'], 'correct_articles': result['correct_articles'],
-                          'all_articles': result['all_articles']}
+                          'all_articles': result['all_articles'], 'incorrect_articles': result['incorrect_articles']}
             test_issues.append(test_issue)
 
         test = {'journal_name': journal_name, 'tested_at': time, 'version': version, 'correct_blocks': correct_blocks,
@@ -241,6 +208,28 @@ class RulesTester(object):
                 sys.stdout.write("Please respond with 'yes' or 'no' "
                                  "(or 'y' or 'n').\n")
 
+    # create dictionry for incorrect article
+    def __get_incorrect_article(self, test_article, correct_blocks):
+        all_blocks = len(test_article['_source']['groups'])
+
+        # find heading
+        heading = next((group for group in test_article['_source']['groups'] if group['type'] == "headings"), None)
+
+        title = ''
+        page = None
+        if heading is not None:
+            title = heading['text']
+            page = heading['page']
+
+        # if article don't have heading get page for first block - all blocks should be on one page
+        if page is None and len(test_article['_source']['groups']) > 0:
+            page = test_article['_source']['groups'][0]['page']
+
+        incorrect_article = {"id": test_article['_id'], "correct_blocks": correct_blocks,
+                             "all_blocks": all_blocks, "page": page, "title": title}
+
+        return incorrect_article
+
     # save statistics
     def __save_statistics(self, results, version, elastic, index):
         self.__print_results(results)
@@ -248,8 +237,6 @@ class RulesTester(object):
         respond = self.__query_yes_no("Do you want to save results to elastic?")
         if respond is False:
             return
-
-        self.__update_issues(results, version, elastic, index)
 
         # save for all
         self.__save_test(results, version, 'all', elastic, index)
