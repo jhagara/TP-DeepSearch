@@ -39,7 +39,7 @@ class TestRulesTester(unittest.TestCase):
         es.indices.refresh(index=elastic_index)
         helper.rules_tester.input = lambda: 'y'
         tester = helper.rules_tester.RulesTester()
-        tester.test_all_test_issues('test_version', elastic_index)
+        tester.test_test_issues(None, 'test_version', elastic_index)
 
 
 if __name__ == '__main__':

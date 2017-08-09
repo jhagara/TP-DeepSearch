@@ -91,3 +91,6 @@ ENV/
 
 # pycharm .idea folder
 .idea/
+/tests/elastic_filler/slovak/1939/19390526/STR_small/1336-4464_1939_19390526_00001.jpg
+/tests/elastic_filler/slovak/1940/19390526/STR_small/1336-4464_1939_19390526_00001.jpg
+/tests/elastic_filler/slovak/1941/19390526/STR_small/1336-4464_1939_19390526_00001.jpg

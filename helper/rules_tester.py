@@ -13,11 +13,11 @@ from parser.xml.xml_parser import XmlParser
 class RulesTester(object):
 
     # make testing on all test issues set as test_issue
-    def test_all_test_issues(self, version, elastic_index):
+    def test_test_issues(self, journal_name, version, elastic_index):
         # establishment of connection
         es = Elasticsearch()
 
-        test_issues = self.__find_all_test_issues(es, elastic_index)
+        test_issues = self.__find_test_issues(journal_name, es, elastic_index)
 
         results = []
         for issue in test_issues:
@@ -67,12 +67,20 @@ class RulesTester(object):
             results.append(result_issue)
 
         # save statistics
-        self.__save_statistics(results, version, es, elastic_index)
+        self.__save_statistics(results, journal_name, version, es, elastic_index)
 
-    # find all test issues set as test_issue
-    def __find_all_test_issues(self, elastic, index):
-        test_issues = elastic.search(index=index, doc_type="issue",
-                                     body={'query': {'term': {'is_tested': 'true'}}, 'size': 1000})['hits']['hits']
+    # find test issues set as test_issue
+    def __find_test_issues(self, journal_name, elastic, index):
+        if journal_name is None or journal_name == 'all':
+            test_issues = elastic.search(index=index, doc_type="issue",
+                                         body={'query': {'term': {'is_tested': {'value': True}}},
+                                               'size': 1000})['hits']['hits']
+        else:
+            test_issues = elastic.search(index=index, doc_type="issue",
+                                         body={'query': {'bool': {'must': [
+                                             {'match': {'journal_name': journal_name}},
+                                             {'term': {'is_tested': {'value': 'true'}}}]}},
+                                             'size': 1000})['hits']['hits']
         return test_issues
 
     # find xml path
@@ -237,12 +245,12 @@ class RulesTester(object):
         else:
             print("Latest version is: " + latest_test[0]['_source']['version'])
 
-        sys.stdout.write("Enter actual version: ")
+        sys.stdout.write("Enter current version: ")
         version = input()
         return version
 
     # save statistics
-    def __save_statistics(self, results, version, elastic, index):
+    def __save_statistics(self, results, journal_name, version, elastic, index):
         self.__print_results(results)
 
         respond = self.__query_yes_no("Do you want to save results to elastic?")
@@ -253,7 +261,8 @@ class RulesTester(object):
             version = self.__find_latest_version(elastic, index)
 
         # save for all
-        self.__save_test(results, version, 'all', elastic, index)
+        if journal_name is None or journal_name == 'all':
+            self.__save_test(results, version, 'all', elastic, index)
 
         # save for each journal
         results.sort(key=itemgetter("journal_name"))
@@ -265,10 +274,19 @@ class RulesTester(object):
 
 
 def usage():
-    print("TODO")
+    print("Name")
+    print("rules_tester.py - test issues that are marked as tested")
+    print()
+    print("Usage")
+    print("rules_tester.py -v [version] -i [elastic index] -n [journal name] -h")
+    print("-v [version]: save statistics with specified version")
+    print("-i [elastic index]: use [elastic index] for elasticsearch")
+    print("-n [journal name]: test for issues with journal name = [journal name]")
+    print("-h: usage of script")
+    print()
     es = Elasticsearch()
     indices = es.indices.get_alias().keys()
-    print("Elasticsearch indecies:")
+    print("Existing elasticsearch indecies:")
     for index in indices:
         print(index)
     return
@@ -277,8 +295,9 @@ def usage():
 def main():
     version = None
     index = None
+    name = None
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'v:i:h', ['version=', 'index=', 'help'])
+        opts, args = getopt.getopt(sys.argv[1:], 'v:i:n:h', ['version=', 'index=', 'name=', 'help'])
     except getopt.GetoptError as err:
         print(str(err))
         usage()
@@ -290,20 +309,21 @@ def main():
             sys.exit()
         elif opt in ('-v', '--version'):
             version = arg
-            print(version)
         elif opt in ('-i', '--index'):
             index = arg
-            print(index)
+        elif opt in ('-n', '--name'):
+            name = arg
         else:
             usage()
             sys.exit(2)
 
     if index is None:
+        print("NO ELASTIC INDEX")
         usage()
         sys.exit(2)
 
     tester = RulesTester()
-    tester.test_all_test_issues(version, index)
+    tester.test_test_issues(name, version, index)
 
 if __name__ == "__main__":
     main()
