@@ -36,6 +36,54 @@ class TestRulesTester(unittest.TestCase):
                           }
                       }
                   })
+
+        json = path + '/../elastic_filler/slovak/slovak_config.json'
+        dir = path + '/../elastic_filler/slovak/1940/19390526'
+        journal_marc21 = path + '/../elastic_filler/slovak/journal_marc21.xml'
+        xml = path + '/../elastic_filler/slovak/1940/19390526/XML/1336-4464_1939_19390526_00001.xml'
+        file = {'json': json,
+                'dir': dir,
+                'journal_marc21': journal_marc21,
+                'xml': xml}
+
+        semantic = Semantic(xml=file['xml'], header_config=file['json'])
+        issue_id = semantic.save_to_elastic("test_issue", file['dir'], file)
+        es.update(index=elastic_index,
+                  doc_type='issue',
+                  id=issue_id,
+                  body={
+                      "script": {
+                          "inline": "ctx._source.is_tested = params.is_tested",
+                          "lang": "painless",
+                          "params": {
+                              "is_tested": True
+                          }
+                      }
+                  })
+
+        json = path + '/../elastic_filler/slovak/1941/19390526/1939.json'
+        dir = path + '/../elastic_filler/slovak/1941/19390526'
+        journal_marc21 = path + '/../elastic_filler/slovak/journal_marc21.xml'
+        xml = path + '/../elastic_filler/slovak/1941/19390526/XML/1336-4464_1939_19390526_00001.xml'
+        file = {'json': json,
+                'dir': dir,
+                'journal_marc21': journal_marc21,
+                'xml': xml}
+
+        semantic = Semantic(xml=file['xml'], header_config=file['json'])
+        issue_id = semantic.save_to_elastic("test_issue", file['dir'], file)
+        es.update(index=elastic_index,
+                  doc_type='issue',
+                  id=issue_id,
+                  body={
+                      "script": {
+                          "inline": "ctx._source.is_tested = params.is_tested",
+                          "lang": "painless",
+                          "params": {
+                              "is_tested": True
+                          }
+                      }
+                  })
         es.indices.refresh(index=elastic_index)
         helper.rules_tester.input = lambda: 'y'
         tester = helper.rules_tester.RulesTester()
