@@ -2,7 +2,7 @@ import os
 import sys
 from lxml import etree
 from parser.xml.cleaner import Cleaner
-import glob
+
 
 class PathValidator(object):
     marc_schema_path = "/MARC21schema.xsd"
@@ -13,7 +13,9 @@ class PathValidator(object):
     def validate_issues_in_path(self,path):
 
         if os.path.exists(path):
-            # make sure that path is absolute
+            self.error_count = 0
+            self.issue_count = 0
+            # first make sure that path is absolute
             path = os.path.abspath(path)
 
             # find XML subdirectories of path
@@ -78,7 +80,6 @@ class PathValidator(object):
         else:
             # check if quantity of images correspond to quantity of pages in xml
             if cls.__validate_number_of_pages(xml_path, images_path, issue_name) is False:
-                print("Error when validating number of pages and images in directory for issue: " + issue_name)
                 error_count = error_count + 1
 
         # get path to main journal file
@@ -97,7 +98,8 @@ class PathValidator(object):
                 # check if exists config file .json in journal directory
                 json_path = cls.__find_file_path(journal_path, ".json")
                 if json_path is None:
-                    print("Error: No .json config file found for issue: " + issue_name + " in issue, year or journal directory")
+                    print("Error: No .json config file found for issue: " + issue_name +
+                          " in issue, year or journal directory")
                     error_count = error_count + 1
 
         return error_count
@@ -139,20 +141,41 @@ class PathValidator(object):
 
     @classmethod
     def __validate_number_of_pages(cls,xml_path, images_path, issue_name):
+
         # load xml file
-        xml = etree.parse(xml_path)
-        xml = Cleaner.clean(xml)
+        # xml = etree.parse(xml_path)
+        # xml = Cleaner.clean(xml)
 
         # get count of pages in xml
-        pages_count = xml.xpath('count(//page)')
+        # pages_count = xml.xpath('count(//page)')
+
+        # get line from xml issue which contains element pagesCount
+        pages_count_line = None
+        with open(xml_path) as f:
+            for line in f:
+                if 'pagesCount="' in line:
+                    pages_count_line = line
+                    break
+        if pages_count_line is None:
+            print("Error: no element pagesCount found in xml of issue: " + issue_name)
+            return False
+
+        # parse pagesCount value
+        pages_count = 0
+        for s in pages_count_line.split():
+            if s.startswith('pagesCount='):
+                pages_count = int(list(filter(str.isdigit, s))[0])
+                break
 
         # get count of images in path
         images_count = 0
         for file in os.listdir(images_path):
-            if file.startswith(issue_name):
+            if file.startswith(issue_name) and file.endswith(".jpg"):
                 images_count = images_count + 1
 
-        if pages_count != images_count:
+        # validate number of images and pages
+        if pages_count > images_count:
+            print("Error: issue: " + issue_name + " has", pages_count, "pages, but only", images_count, "image(s)")
             return False
         else:
             return True
@@ -172,14 +195,15 @@ def main(*attrs):
         issue_count = result.get("issue_count")
 
         result_code = 1
-        if error_count == 0 & issue_count > 0 :
-            result_code = 0
-        elif error_count == -1:
-            print("Path " + path + " does not exists")
-        elif error_count > 0:
+        if error_count > 0:
             print("There were found", error_count, "errors in", issue_count, "issues")
-        else:
+        elif error_count == -1 & issue_count == -1:
+            print("Error: Path " + path + " does not exists")
+        elif error_count == -1 & issue_count > 0:
             print("No issues found in path: " + path)
+        else:
+            print("No errors found in path " + path)
+            result_code = 0
 
     except:
         print("Invalid path")
