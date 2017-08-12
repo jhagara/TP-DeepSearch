@@ -209,17 +209,21 @@ def main(*attrs):
     print("Validating path: " + path)
 
     try:
+        # prepare logfile for printing errors
         time_str = time.strftime("%Y%m%d-%H%M%S")
         log_name = "logs/log"+time_str+".log"
         if not os.path.exists("logs"):
             os.makedirs("logs")
         logfile = open(log_name,"w+")
+        print("Validating path: " + path, file = logfile)
 
+        # run path validation
         path_validator = PathValidator()
         result = path_validator.validate_issues_in_path(path, logfile)
         error_count = result.get("error_count")
         issue_count = result.get("issue_count")
 
+        # handle results of path validation
         result_code = 1
         if error_count > 0:
             print("There were found", error_count, "errors in", issue_count, "issues")
