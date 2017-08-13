@@ -13,25 +13,27 @@ class TestImageCompress(unittest.TestCase):
         source_dirname = os.path.dirname(os.path.abspath(__file__)) + "/19430526"
 
         rem_dir = source_dirname + "/STR_small"
-
-        pics_dirname_small = os.path.dirname(os.path.abspath(__file__)) + "/19430526/STR_small_true"
-        pages_paths_small = glob.glob(pics_dirname_small + '/*.jpg')
-        pages_paths_small.sort()
-
         try:
             num_pics = ImageProcessor.compress_images(source_dirname)
+
+            pics_dirname_small = source_dirname + "/STR_small"
+            pages_paths_small = glob.glob(pics_dirname_small + '/*.jpg')
+            pages_paths_small.sort()
+
             self.assertEqual(len(pages_paths_small), num_pics)
 
             for test_path in pages_paths_small:
                 new_path = deepcopy(test_path)
-                new_path = new_path.replace('STR_small_true', 'STR_small')
-                print(test_path, new_path)
-                test = Image.open(test_path)
-                created = Image.open(new_path)
-                # self.assertEqual(created, test)
+                new_path = new_path.replace('STR_small', 'STR')
 
-                test_hist = test.histogram()
-                created_hist = created.histogram()
-                # self.assertEqual(created_hist, test_hist)
+                test_path_info = os.stat(test_path)
+                test_path_size = test_path_info.st_size
+
+                new_path_info = os.stat(new_path)
+                new_path_size = new_path_info.st_size
+                
+                self.assertGreater(new_path_size, test_path_size)
+                # print(test_path, new_path)
+
         finally:
             shutil.rmtree(rem_dir)
