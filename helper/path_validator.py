@@ -15,6 +15,7 @@ class PathValidator(object):
         if os.path.exists(path):
             self.error_count = 0
             self.issue_count = 0
+
             # first make sure that path is absolute
             path = os.path.abspath(path)
 
@@ -32,8 +33,7 @@ class PathValidator(object):
 
                     # get issue name
                     path, issue_name = os.path.split(xml_path)
-                    issue_name = os.path.splitext(issue_name)[0]
-                    issue_name = issue_name[:-6]
+                    issue_name = (os.path.splitext(issue_name)[0])[:23]
 
                     # get issue path
                     issue_path = os.path.abspath(os.path.join(path, os.pardir))
@@ -128,10 +128,10 @@ class PathValidator(object):
         return error_count
 
     @classmethod
-    def __validate_marcxml(cls,marcxml_path):
+    def __validate_marcxml(cls, marcxml_path):
 
         # get absolute path to schema of marc journal file
-        schema_abs_path = os.path.dirname(os.path.abspath(__file__))+cls.marc_schema_path
+        schema_abs_path = os.path.dirname(os.path.abspath(__file__)) + cls.marc_schema_path
 
         # parse schema of marc journal
         schema_doc = etree.parse(schema_abs_path)
@@ -147,7 +147,7 @@ class PathValidator(object):
             return False
 
     @classmethod
-    def __validate_number_of_pages(cls,xml_path, images_path, issue_name, logfile):
+    def __validate_number_of_pages(cls, xml_path, images_path, issue_name, logfile):
 
         # load xml file
         # xml = etree.parse(xml_path)
@@ -159,7 +159,7 @@ class PathValidator(object):
         # get line from xml issue which contains element pagesCount
         pages_count_line = None
         pages_count = 0
-        with open(xml_path) as f:
+        with open(xml_path,"r",encoding="utf-8") as f:
             for line in f:
                 if 'pagesCount="' in line:
                     pages_count_line = line
@@ -173,7 +173,6 @@ class PathValidator(object):
                 if has_namespace:
                     node.tag = node.tag.split('}', 1)[1]
             pages_count = xml.xpath('count(//page)')
-            return False
 
         # parse pagesCount value from line
         else:
@@ -185,9 +184,7 @@ class PathValidator(object):
         # get count of images in path
         images_count = 0
         for file in os.listdir(images_path):
-            # removed first part of condition because of revisions creating folder issue_name_02 but not for images
-            # if file.startswith(issue_name) and file.endswith(".jpg"):
-            if file.endswith(".jpg"):
+            if file.startswith(issue_name) and file.endswith(".jpg"):
                 images_count = images_count + 1
 
         # validate number of images and pages
@@ -227,7 +224,7 @@ def main(*attrs):
         result_code = 1
         if error_count > 0:
             print("There were found", error_count, "errors in", issue_count, "issues")
-            print("There were found", error_count, "errors in", issue_count, "issues",file=logfile)
+            print("There were found", error_count, "errors in", issue_count, "issues", file = logfile)
         elif error_count == -1 & issue_count == -1:
             print("Error: Path " + path + " does not exists")
         elif error_count == -1 & issue_count > 0:
