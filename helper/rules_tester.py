@@ -152,11 +152,38 @@ class RulesTester(object):
 
     # print results
     def __print_results(self, results):
-        for result in results:
-            print("Journal: " + result['journal_name'] + " issue name: " + result['issue']['_source']['name'] +
-                  " correct articles: " + str(result['correct_articles']) + "/" + str(result['all_articles']) +
-                  " correct blocks: " + str(result['correct_blocks']) + "/" +
-                  str(result['all_blocks']))
+
+        all_blocks = 0
+        all_cor_blocks = 0
+        all_articles = 0
+        all_cor_articles = 0
+        for key, group in itertools.groupby(results, lambda r: r["journal_name"]):
+            print("Journal: " + key)
+            print("{:<20} {:<8} {:<8}".format('Issue', 'Articles', 'Blocks'))
+            journal_all_blocks = 0
+            journal_cor_blocks = 0
+            journal_all_articles = 0
+            journal_cor_articles = 0
+            for result in group:
+                all_blocks += result['all_blocks']
+                all_cor_blocks += result['correct_blocks']
+                all_articles += result['all_articles']
+                all_cor_articles += result['correct_articles']
+                journal_all_blocks += result['all_blocks']
+                journal_cor_blocks += result['correct_blocks']
+                journal_all_articles += result['all_articles']
+                journal_cor_articles += result['correct_articles']
+                per_blocks = "{0:.2f}%".format(result['correct_blocks'] / result['all_blocks'] * 100)
+                per_articles = "{0:.2f}%".format(result['correct_articles'] / result['all_articles'] * 100)
+                print("{:<20} {:<8} {:<8}".format(result['issue']['_source']['name'], per_articles, per_blocks))
+            per_articles = "{0:.2f}%".format(journal_cor_articles / journal_all_articles * 100)
+            per_blocks = "{0:.2f}%".format(journal_cor_blocks / journal_all_blocks * 100)
+            print("{:<20} {:<8} {:<8}".format('TOTAL', per_articles, per_blocks))
+            print()
+        print("For all journals")
+        per_articles = "{0:.2f}%".format(all_cor_articles / all_articles * 100)
+        per_blocks = "{0:.2f}%".format(all_cor_blocks / all_blocks * 100)
+        print("{:<20} {:<8} {:<8}".format('ALL', per_articles, per_blocks))
 
     # save test
     def __save_test(self, results, version, journal_name, elastic, index):
@@ -251,6 +278,8 @@ class RulesTester(object):
 
     # save statistics
     def __save_statistics(self, results, journal_name, version, elastic, index):
+
+        results.sort(key=itemgetter("journal_name"))
         self.__print_results(results)
 
         respond = self.__query_yes_no("Do you want to save results to elastic?")
@@ -265,8 +294,6 @@ class RulesTester(object):
             self.__save_test(results, version, 'all', elastic, index)
 
         # save for each journal
-        results.sort(key=itemgetter("journal_name"))
-
         for key, group in itertools.groupby(results, lambda result: result["journal_name"]):
             self.__save_test(group, version, key, elastic, index)
 
