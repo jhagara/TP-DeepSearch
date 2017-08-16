@@ -39,8 +39,13 @@ class PathValidator(object):
                     issue_path = os.path.abspath(os.path.join(path, os.pardir))
                     self.issue_count = self.issue_count + 1
 
-                    # check .json config and images in STR directory
-                    self.error_count = self.error_count + self.__check_needed_files(xml_path,issue_path,
+                    # get path to main journal file to validate marc21 record of journal later
+                    second_level_path = os.path.abspath(os.path.join(issue_path, os.pardir))
+                    journal_path = os.path.abspath(os.path.join(second_level_path, os.pardir))
+                    self.journal_paths.add(journal_path)
+
+                    # check images in STR directory
+                    self.error_count = self.error_count + self.__validate_images(xml_path,issue_path,
                                                                                     issue_name, logfile)
 
             # at last check journal directories if they contain valid marc21 record for journal
@@ -71,7 +76,7 @@ class PathValidator(object):
         return xml_path
 
     @classmethod
-    def __check_needed_files(cls, xml_path, issue_path, issue_name, logfile):
+    def __validate_images(cls, xml_path, issue_path, issue_name, logfile):
         error_count = 0
 
         # check if path to images exists
@@ -84,29 +89,6 @@ class PathValidator(object):
             # check if quantity of images correspond to quantity of pages in xml
             if cls.__validate_number_of_pages(xml_path, images_path, issue_name, logfile) is False:
                 error_count = error_count + 1
-
-        # get path to main journal file
-        year_path = os.path.abspath(os.path.join(issue_path, os.pardir))
-        journal_path = os.path.abspath(os.path.join(year_path, os.pardir))
-        cls.journal_paths.add(journal_path)
-
-        # check if exists config file .json in issue directory
-        json_path = cls.__find_file_path(issue_path, ".json")
-        if json_path is None:
-
-            # check if exists config file .json in year directory
-            json_path = cls.__find_file_path(year_path, ".json")
-            if json_path is None:
-
-                # check if exists config file .json in journal directory
-                json_path = cls.__find_file_path(journal_path, ".json")
-                if json_path is None:
-                    print("Error: No .json config file found for issue: " + issue_name +
-                          " in issue, year or journal directory")
-                    print("Error: No .json config file found for issue: " + issue_name +
-                          " in issue, year or journal directory", file = logfile)
-                    error_count = error_count + 1
-
         return error_count
 
     @classmethod
@@ -149,13 +131,6 @@ class PathValidator(object):
     @classmethod
     def __validate_number_of_pages(cls, xml_path, images_path, issue_name, logfile):
 
-        # load xml file
-        # xml = etree.parse(xml_path)
-        # xml = Cleaner.clean(xml)
-
-        # get count of pages in xml
-        # pages_count = xml.xpath('count(//page)')
-
         # get line from xml issue which contains element pagesCount
         pages_count_line = None
         pages_count = 0
@@ -165,7 +140,7 @@ class PathValidator(object):
                     pages_count_line = line
                     break
 
-        # if no element pagesCount found, use lxml to count element <page>
+        # if no line with element pagesCount found, use lxml to count element <page>
         if pages_count_line is None:
             xml = etree.parse(xml_path)
             for node in xml.iter():
@@ -174,7 +149,7 @@ class PathValidator(object):
                     node.tag = node.tag.split('}', 1)[1]
             pages_count = xml.xpath('count(//page)')
 
-        # parse pagesCount value from line
+        # else parse pagesCount value from line
         else:
             for s in pages_count_line.split():
                 if s.startswith('pagesCount='):
@@ -184,7 +159,7 @@ class PathValidator(object):
         # get count of images in path
         images_count = 0
         for file in os.listdir(images_path):
-            if file.startswith(issue_name) and file.endswith(".jpg"):
+            if file.endswith(".jpg"):
                 images_count = images_count + 1
 
         # validate number of images and pages
@@ -203,6 +178,7 @@ def main(*attrs):
         path = input("Enter path to validate:\n")
     else:
         path = attrs[0]
+    path = os.path.abspath(path)
     print("Validating path: " + path)
 
     try:
@@ -225,14 +201,17 @@ def main(*attrs):
         if error_count > 0:
             print("There were found", error_count, "errors in", issue_count, "issues")
             print("There were found", error_count, "errors in", issue_count, "issues", file = logfile)
+            print("Created logfile: " + os.path.abspath(log_name))
         elif error_count == -1 & issue_count == -1:
             print("Error: Path " + path + " does not exists")
+            os.remove(log_name)
         elif error_count == -1 & issue_count > 0:
             print("No issues found in path: " + path)
+            os.remove(log_name)
         else:
             print("No errors found in path " + path)
             result_code = 0
-
+            os.remove(log_name)
     except:
         print("Invalid path")
         result_code = 1
