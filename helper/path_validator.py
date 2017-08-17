@@ -180,6 +180,7 @@ def main(*attrs):
         path = attrs[0]
     path = os.path.abspath(path)
     print("Validating path: " + path)
+    print("... please wait ...")
 
     try:
         # prepare logfile for printing errors
@@ -199,8 +200,8 @@ def main(*attrs):
         # handle results of path validation
         result_code = 1
         if error_count > 0:
-            print("There were found", error_count, "errors in", issue_count, "issues")
-            print("There were found", error_count, "errors in", issue_count, "issues", file = logfile)
+            print("There were found", error_count, "error(s) and", issue_count, "issue(s)")
+            print("There were found", error_count, "error(s) and", issue_count, "issue(s)", file = logfile)
             print("Created logfile: " + os.path.abspath(log_name))
         elif error_count == -1 & issue_count == -1:
             print("Error: Path " + path + " does not exists")
