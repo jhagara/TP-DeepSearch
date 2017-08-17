@@ -70,7 +70,9 @@ Then you need these files from this repository in folder /helper:
 	MARC21schema.xsd
 	Path Validator.bat
 
-All these files (including Python installer) must be in the same folder, for example C:\Documents\Work
+All these files (including Python installer) must be in the same folder, for example: 
+::
+	C:\Documents\Work
 
 To run path validation, double click on Path Validator.bat, wait for python installation (if it is needed) and then, when prompted, enter the path to validate.
 
