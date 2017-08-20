@@ -60,7 +60,7 @@ user stories, tasks or some other way.
 
 Path Validation
 ===============
-Firstly, you need to download folder path_validator located in folder /helper in this repository. This folder path_validator should contain these files:
+Firstly, you need to download content of folder path_validator located in folder /helper in this repository. This folder path_validator should contain these files:
 ::
 	issue_xml_schema.xsd
 	MARC21_journal_schema.xsd
@@ -82,6 +82,10 @@ Make sure that you have all the needed files:
 	Path Validator.bat
 	path_validator.py
     python-3.6.2.exe
+
+All these files (including Python installer) must be in the same folder, for example:
+::
+	C:\Documents\Work
 
 To run path validation, double click on Path Validator.bat, wait few minutes for python installation (if it is needed) and then, when prompted, enter the path to validate.
 
