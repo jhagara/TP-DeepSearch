@@ -5,7 +5,8 @@ from lxml import etree
 
 
 class PathValidator(object):
-    marc_schema_path = "/MARC21schema.xsd"
+    marc_schema_path = "/MARC21_journal_schema.xsd"
+    xml_issue_schema_path = "/issue_xml_schema.xsd"
     error_count = 0
     issue_count = 0
     journal_paths = set()
@@ -30,10 +31,13 @@ class PathValidator(object):
                         print("Error: .xml file of issue not found in: " + xml_dir_path)
                         print("Error: .xml file of issue not found in: " + xml_dir_path, file = logfile)
                         self.error_count = self.error_count + 1
+                        continue
+                    else:
+                        self.error_count = self.error_count + self.__validate_issue_xml(xml_path, logfile)
 
                     # get issue name
                     path, issue_name = os.path.split(xml_path)
-                    issue_name = (os.path.splitext(issue_name)[0])[:23]
+                    issue_name = (os.path.splitext(issue_name)[0])
 
                     # get issue path
                     issue_path = os.path.abspath(os.path.join(path, os.pardir))
@@ -82,8 +86,10 @@ class PathValidator(object):
         # check if path to images exists
         images_path = cls.__find_dir_path(issue_path, "STR")
         if images_path is None:
-            print("Error: STR Directory for issue: " + issue_name + " was not found")
-            print("Error: STR Directory for issue: " + issue_name + " was not found", file = logfile)
+            print("Error: STR Directory for issue: " + issue_name + " was not found. Expected path: " +
+                  images_path)
+            print("Error: STR Directory for issue: " + issue_name + " was not found. Expected path: " +
+                  images_path, file = logfile)
             error_count = error_count + 1
         else:
             # check if quantity of images correspond to quantity of pages in xml
@@ -98,14 +104,16 @@ class PathValidator(object):
         # check if exists marc21 record for journal
         marc_path = cls.__find_file_path(journal_path, "marc21.xml")
         if marc_path is None:
-            print("Error: No marc21 record found for journal in directory: " + journal_path)
-            print("Error: No marc21 record found for journal in directory: " + journal_path, file = logfile)
+            print("Error: No marc21.xml record found for journal in directory: " + journal_path + " Expected file with name ending with marc21.xml")
+            print("Error: No marc21.xml record found for journal in directory: " + journal_path, file = logfile)
             error_count = error_count + 1
         else:
             # check if existing marc21 record is valid
             if cls.__validate_marcxml(marc_path) is False:
-                print("Error: MarcXML is not valid for journal in directory : " + journal_path)
-                print("Error: MarcXML is not valid for journal in directory : " + journal_path, file = logfile)
+                print("Error: MarcXML " + os.path.split(marc_path)[1] + " is not valid for journal in directory : "
+                      + journal_path)
+                print("Error: MarcXML " + os.path.split(marc_path)[1] + " is not valid for journal in directory : "
+                      + journal_path, file = logfile)
                 error_count = error_count + 1
         return error_count
 
@@ -127,6 +135,29 @@ class PathValidator(object):
             return True
         else:
             return False
+
+    @classmethod
+    def __validate_issue_xml(cls, xml_path, logfile):
+
+        # get absolute path to schema of marc journal file
+        schema_abs_path = os.path.dirname(os.path.abspath(__file__)) + cls.xml_issue_schema_path
+
+        # parse schema of issue xml
+        schema_doc = etree.parse(schema_abs_path)
+        schema = etree.XMLSchema(schema_doc)
+
+        # parse xml issue
+        issue_xml = etree.parse(xml_path)
+
+        # validate os.path.split(marc_path)[1]
+        if schema.validate(issue_xml):
+            return 0
+        else:
+            print("Error: Invalid issue " + os.path.split(xml_path)[1] +
+                  " in " + os.path.split(xml_path)[0])
+            print("Error: Invalid issue " + os.path.split(xml_path)[1] +
+                  " in " + os.path.split(xml_path)[0], file=logfile)
+            return 1
 
     @classmethod
     def __validate_number_of_pages(cls, xml_path, images_path, issue_name, logfile):
@@ -164,13 +195,23 @@ class PathValidator(object):
 
         # validate number of images and pages
         if pages_count > images_count:
-            print("Error: issue: " + issue_name + " has", pages_count, "pages, but only", images_count, "image(s)")
-            print("Error: issue: " + issue_name + " has", pages_count, "pages, but only", images_count, "image(s)"
-                  , file = logfile)
+            print("Error: issue " + issue_name + " has", pages_count, "pages, but there are only",
+                  images_count, "image(s) in " + images_path)
+            print("Error: issue " + issue_name + " has", pages_count, "pages, but there are only",
+                  images_count, "image(s) in " + images_path, file = logfile)
             return False
         else:
             return True
 
+    @classmethod
+    def __get_error_path(cls,path):
+        error_path = path
+        for x in range(0, 5):
+            error_path = os.path.abspath(os.path.join(error_path, os.pardir))
+        print(error_path)
+        error_path = os.path.relpath(path, error_path)
+        error_path = os.path.split(os.path.split(error_path)[0])[0]
+        print(error_path)
 
 def main(*attrs):
     # handle input

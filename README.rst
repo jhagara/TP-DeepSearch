@@ -60,25 +60,36 @@ user stories, tasks or some other way.
 
 Path Validation
 ===============
-First, download Python installer from this link:
+Firstly, you need to download folder path_validator located in folder /helper in this repository. This folder path_validator should contain these files:
+::
+	issue_xml_schema.xsd
+	MARC21_journal_schema.xsd
+	Path Validator.bat
+	path_validator.py
+
+Secondly, download Python installer from this link:
 ::
 	https://drive.google.com/file/d/0Bwbz4DMi5b1vdUtjX0RsYmZ4dU0/view?usp=sharing
 
-Then you need these files from this repository in folder /helper:
+All these files (including Python installer) must be placed in the same folder, for example:
 ::
-	path_validator.py
-	MARC21schema.xsd
+    C:\Documents\Work
+
+Make sure that you have all the needed files:
+::
+    issue_xml_schema.xsd
+	MARC21_journal_schema.xsd
 	Path Validator.bat
+	path_validator.py
+    python-3.6.2.exe
 
-All these files (including Python installer) must be in the same folder, for example C:\Documents\Work
-
-To run path validation, double click on Path Validator.bat, wait for python installation (if it is needed) and then, when prompted, enter the path to validate.
+To run path validation, double click on Path Validator.bat, wait few minutes for python installation (if it is needed) and then, when prompted, enter the path to validate.
 
 Path should be entered in the form of absolute path for example:
 ::
 	C:\Documents\Work\Journals\Slovak
 
-Path can also be entered in the form of relative path, for example if you placed these files in 
+Path can also be entered in the form of relative path, for example if you placed these path_validator files in
 ::
 	C:\Documents\Work
 

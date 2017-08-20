@@ -2,7 +2,7 @@ import unittest
 import os
 import time
 import shutil
-from helper.path_validator import PathValidator
+from helper.path_validator.path_validator import PathValidator
 
 
 class TestPathValidator(unittest.TestCase):
@@ -15,7 +15,6 @@ class TestPathValidator(unittest.TestCase):
         if not os.path.exists("logs"):
             os.makedirs("logs")
         logfile = open(log_name, "w+")
-
         path_validator = PathValidator()
         result = path_validator.validate_issues_in_path(test_path + '/elastic_filler/slovak', logfile)
 
