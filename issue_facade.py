@@ -8,6 +8,26 @@ import sys
 
 class IssueFacade(object):
     @classmethod
+    def insert_by_fullpath(cls, parser_dir, target_fullpath, name):
+        xml = re.sub("[\n]", '', os.popen("find '" + target_fullpath + "/XML' -maxdepth 1 -type f -name '*.xml'").read())
+        config_path = cls.__find_file(copy.copy(target_fullpath), parser_dir, "*.json")
+        journal_marc21_path = cls.__find_file(copy.copy(target_fullpath), parser_dir, "*journal_marc21.xml")
+        file = {'dir': target_fullpath, 'xml': xml, 'json': config_path, 'journal_marc21': journal_marc21_path}
+        print("Parsing: " + str(file))
+
+        # return bad exit code if any xml did not search
+        if xml == '' or config_path == '' or journal_marc21_path == '':
+            raise FileNotFoundError("Missing xml, config file or journal marc21 file in dir and parent dirs")
+
+        print('Parsing File: ', target_fullpath)
+        semantic = Semantic(xml=file['xml'], header_config=file['json'])
+        issue_id = semantic.save_to_elastic(name, file['dir'], file)
+        semantic.compress_images(file['dir'])
+        semantic.insert_key_words(issue_id)
+
+        return 'Insert by fullpath was successful'
+
+    @classmethod
     def bulk_insert(cls, parser_dir, dir, name):
         print('PARSING Directory: ', dir)
         files = []
@@ -18,7 +38,7 @@ class IssueFacade(object):
 
             xml = re.sub("[\n]", '', os.popen("find " + current_dir + " -maxdepth 1 -type f -name '*.xml'").read())
 
-            current_dir = re.sub("[\n]", '', os.popen("dirname '" + re.sub("[\n]", '', current_dir) + "'").read())
+            current_dir = re.sub("[\n]", '', os.popen("dirname '" + re.sub("[\n]", '', current_dir) + "' | xargs readlink -f").read())
             config_path = cls.__find_file(copy.copy(current_dir), parser_dir, "*.json")
             journal_marc21_path = cls.__find_file(copy.copy(current_dir), parser_dir, "*journal_marc21.xml")
 
