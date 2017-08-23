@@ -21,8 +21,8 @@ for index in indices:
     print("indexing: " + index)
 
     # destroy index if already exists
-    if es.indices.exists(index=index):
-        es.indices.delete(index=index)
+    # if es.indices.exists(index=index):
+    es.indices.delete(index=index, ignore=[400, 404])
 
     # create index
     es.indices.create(
@@ -39,7 +39,7 @@ for index in indices:
                         "number": {"type": "text"},
                         "pages_count": {"type": "short"},
                         "year": {"type": "text"},
-                        "source_dirname": {"type": "text"},
+                        "source_dirname": {"type": "keyword"},
                         "journal_marc21_path": {"type": "text"},
                         "issue_marc21_path": {"type": "text"},
                         "page_height": {"type": "short"},
@@ -64,7 +64,7 @@ for index in indices:
                         "authors": {"type": "string"},
                         "keywords": {"type": "keyword"},
                         "article_marc21_path": {"type": "text"},
-                        "source_dirname": {"type": "text"},
+                        "source_dirname": {"type": "keyword"},
                         "issue": {
                             "type": "nested",
                             "properties": {
