@@ -110,16 +110,15 @@ class Analyzer(object):
         list_of_starts = []
 
         for article in jlist:
-            if article['is_ignored'] is False:
-                all_text = ''
-                for group in article['groups']:
-                    all_text += group['text']
+            all_text = ''
+            for group in article['groups']:
+                all_text += group['text']
 
-                # remove stop words and get list of sentence starters
-                all_text = ' '.join([word for word in all_text.split() if word not in stops and word.lower() not in stops])
-                starts = re.findall('(?:^|(?:[.!?]\s))(\w+)', all_text)
-                list_of_starts.append(starts)
-                bloblist.append(tB(all_text))
+            # remove stop words and get list of sentence starters
+            all_text = ' '.join([word for word in all_text.split() if word not in stops and word.lower() not in stops])
+            starts = re.findall('(?:^|(?:[.!?]\s))(\w+)', all_text)
+            list_of_starts.append(starts)
+            bloblist.append(tB(all_text))
 
         return self.key_words(bloblist, list_of_starts)
 
@@ -140,10 +139,12 @@ class Analyzer(object):
         article_bodies = []
 
         for hit in articles:
-            article_bodies.append(hit['_source'])
-            article_ids.append(hit['_id'])
+            if hit['_source']['is_ignored'] is False:
+                article_bodies.append(hit['_source'])
+                article_ids.append(hit['_id'])
 
         art_key_words = self.key_words_from_json(article_bodies)
+
 
         for i, article_id in enumerate(article_ids):
             updated = es.update(index=elastic_index,

@@ -4,6 +4,8 @@ import re
 import config
 import copy
 import sys
+from elasticsearch import Elasticsearch
+import traceback
 
 
 class IssueFacade(object):
@@ -71,6 +73,10 @@ class IssueFacade(object):
         semantic.export_marc_for_issue(issue_id)
         semantic.export_image_for_issue(issue_id)
 
+        # set exported flag to true
+        es = Elasticsearch()
+        es.update(index=config.elastic_index(), doc_type='issue', id=issue_id, body={'doc': {'was_exported': True}})
+
         return 'Exporting Issue with id: ' + str(issue_id) + ' was successful'
 
     # PRIVATE
@@ -104,6 +110,7 @@ def main(*attrs):
         print(getattr(IssueFacade, action)(*prms))
         result_code = 0
     except:
+        traceback.print_exc()
         print(sys.exc_info()[0])
         result_code = 1
 
