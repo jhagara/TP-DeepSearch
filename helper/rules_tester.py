@@ -11,13 +11,15 @@ from parser.xml.xml_parser import XmlParser
 
 
 class RulesTester(object):
+    def __init__(self, index):
+        # establishment of connection
+        self.elastic = Elasticsearch()
+        self.index = index
 
     # make testing on all test issues set as test_issue
-    def test_test_issues(self, journal_name, version, elastic_index):
-        # establishment of connection
-        es = Elasticsearch()
+    def test_test_issues(self, journal_name, version, old_version):
 
-        test_issues = self.__find_test_issues(journal_name, es, elastic_index)
+        test_issues = self.__find_test_issues(journal_name)
 
         results = []
         for issue in test_issues:
@@ -32,10 +34,10 @@ class RulesTester(object):
             parser = XmlParser()
             xml, header, parsed_articles = parser.parse(config_path, xml_path)
 
-            test_articles = es.search(index=elastic_index, doc_type="article",
-                                      body={'query': {'bool': {'must': {'nested': {'path': 'issue',
-                                            'query': {'match': {'issue.id': issue['_id']}}}}}},
-                                            'size': 1000})['hits']['hits']
+            test_articles = self.elastic.search(index=self.index, doc_type="article",
+                                                body={'query': {'bool': {'must': {'nested': {'path': 'issue',
+                                                      'query': {'match': {'issue.id': issue['_id']}}}}}},
+                                                      'size': 1000})['hits']['hits']
 
             correct_articles = 0
             all_articles = len(test_articles)
@@ -67,20 +69,20 @@ class RulesTester(object):
             results.append(result_issue)
 
         # save statistics
-        self.__save_statistics(results, journal_name, version, es, elastic_index)
+        self.__save_statistics(results, journal_name, version, old_version)
 
     # find test issues set as test_issue
-    def __find_test_issues(self, journal_name, elastic, index):
+    def __find_test_issues(self, journal_name):
         if journal_name is None or journal_name == 'all':
-            test_issues = elastic.search(index=index, doc_type="issue",
-                                         body={'query': {'term': {'is_tested': {'value': True}}},
-                                               'size': 1000})['hits']['hits']
+            test_issues = self.elastic.search(index=self.index, doc_type="issue",
+                                              body={'query': {'term': {'is_tested': {'value': True}}},
+                                                    'size': 1000})['hits']['hits']
         else:
-            test_issues = elastic.search(index=index, doc_type="issue",
-                                         body={'query': {'bool': {'must': [
-                                             {'match': {'journal_name': journal_name}},
-                                             {'term': {'is_tested': {'value': 'true'}}}]}},
-                                             'size': 1000})['hits']['hits']
+            test_issues = self.elastic.search(index=self.index, doc_type="issue",
+                                              body={'query': {'bool': {'must': [
+                                                  {'match': {'journal_name': journal_name}},
+                                                  {'term': {'is_tested': {'value': 'true'}}}]}},
+                                                  'size': 1000})['hits']['hits']
         return test_issues
 
     # find xml path
@@ -94,6 +96,7 @@ class RulesTester(object):
     # find header config for xml
     def __find_config(self, source_dir):
         current_dir = source_dir
+        path = None
         while True:
             path = os.popen("find " + current_dir + " -maxdepth 1 -type f -name '*.json'").read()
             path = re.sub("[\n]", '', path)
@@ -134,7 +137,6 @@ class RulesTester(object):
             t = str(test_group['t'])
             b = str(test_group['b'])
             page = str(test_group['page'])
-            is_found = False
             for parsed_group in parsed_article:
                 if page != parsed_group.attrib['page']:
                     continue
@@ -142,7 +144,6 @@ class RulesTester(object):
                                            b + "]")
                 if found is not None and len(found) != 0:
                     correct_blocks += 1
-                    is_found = True
                     break
 
         correct_article = False
@@ -150,21 +151,50 @@ class RulesTester(object):
             correct_article = True
         return correct_article, correct_blocks
 
+    def __get_latest_test(self, journal_name, old_version):
+        if old_version is None:
+            result = self.elastic.search(index=self.index, doc_type="test",
+                                         body={'query': {"match": {"journal_name": journal_name}}, 'size': 1,
+                                               'sort': [{'tested_at': {'order': 'desc'}}]})['hits']['hits']
+        else:
+            result = self.elastic.search(index=self.index, doc_type="test",
+                                         body={'query': {'bool': {'must': [
+                                             {'match': {'journal_name': journal_name}},
+                                             {'match': {'version': old_version}}]}}, 'size': 1,
+                                              'sort': [{'tested_at': {'order': 'desc'}}]})['hits']['hits']
+        if result is not None and len(result) > 0:
+            return result[0]
+        else:
+            return None
+
     # print results
-    def __print_results(self, results):
+    def __print_results(self, results, old_version):
 
         all_blocks = 0
         all_cor_blocks = 0
         all_articles = 0
         all_cor_articles = 0
+        old_all_blocks = 0
+        old_all_cor_blocks = 0
+        old_all_articles = 0
+        old_all_cor_articles = 0
         for key, group in itertools.groupby(results, lambda r: r["journal_name"]):
-            print("Journal: " + key)
-            print("{:<20} {:<8} {:<8}".format('Issue', 'Articles', 'Blocks'))
+            latest_test = self.__get_latest_test(key, old_version)
+            if latest_test is not None:
+                v = latest_test['_source']['version']
+            else:
+                v = "Not tested"
+            print("Journal: " + key + " old version: " + v)
+            print("{:<20} {:<12} {:<12} {:<10} {:<10}".format('Issue', 'Old Articles', 'New Articles', 'Old Blocks',
+                                                              'New Blocks'))
             journal_all_blocks = 0
             journal_cor_blocks = 0
             journal_all_articles = 0
             journal_cor_articles = 0
             for result in group:
+                if latest_test is not None:
+                    old_result = next((issue for issue in latest_test['_source']['test_issues']
+                                       if issue['id'] == result['issue']['_id']), None)
                 all_blocks += result['all_blocks']
                 all_cor_blocks += result['correct_blocks']
                 all_articles += result['all_articles']
@@ -175,18 +205,50 @@ class RulesTester(object):
                 journal_cor_articles += result['correct_articles']
                 per_blocks = "{0:.2f}%".format(result['correct_blocks'] / result['all_blocks'] * 100)
                 per_articles = "{0:.2f}%".format(result['correct_articles'] / result['all_articles'] * 100)
-                print("{:<20} {:<8} {:<8}".format(result['issue']['_source']['name'], per_articles, per_blocks))
+                if latest_test is not None:
+                    old_per_blocks = "{0:.2f}%".format(old_result['correct_blocks'] / old_result['all_blocks'] * 100)
+                    old_per_articles = "{0:.2f}%".format(old_result['correct_articles'] / old_result['all_articles']
+                                                         * 100)
+                else:
+                    old_per_blocks = "Not tested"
+                    old_per_articles = "Not tested"
+                print("{:<20} {:<12} {:<12} {:<10} {:<10}".format(result['issue']['_source']['name'], old_per_articles,
+                                                                  per_articles, old_per_blocks, per_blocks))
             per_articles = "{0:.2f}%".format(journal_cor_articles / journal_all_articles * 100)
             per_blocks = "{0:.2f}%".format(journal_cor_blocks / journal_all_blocks * 100)
-            print("{:<20} {:<8} {:<8}".format('TOTAL', per_articles, per_blocks))
+            if latest_test is not None:
+                old_all_blocks += latest_test['_source']['all_blocks']
+                old_all_cor_blocks += latest_test['_source']['correct_blocks']
+                old_all_articles += latest_test['_source']['all_articles']
+                old_all_cor_articles += latest_test['_source']['correct_articles']
+                old_per_articles = "{0:.2f}%".format(latest_test['_source']['correct_articles'] /
+                                                     latest_test['_source']['all_articles'] * 100)
+                old_per_blocks = "{0:.2f}%".format(latest_test['_source']['correct_blocks'] /
+                                                   latest_test['_source']['all_blocks'] * 100)
+            else:
+                old_per_blocks = "Not tested"
+                old_per_articles = "Not tested"
+            print("{:<20} {:<12} {:<12} {:<10} {:<10}".format('TOTAL', old_per_articles, per_articles, old_per_blocks,
+                                                              per_blocks))
             print()
         print("For all journals")
         per_articles = "{0:.2f}%".format(all_cor_articles / all_articles * 100)
         per_blocks = "{0:.2f}%".format(all_cor_blocks / all_blocks * 100)
-        print("{:<20} {:<8} {:<8}".format('ALL', per_articles, per_blocks))
+        if old_all_articles > 0:
+            old_per_articles = "{0:.2f}%".format(old_all_cor_articles / old_all_articles * 100)
+        else:
+            old_per_articles = "Not tested"
+        if old_all_blocks > 0:
+            old_per_blocks = "{0:.2f}%".format(old_all_cor_blocks / old_all_blocks * 100)
+        else:
+            old_per_blocks = "Not tested"
+        print("{:<20} {:<12} {:<12} {:<10} {:<10}".format('All', 'Old Articles', 'New Articles', 'Old Blocks',
+                                                          'New Blocks'))
+        print("{:<20} {:<12} {:<12} {:<10} {:<10}".format('ALL', old_per_articles, per_articles, old_per_blocks,
+                                                          per_blocks))
 
     # save test
-    def __save_test(self, results, version, journal_name, elastic, index):
+    def __save_test(self, results, version, journal_name):
         time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
         correct_blocks = 0
         all_blocks = 0
@@ -207,7 +269,7 @@ class RulesTester(object):
                 'all_blocks': all_blocks, 'correct_articles': correct_articles, 'all_articles': all_articles,
                 'test_issues': test_issues}
 
-        elastic.index(index=index, doc_type='test', body=test)
+        self.elastic.index(index=self.index, doc_type='test', body=test)
 
     def __query_yes_no(self, question, default="yes"):
         """Ask a yes/no question via input() and return their answer.
@@ -263,10 +325,10 @@ class RulesTester(object):
 
         return incorrect_article
 
-    def __find_latest_version(self, elastic, index):
-        latest_test = elastic.search(index=index, doc_type="test",
-                                     body={'query': {"match_all": {}}, 'size': 1,
-                                           'sort': [{'tested_at': {'order': 'desc'}}]})['hits']['hits']
+    def __find_latest_version(self):
+        latest_test = self.elastic.search(index=self.index, doc_type="test",
+                                          body={'query': {"match_all": {}}, 'size': 1,
+                                                'sort': [{'tested_at': {'order': 'desc'}}]})['hits']['hits']
         if latest_test is None or len(latest_test) == 0:
             print("No existing tests")
         else:
@@ -277,27 +339,27 @@ class RulesTester(object):
         return version
 
     # save statistics
-    def __save_statistics(self, results, journal_name, version, elastic, index):
+    def __save_statistics(self, results, journal_name, version, old_version):
 
         results.sort(key=itemgetter("journal_name"))
-        self.__print_results(results)
+        self.__print_results(results, old_version)
 
         respond = self.__query_yes_no("Do you want to save results to elastic?")
         if respond is False:
             return
 
         if version is None:
-            version = self.__find_latest_version(elastic, index)
+            version = self.__find_latest_version()
 
         # save for all
         if journal_name is None or journal_name == 'all':
-            self.__save_test(results, version, 'all', elastic, index)
+            self.__save_test(results, version, 'all')
 
         # save for each journal
         for key, group in itertools.groupby(results, lambda result: result["journal_name"]):
-            self.__save_test(group, version, key, elastic, index)
+            self.__save_test(group, version, key)
 
-        elastic.indices.refresh(index=index)
+        self.elastic.indices.refresh(index=self.index)
 
 
 def usage():
@@ -307,6 +369,7 @@ def usage():
     print("Usage")
     print("rules_tester.py -v [version] -i [elastic index] -n [journal name] -h")
     print("-v [version]: save statistics with specified version")
+    print("-o [old version]: compare resutls with specific version")
     print("-i [elastic index]: use [elastic index] for elasticsearch")
     print("-n [journal name]: test for issues with journal name = [journal name]")
     print("-h: usage of script")
@@ -323,8 +386,9 @@ def main():
     version = None
     index = None
     name = None
+    old_version = None
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'v:i:n:h', ['version=', 'index=', 'name=', 'help'])
+        opts, args = getopt.getopt(sys.argv[1:], 'v:i:n:o:h', ['version=', 'index=', 'name=', 'old=', 'help'])
     except getopt.GetoptError as err:
         print(str(err))
         usage()
@@ -340,6 +404,8 @@ def main():
             index = arg
         elif opt in ('-n', '--name'):
             name = arg
+        elif opt in ('-o', '--old'):
+            old_version = arg
         else:
             usage()
             sys.exit(2)
@@ -349,8 +415,8 @@ def main():
         usage()
         sys.exit(2)
 
-    tester = RulesTester()
-    tester.test_test_issues(name, version, index)
+    tester = RulesTester(index)
+    tester.test_test_issues(name, version, old_version)
 
 if __name__ == "__main__":
     main()

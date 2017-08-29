@@ -86,8 +86,10 @@ class TestRulesTester(unittest.TestCase):
                   })
         es.indices.refresh(index=elastic_index)
         helper.rules_tester.input = lambda: 'y'
-        tester = helper.rules_tester.RulesTester()
-        tester.test_test_issues(None, 'test_version', elastic_index)
+        tester = helper.rules_tester.RulesTester(elastic_index)
+        tester.test_test_issues(None, 'test_version', None)
+        tester2 = helper.rules_tester.RulesTester(elastic_index)
+        tester2.test_test_issues(None, 'test_version2', None)
 
 
 if __name__ == '__main__':
