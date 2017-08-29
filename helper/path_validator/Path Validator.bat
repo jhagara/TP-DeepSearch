@@ -10,7 +10,7 @@ echo ----------------------------------------
 REM calling path validator script
 %pythonpath% path_validator.py %*
 pause
-GOTO:EOF
+GOTO:PYSCRIPT
 :NOPYDEPEND
 echo lxml is not installed
 echo Installing lxml ... please wait ...
