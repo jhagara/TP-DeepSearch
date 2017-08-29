@@ -46,6 +46,7 @@ class Elastic(object):
         # empty_issue_art['page_height'] = int(page_zero.attrib['height'])
         empty_issue['page_width'] = int(page_zero.attrib['width'])
         # empty_issue_art['page_width'] = int(page_zero.attrib['width'])
+        empty_issue['was_exported'] = False
 
         for attrs in self.header:
             """
