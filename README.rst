@@ -27,7 +27,7 @@ Install Python3 external dependency
 
 Install key words processing dependency
 ::
-        $ pip3 install -m textblob.download_corpora
+        $ python3 -m textblob.download_corpora
 
 More information about virtualenv can be found on documentation_. 
 
