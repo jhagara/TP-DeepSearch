@@ -25,7 +25,7 @@ class TestSourceHeader(unittest.TestCase):
         desired_xml = Cleaner.clean(desired_xml)
 
         actual_xml, header = SourceHeader.get_source_header(original_xml, data)
-        self.assertEqual('Cena 80 h?l.', header['marc21'][0]['value'])
+        self.assertEqual('Cena 80 h?l.', header['Cost']['value'])
 
     # reading of JSON configuration file which defines paths
     def read_from_json(self, readfile):
