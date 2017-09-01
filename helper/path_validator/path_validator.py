@@ -1,3 +1,4 @@
+import math
 import os
 import sys
 import time
@@ -30,11 +31,20 @@ class PathValidator(object):
             # first make sure that path is absolute
             path = os.path.abspath(path)
 
+            total_count = self.count_issues_in_path(path)
             # find XML subdirectories of path
             for dirpath, dirnames, filenames in os.walk(path):
                 for dirname in [d for d in dirnames if d == "XML"]:
+                    # join /XML to path
                     xml_dir_path = os.path.join(dirpath, dirname)
+
                     invalid_issue_xml = False
+
+                    # print progress bar
+                    issue_count = issue_count + 1
+                    progress = issue_count/total_count*100
+                    print('\rProgress is: [{0}{1}] {2:.2f}%'.format('#' * (math.floor(progress / 10))
+                                            ,' ' * (10-(math.floor(progress / 10))), progress), end='')
 
                     # find .xml file in /XML directory and validate xml to schema
                     xml_path = self.__find_file_path(xml_dir_path,".xml")
@@ -54,7 +64,6 @@ class PathValidator(object):
 
                     # get issue path
                     issue_path = os.path.abspath(os.path.join(path, os.pardir))
-                    issue_count = issue_count + 1
 
                     # try to search for journal_marc in issue path and validate it to schema
                     marc_found = False
@@ -92,6 +101,8 @@ class PathValidator(object):
         else:
             return None
 
+        # delete progress bar
+        print('\r',end='')
         error_list.append(issue_count)
         return error_list
 
@@ -111,6 +122,13 @@ class PathValidator(object):
             if file.endswith(file_extension):
                 xml_path = os.path.join(path, file)
         return xml_path
+
+    def count_issues_in_path(cls, path):
+        counter = 0
+        for dirpath, dirnames, filenames in os.walk(path):
+            for dirname in [d for d in dirnames if d == "XML"]:
+                counter = counter + 1
+        return counter
 
     # find STR directory and if xml of issue is valid, validate number of pages to number of images in STR dir
     @classmethod
@@ -298,20 +316,19 @@ def main(*attrs):
 
     print("Validating path: " + path)
     print("Max recursive depth to be searched is path: " + limit_path)
-    print("... please wait ...")
+    print("Validation started at: " + time.strftime("%H:%M:%S"))
+
+    path_validator = PathValidator()
 
     # get approximate running time and print it
     if os.path.exists(path):
-        counter = 0
-        for dirpath, dirnames, filenames in os.walk(path):
-            for dirname in [d for d in dirnames if d == "XML"]:
-                counter = counter + 1
-        approximate_time = counter * PathValidator.issue_validate_time
+        approximate_time =  path_validator.count_issues_in_path(path) * PathValidator.issue_validate_time
         if approximate_time<60:
             print("Approximate running time is : {0:.2f} seconds".format(approximate_time))
         else:
             print("Approximate running time is : {0:.2f} minutes".format(approximate_time/60))
 
+    print("... please wait ...")
     try:
         # prepare logfile for printing errors
         time_str = time.strftime("%d%m%Y-%H%M%S")
@@ -322,7 +339,7 @@ def main(*attrs):
         print("Validating path: " + path, file = logfile)
 
         # run path validation
-        path_validator = PathValidator()
+
         result = path_validator.validate_issues_in_path(path, limit_path)
 
         # handle results of path validation
@@ -341,7 +358,7 @@ def main(*attrs):
                     warning_count = warning_count + 1
                 else:
                     error_count = error_count + 1
-
+            print("------------------------------------------")
             print("There were found", error_count, "error(s),", warning_count,
                   "warning(s), and total of", issue_count, "issue(s)")
             print("There were found", error_count, "error(s),", warning_count,

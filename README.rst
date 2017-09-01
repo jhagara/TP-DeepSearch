@@ -75,7 +75,7 @@ All these files (including Python installer) must be placed in the same folder, 
 ::
     C:\Documents\Work
 
-Make sure that you have all the needed files:
+Make sure that you have in the same directory all needed files:
 ::
     issue_xml_schema.xsd
     MARC21_journal_schema.xsd
@@ -83,7 +83,7 @@ Make sure that you have all the needed files:
     path_validator.py
     python-3.6.2.exe
 
-To run path validation, double click on Path Validator.bat, wait few minutes for python installation (if it is needed) and then, when prompted, enter the path to validate. Path should be entered in the form of absolute path for example:
+To run path validation, double click on Path Validator.bat, wait few minutes for python installation (if it is needed) and then, when prompted, enter the path to validate, and if desired also enter limiting path up to which will be searched for marc_journal, or leave blank if marc_journal is expected only in the validating path and its subpaths. Paths should be entered in the form of absolute path for example:
 ::
     C:\Documents\Work\Journals\Slovak
 
@@ -95,3 +95,4 @@ then enter path for files starting from this directory, for example to validate 
 ::
     Journals\Slovak
 
+After validation, press any key to start validation again with new parameters. To stop or end validation, click red X in the corner of the output console
