@@ -271,7 +271,7 @@ class PathValidator(object):
         # validate number of images and pages
         if pages_count > images_count:
             error = "Error: issue " + issue_name + " in: " + os.path.abspath(os.path.join(xml_path, os.pardir)) + \
-                  " has " + str(pages_count) + " pages, but there are only " + str(images_count) + \
+                  " has " + str(pages_count) + " page(s), but there are only " + str(images_count) + \
                     " .jpg image(s) in " + images_path
             error_list.append(error)
 
@@ -348,6 +348,7 @@ def main(*attrs):
         warning_count = 0
         if result is None:
             print("Error: Path " + path + " does not exists")
+            logfile.close()
             os.remove(log_name)
         elif len(result) > 1:
             issue_count = result[len(result)-1]
@@ -367,10 +368,12 @@ def main(*attrs):
             result_code = 0
         elif len(result) == 1 and result[0] == 0:
             print("No issues found in path: " + path)
+            logfile.close()
             os.remove(log_name)
         else:
             print("No errors and total of", result[len(result)-1], "issue(s) found in path " + path)
             result_code = 0
+            logfile.close()
             os.remove(log_name)
     except IOError as e:
         print("I/O error({0}): {1}".format(e.errno, e.strerror))
