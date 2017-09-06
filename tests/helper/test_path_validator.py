@@ -25,3 +25,8 @@ class TestPathValidator(unittest.TestCase):
         result = path_validator.validate_issues_in_path(test_path + '/helper', test_path + '/helper')
         self.assertEquals(len(result)-1, 0)
         self.assertEquals(result[len(result)-1], 0)
+
+        # testing issue validation, there should be 1 error and 1 issue
+        result = path_validator.validate_issue(test_path + '/elastic_filler/slovak/1939/19390526',
+                                                        test_path + '/elastic_filler/slovak')
+        self.assertEquals(len(result), 1)

@@ -2,6 +2,8 @@ import math
 import os
 import sys
 import time
+import re
+import datetime
 from lxml import etree
 
 
@@ -13,6 +15,41 @@ class PathValidator(object):
     marc_schema_path = "/MARC21_journal_schema.xsd"
     xml_issue_schema_path = "/issue_xml_schema.xsd"
     issue_validate_time = 1.6
+
+    # this is method which will be called before parsing issue
+    # argument should be path to issue directory, such as 1336-4464/1336-4464_1939/19390101 containing STR,XML etc.
+    def validate_issue(self, issue_path, limit_path):
+
+        error_list = []
+
+        issue_path = os.path.abspath(issue_path)
+        xml_dir_path = self.__find_dir_path(issue_path, "XML")
+        xml_path = self.__find_file_path(xml_dir_path, ".xml")
+
+        # get issue name
+        path, issue_name = os.path.split(xml_path)
+        issue_name = (os.path.splitext(issue_name)[0])
+
+        # check if name of xml contains date in the same format as is searched for
+        function_error_list = self.__validate_issue_name(issue_name, xml_dir_path)
+        error_list = error_list + function_error_list
+
+        # check validity of .xml issue in path
+        invalid_issue_xml = False
+        function_error_list = self.__validate_issue_xml(xml_path)
+        if len(function_error_list) > 0:
+            invalid_issue_xml = True
+            error_list = error_list + function_error_list
+
+        # check existence of STR directory and quantity of images and pages
+        function_error_list = self.__validate_images(xml_path, issue_path, issue_name, invalid_issue_xml)
+        error_list = error_list + function_error_list
+
+        # check existence of journal_marc and validate it to schema
+        function_error_list = self.__check_journal_marc(issue_path,limit_path)
+        error_list = error_list + function_error_list
+
+        return error_list
 
     # method returns list, which contains all found errors and at last, count of all issues
     # method returns None, when no issue has been found
@@ -62,6 +99,10 @@ class PathValidator(object):
                     path, issue_name = os.path.split(xml_path)
                     issue_name = (os.path.splitext(issue_name)[0])
 
+                    # validate filename of xml issue
+                    function_error_list = self.__validate_issue_name(issue_name, xml_dir_path)
+                    error_list = error_list + function_error_list
+
                     # get issue path
                     issue_path = os.path.abspath(os.path.join(path, os.pardir))
 
@@ -94,8 +135,9 @@ class PathValidator(object):
 
             # check parent directories of issues if they contain valid marc21 record for journal
             # send limit_path as argument so it will be searching recursively from parent dir of issue up to limit_path
-            function_error_list = self.__check_journal_marc(issue_parent_paths, limit_path)
-            error_list = error_list + function_error_list
+            for parent_issue_path in issue_parent_paths:
+                function_error_list = self.__check_journal_marc(parent_issue_path, limit_path)
+                error_list = error_list + function_error_list
 
         # if path does not exists
         else:
@@ -130,6 +172,29 @@ class PathValidator(object):
                 counter = counter + 1
         return counter
 
+    @classmethod
+    def __validate_issue_name(cls, issue_name, xml_dir_path):
+        error_list = []
+
+        # search for 8 numbers-long string between _ character -> representing date format
+        release_dates = re.search('_[0-9]{8}_', issue_name)
+        if release_dates is None:
+            error = "Error: Name of .xml file for issue: " + issue_name + ".xml in: " + xml_dir_path + \
+                    " does not contain 8 characters long string which represents date e.g. 19390526"
+            error_list.append(error)
+        else:
+            release_date = release_dates.group(0)[1:-1]
+
+            # if 8 numbers-long string exists, try to parse it as a date
+            try:
+                datetime.datetime.strptime(release_date, '%Y%m%d')
+            except:
+                error = "Error: Incorrect date format found in the name of .xml issue: " + issue_name + ".xml in: " + \
+                        xml_dir_path + " Format should be YYYYMMDD like 19390526"
+                error_list.append(error)
+
+        return error_list
+
     # find STR directory and if xml of issue is valid, validate number of pages to number of images in STR dir
     @classmethod
     def __validate_images(cls, xml_path, issue_path, issue_name, invalid_issue_xml):
@@ -153,34 +218,33 @@ class PathValidator(object):
         return error_list
 
     @classmethod
-    def __check_journal_marc(cls, issue_parent_paths, limit_path):
+    def __check_journal_marc(cls, issue_path, limit_path):
         error_list = []
 
         # for each path in list, search recursively for marc_journal in that path up to limit path
-        for checking_path in issue_parent_paths:
-            current_path = checking_path
-            marc_path = None
-            while True:
-                for file in os.listdir(current_path):
-                    if 'journal_marc' in file:
-                        marc_path = os.path.join(current_path, file)
-                if current_path == limit_path or marc_path is not None:
-                    break
-                current_path = os.path.abspath(os.path.join(current_path, os.pardir))
+        current_path = issue_path
+        marc_path = None
+        while True:
+            for file in os.listdir(current_path):
+                if 'journal_marc' in file:
+                    marc_path = os.path.join(current_path, file)
+            if current_path == limit_path or marc_path is not None:
+                break
+            current_path = os.path.abspath(os.path.join(current_path, os.pardir))
 
-            # if marc_path was founded, validate its xml to schema
-            if marc_path is not None:
-                if cls.__validate_marcxml(marc_path) is False:
-                    error = "Error: For issues in: " + checking_path + " founded MarcXML " + os.path.split(marc_path)[
-                        1] + " is not valid for journal in directory : " \
-                            + os.path.split(marc_path)[0]
-                    error_list.append(error)
-
-            # else generate error
-            else:
-                error = "Error: For issues in: " + checking_path + " MarcXML for journal was not founded from " + \
-                        "this path up to " + limit_path
+        # if marc_path was founded, validate its xml to schema
+        if marc_path is not None:
+            if cls.__validate_marcxml(marc_path) is False:
+                error = "Error: For issues in: " + issue_path + " founded MarcXML " + os.path.split(marc_path)[
+                    1] + " is not valid for journal in directory : " \
+                        + os.path.split(marc_path)[0]
                 error_list.append(error)
+
+        # else generate error
+        else:
+            error = "Error: For issues in: " + issue_path + " MarcXML for journal was not founded from " + \
+                    "this path up to " + limit_path
+            error_list.append(error)
 
         return error_list
 
