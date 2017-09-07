@@ -40,18 +40,30 @@ class RulesTester(object):
                                                       'size': 1000})['hits']['hits']
 
             correct_articles = 0
-            all_articles = len(test_articles)
+            all_articles = 0
             correct_blocks = 0
             all_blocks = 0
             incorrect_articles = []
             for test_article in test_articles:
+                if test_article['_source']['is_ignored']:
+                    continue
+
+                # find heading in test article
+                test_heading = next(
+                        (group for group in test_article['_source']['groups'] if group['type'] == "headings"), None)
+                if test_heading is None:
+                    continue
+
                 all_blocks += len(test_article['_source']['groups'])
+                all_articles += 1
+
                 # find article in newly parsed issue
-                parsed_article = self.__find_parsed_article(test_article, parsed_articles)
+                parsed_article = self.__find_parsed_article(test_heading, parsed_articles)
                 if parsed_article is None:
                     incorrect_article = self.__get_incorrect_article(test_article, 0)
                     incorrect_articles.append(incorrect_article)
                     continue
+
                 # compare articles
                 ca, cb = self.__compare_articles(test_article, parsed_article)
                 if ca:
@@ -109,13 +121,7 @@ class RulesTester(object):
         return path
 
     # find same article in newly parsed issue
-    def __find_parsed_article(self, test_article, parsed_articles):
-        # find heading in article
-        heading = next((group for group in test_article['_source']['groups'] if group['type'] == "headings"), None)
-
-        if heading is None:
-            return None
-
+    def __find_parsed_article(self, heading, parsed_articles):
         l = str(heading['l'])
         r = str(heading['r'])
         t = str(heading['t'])
@@ -167,6 +173,13 @@ class RulesTester(object):
         else:
             return None
 
+    # get percentage
+    # if y is 0 return 0%
+    def __safe_per(self, x, y):
+        if y == 0:
+            return "0%"
+        return "{0:.2f}%".format(x / y * 100)
+
     # print results
     def __print_results(self, results, old_version):
 
@@ -203,28 +216,27 @@ class RulesTester(object):
                 journal_cor_blocks += result['correct_blocks']
                 journal_all_articles += result['all_articles']
                 journal_cor_articles += result['correct_articles']
-                per_blocks = "{0:.2f}%".format(result['correct_blocks'] / result['all_blocks'] * 100)
-                per_articles = "{0:.2f}%".format(result['correct_articles'] / result['all_articles'] * 100)
+                per_blocks = self.__safe_per(result['correct_blocks'], result['all_blocks'])
+                per_articles = self.__safe_per(result['correct_articles'], result['all_articles'])
                 if latest_test is not None:
-                    old_per_blocks = "{0:.2f}%".format(old_result['correct_blocks'] / old_result['all_blocks'] * 100)
-                    old_per_articles = "{0:.2f}%".format(old_result['correct_articles'] / old_result['all_articles']
-                                                         * 100)
+                    old_per_blocks = self.__safe_per(old_result['correct_blocks'], old_result['all_blocks'])
+                    old_per_articles = self.__safe_per(old_result['correct_articles'], old_result['all_articles'])
                 else:
                     old_per_blocks = "Not tested"
                     old_per_articles = "Not tested"
                 print("{:<20} {:<12} {:<12} {:<10} {:<10}".format(result['issue']['_source']['name'], old_per_articles,
                                                                   per_articles, old_per_blocks, per_blocks))
-            per_articles = "{0:.2f}%".format(journal_cor_articles / journal_all_articles * 100)
-            per_blocks = "{0:.2f}%".format(journal_cor_blocks / journal_all_blocks * 100)
+            per_articles = self.__safe_per(journal_cor_articles, journal_all_articles)
+            per_blocks = self.__safe_per(journal_cor_blocks, journal_all_blocks)
             if latest_test is not None:
                 old_all_blocks += latest_test['_source']['all_blocks']
                 old_all_cor_blocks += latest_test['_source']['correct_blocks']
                 old_all_articles += latest_test['_source']['all_articles']
                 old_all_cor_articles += latest_test['_source']['correct_articles']
-                old_per_articles = "{0:.2f}%".format(latest_test['_source']['correct_articles'] /
-                                                     latest_test['_source']['all_articles'] * 100)
-                old_per_blocks = "{0:.2f}%".format(latest_test['_source']['correct_blocks'] /
-                                                   latest_test['_source']['all_blocks'] * 100)
+                old_per_articles = self.__safe_per(latest_test['_source']['correct_articles'],
+                                                   latest_test['_source']['all_articles'])
+                old_per_blocks = self.__safe_per(latest_test['_source']['correct_blocks'],
+                                                 latest_test['_source']['all_blocks'])
             else:
                 old_per_blocks = "Not tested"
                 old_per_articles = "Not tested"
@@ -232,14 +244,14 @@ class RulesTester(object):
                                                               per_blocks))
             print()
         print("For all journals")
-        per_articles = "{0:.2f}%".format(all_cor_articles / all_articles * 100)
-        per_blocks = "{0:.2f}%".format(all_cor_blocks / all_blocks * 100)
+        per_articles = self.__safe_per(all_cor_articles, all_articles)
+        per_blocks = self.__safe_per(all_cor_blocks, all_blocks)
         if old_all_articles > 0:
-            old_per_articles = "{0:.2f}%".format(old_all_cor_articles / old_all_articles * 100)
+            old_per_articles = self.__safe_per(old_all_cor_articles, old_all_articles)
         else:
             old_per_articles = "Not tested"
         if old_all_blocks > 0:
-            old_per_blocks = "{0:.2f}%".format(old_all_cor_blocks / old_all_blocks * 100)
+            old_per_blocks = self.__safe_per(old_all_cor_blocks, old_all_blocks)
         else:
             old_per_blocks = "Not tested"
         print("{:<20} {:<12} {:<12} {:<10} {:<10}".format('All', 'Old Articles', 'New Articles', 'Old Blocks',
@@ -367,7 +379,7 @@ def usage():
     print("rules_tester.py - test issues that are marked as tested")
     print()
     print("Usage")
-    print("rules_tester.py -v [version] -i [elastic index] -n [journal name] -h")
+    print("rules_tester.py -v [version] -o [old version] -i [elastic index] -n [journal name] -h")
     print("-v [version]: save statistics with specified version")
     print("-o [old version]: compare resutls with specific version")
     print("-i [elastic index]: use [elastic index] for elasticsearch")
