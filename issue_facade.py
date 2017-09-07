@@ -1,5 +1,6 @@
 import os
 from semantic import Semantic
+from helper.path_validator.path_validator import PathValidator
 import re
 import config
 import copy
@@ -93,6 +94,13 @@ class IssueFacade(object):
                 current_dir = re.sub("[\n]", '', os.popen("dirname '" + current_dir + "'").read())
 
         return path
+
+    @classmethod
+    def __validate_issue_before_parsing(cls, issue_path, limit_path):
+        path_validator = PathValidator()
+        error_list = path_validator.validate_issue(issue_path,limit_path)
+
+        return error_list
 
 
 def main(*attrs):
