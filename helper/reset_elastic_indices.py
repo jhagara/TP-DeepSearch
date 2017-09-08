@@ -47,6 +47,7 @@ for index in indices:
                         "page_width": {"type": "short"},
                         "created_at": {"type": "date", 'format': "yyyy-MM-dd HH:mm:ss"},
                         "is_tested": {"type": "boolean"}
+                        "was_exported": {"type": "boolean"},
                     }
                 },
                 "article": {

@@ -1,6 +1,6 @@
-============
-TP-DeepSeach
-============
+=============
+TP-DeepSearch
+=============
 
 
 Installation
@@ -27,50 +27,16 @@ Install Python3 external dependency
 
 Install key words processing dependency
 ::
-        $ pip3 install -m textblob.download_corpora
+        $ python3 -m textblob.download_corpora
 
 More information about virtualenv can be found on documentation_. 
 
 .. _documentation: https://virtualenv.pypa.io/en/stable/
 
-Prepare MySQL database
-::
-
-NOTE: We expect you to have installed default MySQL server on your device.
-If not, check basic way of apt-get install mysql server and MySQL documentation_.
-
-.. _documentation: https://dev.mysql.com/doc/
-
-Enter your MySQL server
-::
-        $ mysql -u root -p
-
-and enter your password (default_notsafe: root, default_safe - at least 8 chars)
-
-Create database and testing database
-::
-        $ create database tp;
-
-
-        $ create database test;
-
-Run table creating scripts of mysql_init_tables for creation of all tables or 
-create them manually.
-
-Fill data with db_filler script.
-
-Usage
-::
-
-        $ python db_filler.py 'issue_name' 'absolute_path_to_xml' 'absolute_path_to_header_conf_file'
-(leave ')
-
-This script returns id of newly created entry in issues
-
 REQUISITES
 """"""""""
 * Database initialization
-  * execute script from python project TP-DeepSearch, with name helper/reset_elastic_indices.py (You need to check documentation for proper understanting)
+  * execute script from python project TP-DeepSearch, with name helper/reset_elastic_indices.py (You need to check documentation for proper understanding)
 
 Basic orientation
 =================
@@ -90,3 +56,43 @@ Misc is used as the main directory for installation and setup scripts, files and
 
 Other is the main directory for code that is hardly descripable, used as help in some
 user stories, tasks or some other way.
+
+
+Path Validation
+===============
+Firstly, you need to download content of folder path_validator located in folder /helper in this repository. This folder path_validator should contain these files:
+::
+    issue_xml_schema.xsd
+    MARC21_journal_schema.xsd
+    Path Validator.bat
+    path_validator.py
+
+Secondly, download Python installer from this link:
+::
+    https://drive.google.com/file/d/0Bwbz4DMi5b1vdUtjX0RsYmZ4dU0/view?usp=sharing
+
+All these files (including Python installer) must be placed in the same folder, for example:
+::
+    C:\Documents\Work
+
+Make sure that you have in the same directory all needed files:
+::
+    issue_xml_schema.xsd
+    MARC21_journal_schema.xsd
+    Path Validator.bat
+    path_validator.py
+    python-3.6.2.exe
+
+To run path validation, double click on Path Validator.bat, wait few minutes for python installation (if it is needed) and then, when prompted, enter the path to validate, and if desired also enter limiting path up to which will be searched for marc_journal, or leave blank if marc_journal is expected only in the validating path and its subpaths. Paths should be entered in the form of absolute path for example:
+::
+    C:\Documents\Work\Journals\Slovak
+
+Path can also be entered in the form of relative path, for example if you placed these path_validator files in
+::
+    C:\Documents\Work
+
+then enter path for files starting from this directory, for example to validate the same files like in example before, enter path:
+::
+    Journals\Slovak
+
+After validation, press any key to start validation again with new parameters. To stop or end validation, click red X in the corner of the output console

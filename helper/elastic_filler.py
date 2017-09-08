@@ -49,23 +49,25 @@ class Elastic(object):
         # empty_issue_art['page_height'] = int(page_zero.attrib['height'])
         empty_issue['page_width'] = int(page_zero.attrib['width'])
         # empty_issue_art['page_width'] = int(page_zero.attrib['width'])
-        empty_issue['is_tested'] = False
 
-        for marcs in self.header['marc21']:
+        empty_issue['is_tested'] = False
+        empty_issue['was_exported'] = False
+
+        for attrs in self.header:
             """
-            if marcs['key'] == 'Annual_set':
-                empty_issue['release_from'] = marcs['value']
-            elif marcs['key'] == 'Date_Location':
-                empty_issue['release_date'] = marcs['value']
-            elif marcs['key'] == 'Founder':
-                empty_issue['publisher'] = marcs['value']
+            if attrs == 'Annual_set':
+                empty_issue['release_from'] = self.header[attrs]['value']
+            elif attrs == 'Date_Location':
+                empty_issue['release_date'] = self.header[attrs]['value']
+            elif attrs == 'Founder':
+                empty_issue['publisher'] = self.header[attrs]['value']
             """
-            if marcs['key'] == 'Number':
-                empty_issue['number'] = marcs['value']
-            elif marcs['key'] == 'Volume':
-                empty_issue['year'] = marcs['value']
-            elif marcs['key'] == 'Subscription':
-                empty_issue['content'] = marcs['value']
+            if attrs == 'Number':
+                empty_issue['number'] = self.header[attrs]['value']
+            elif attrs == 'Volume':
+                empty_issue['year'] = self.header[attrs]['value']
+            elif attrs == 'Subscription':
+                empty_issue['content'] = self.header[attrs]['value']
 
             xml_name = paths['xml'].split('/')[-1]
             empty_issue['release_date'] = re.search('[0-9]{8}', xml_name).group(0)
@@ -190,3 +192,4 @@ class Elastic(object):
             journal_name = journal_marc['245']['a']
 
         return journal_name
+

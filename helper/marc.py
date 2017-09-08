@@ -39,7 +39,7 @@ class Marc(object):
 
         # 245
         n_245 = issue['_source']['release_date'][0:4] + ", "
-        if issue['_source']['year'] is not None:
+        if issue['_source'].get('year') is not None:
             n_245 += str(issue['_source']['year']) + ", "
         else:
             n_245 += " , "
