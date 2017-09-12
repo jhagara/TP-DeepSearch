@@ -31,7 +31,7 @@ for index in indices:
             "mappings": {
                 "issue": {
                     "properties": {
-                        "name": { "type": "text" },
+                        "name": {"type": "text"},
                         "content": {"type": "text"},
                         "publisher": {"type": "text"},
                         "release_from": {"type": "text"},
@@ -83,6 +83,38 @@ for index in indices:
                         "updated_at": {"type": "date", 'format': "yyyy-MM-dd HH:mm:ss"},
                         "action": {'type': "keyword"},
                         "old_value": {'type': 'text'}
+                    }
+                },
+                "test": {
+                    "properties": {
+                        "journal_name": {"type": "keyword"},
+                        "tested_at": {"type": "date", 'format': "yyyy-MM-dd HH:mm:ss"},
+                        "version": {"type": "keyword"},
+                        "correct_blocks": {"type": "short"},
+                        "all_blocks": {"type": "short"},
+                        "correct_articles": {"type": "short"},
+                        "all_articles": {"type": "short"},
+                        "test_issues": {
+                            "type": "nested",
+                            "properties": {
+                                "id": {"type": "keyword"},
+                                "source_dirname": {"type": "keyword"},
+                                "correct_blocks": {"type": "short"},
+                                "all_blocks": {"type": "short"},
+                                "correct_articles": {"type": "short"},
+                                "all_articles": {"type": "short"},
+                                "incorrect_articles": {
+                                    "type": "nested",
+                                    "properties": {
+                                        "id": {"type": "keyword"},
+                                        "correct_blocks": {"type": "short"},
+                                        "all_blocks": {"type": "short"},
+                                        "page": {"type": "short"},
+                                        "title": {"type": "text"}
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
