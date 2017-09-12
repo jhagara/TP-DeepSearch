@@ -1,11 +1,11 @@
 import os
 from semantic import Semantic
+from helper.path_validator.path_validator import PathValidator
 import re
 import config
 import copy
 import sys
 from elasticsearch import Elasticsearch
-import traceback
 
 
 class IssueFacade(object):
@@ -94,6 +94,19 @@ class IssueFacade(object):
 
         return path
 
+    @staticmethod
+    def validate_issue_before_parsing(issue_path, limit_path):
+        path_validator = PathValidator()
+        error_list = path_validator.validate_issue(issue_path,limit_path)
+        result = ""
+        if len(error_list) == 0:
+            result = "Validation was successful for " + issue_path
+        else:
+            for err in error_list:
+                result = result + err + '|'
+            raise ValueError(result)
+        return result
+
 
 def main(*attrs):
     action = attrs[0]
@@ -110,8 +123,7 @@ def main(*attrs):
         print(getattr(IssueFacade, action)(*prms))
         result_code = 0
     except:
-        traceback.print_exc()
-        print(sys.exc_info()[0])
+        print(sys.exc_info())
         result_code = 1
 
     config.set_environment(config.default_elastic_index)
