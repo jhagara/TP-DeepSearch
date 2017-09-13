@@ -96,3 +96,12 @@ then enter path for files starting from this directory, for example to validate 
     Journals\Slovak
 
 After validation, press any key to start validation again with new parameters. To stop or end validation, click red X in the corner of the output console
+
+Files upload
+===============
+
+1. Validate your files as mentioned above
+2. Download WinSCP (e.g. from here: https://winscp.net/eng/download.php)
+3. Install and run WinSCP
+4. Create new connection to your server with your credentials (if you don't have them ask your admin)
+5. Copy your files into directory that you specified in settings.yml in rails part of this project (check here how to set dir_path: https://github.com/mateee12/TP-DeepSeach-rails)
