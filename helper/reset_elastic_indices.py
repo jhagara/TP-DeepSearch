@@ -31,6 +31,7 @@ for index in indices:
             "mappings": {
                 "issue": {
                     "properties": {
+                        "journal_name": {"type": "keyword"},
                         "name": {"type": "text"},
                         "content": {"type": "text"},
                         "publisher": {"type": "text"},
@@ -45,7 +46,8 @@ for index in indices:
                         "page_height": {"type": "short"},
                         "page_width": {"type": "short"},
                         "created_at": {"type": "date", 'format': "yyyy-MM-dd HH:mm:ss"},
-                        "was_exported": {"type": "boolean"},
+                        "is_tested": {"type": "boolean"},
+                        "was_exported": {"type": "boolean"}
                     }
                 },
                 "article": {
@@ -98,7 +100,7 @@ for index in indices:
                             "type": "nested",
                             "properties": {
                                 "id": {"type": "keyword"},
-                                "source_dirname": {"type": "keyword"},
+                                "name": {"type": "text"},
                                 "correct_blocks": {"type": "short"},
                                 "all_blocks": {"type": "short"},
                                 "correct_articles": {"type": "short"},

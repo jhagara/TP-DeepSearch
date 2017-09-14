@@ -91,3 +91,4 @@ ENV/
 
 # pycharm .idea folder
 .idea/
+tests/elastic_filler/slovak/**/STR_small/
