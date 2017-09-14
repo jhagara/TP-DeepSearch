@@ -272,7 +272,8 @@ class RulesTester(object):
             all_blocks += result['all_blocks']
             correct_articles += result['correct_articles']
             all_articles += result['all_articles']
-            test_issue = {'id': result['issue']['_id'], 'correct_blocks': result['correct_blocks'],
+            test_issue = {'id': result['issue']['_id'], 'name': result['issue']['_source']['name'],
+                          'correct_blocks': result['correct_blocks'],
                           'all_blocks': result['all_blocks'], 'correct_articles': result['correct_articles'],
                           'all_articles': result['all_articles'], 'incorrect_articles': result['incorrect_articles']}
             test_issues.append(test_issue)

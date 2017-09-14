@@ -91,7 +91,7 @@ for index in indices:
                     "properties": {
                         "journal_name": {"type": "keyword"},
                         "tested_at": {"type": "date", 'format': "yyyy-MM-dd HH:mm:ss"},
-                        "version": {"type": "text"},
+                        "version": {"type": "keyword"},
                         "correct_blocks": {"type": "short"},
                         "all_blocks": {"type": "short"},
                         "correct_articles": {"type": "short"},
@@ -100,6 +100,7 @@ for index in indices:
                             "type": "nested",
                             "properties": {
                                 "id": {"type": "keyword"},
+                                "name": {"type": "text"},
                                 "correct_blocks": {"type": "short"},
                                 "all_blocks": {"type": "short"},
                                 "correct_articles": {"type": "short"},
