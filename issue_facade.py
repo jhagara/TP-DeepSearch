@@ -9,6 +9,19 @@ from elasticsearch import Elasticsearch
 
 
 class IssueFacade(object):
+    @staticmethod
+    def validate_issue_before_parsing(issue_path, limit_path):
+        path_validator = PathValidator()
+        error_list = path_validator.validate_issue(issue_path,limit_path)
+        result = ""
+        if len(error_list) == 0:
+            result = "Validation was successful for " + issue_path
+        else:
+            for err in error_list:
+                result = result + err + '|'
+            raise ValueError(result)
+        return result
+
     @classmethod
     def insert_by_fullpath(cls, parser_dir, target_fullpath, name):
         xml = re.sub("[\n]", '', os.popen("find '" + target_fullpath + "/XML' -maxdepth 1 -type f -name '*.xml'").read())
@@ -93,19 +106,6 @@ class IssueFacade(object):
                 current_dir = re.sub("[\n]", '', os.popen("dirname '" + current_dir + "'").read())
 
         return path
-
-    @staticmethod
-    def validate_issue_before_parsing(issue_path, limit_path):
-        path_validator = PathValidator()
-        error_list = path_validator.validate_issue(issue_path,limit_path)
-        result = ""
-        if len(error_list) == 0:
-            result = "Validation was successful for " + issue_path
-        else:
-            for err in error_list:
-                result = result + err + '|'
-            raise ValueError(result)
-        return result
 
 
 def main(*attrs):
