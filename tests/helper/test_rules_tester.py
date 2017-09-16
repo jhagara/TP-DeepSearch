@@ -13,7 +13,7 @@ class TestRulesTester(unittest.TestCase):
         # establishment of connection
         es = Elasticsearch()
         path = os.path.dirname(os.path.abspath(__file__))
-        json = path + '/../elastic_filler/slovak/1939/19390526/1939.json'
+        json = path + '/../elastic_filler/slovak/1939/19390526/1939_config.json'
         dir = path + '/../elastic_filler/slovak/1939/19390526'
         journal_marc21 = path + '/../elastic_filler/slovak/journal_marc21.xml'
         xml = path + '/../elastic_filler/slovak/1939/19390526/XML/1336-4464_1939_19390526_00001.xml'
@@ -61,7 +61,7 @@ class TestRulesTester(unittest.TestCase):
                       }
                   })
 
-        json = path + '/../elastic_filler/slovak/1941/19390526/1939.json'
+        json = path + '/../elastic_filler/slovak/1941/19390526/1941_config.json'
         dir = path + '/../elastic_filler/slovak/1941/19390526'
         journal_marc21 = path + '/../elastic_filler/slovak/journal_marc21.xml'
         xml = path + '/../elastic_filler/slovak/1941/19390526/XML/1336-4464_1939_19390526_00001.xml'

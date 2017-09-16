@@ -60,4 +60,4 @@ class XmlParser(object):
         with open(readfile, encoding='utf8') as f:
             cnfg = json.load(f)
             return cnfg
-                
+

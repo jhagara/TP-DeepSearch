@@ -5,6 +5,7 @@ import time
 import re
 import datetime
 from lxml import etree
+import json
 
 
 class PathValidator(object):
@@ -48,6 +49,9 @@ class PathValidator(object):
         # check existence of journal_marc and validate it to schema
         function_error_list = self.__check_journal_marc(issue_path,limit_path)
         error_list = error_list + function_error_list
+
+        # check existence of config file and validate it
+        error_list = error_list + self.__check_config(issue_path, limit_path)
 
         return error_list
 
@@ -215,6 +219,43 @@ class PathValidator(object):
             else:
                 function_error_list = cls.__validate_number_of_pages(xml_path, images_path, issue_name)
                 error_list = error_list + function_error_list
+        return error_list
+
+    @classmethod
+    def __check_config(cls, issue_path, limit_path):
+        error_list = []
+
+        # for each path in list, search recursively for config.json in that path up to limit path
+        current_path = issue_path
+        config_path = None
+        while True:
+            for file in os.listdir(current_path):
+                if 'config.json' in file:
+                    config_path = os.path.join(current_path, file)
+            if current_path == limit_path or config_path is not None:
+                break
+            current_path = os.path.abspath(os.path.join(current_path, os.pardir))
+
+        # if config_path was founded, validate its json
+        if config_path is not None:
+            try:
+                with open(config_path, encoding='utf8') as f:
+                    config = json.load(f)
+                    config['Number']['path']
+                    config['Volume']['path']
+            except:
+                error = "Error: For issues in: " + issue_path + " founded Config file " + os.path.split(config_path)[
+                    1] + " is not valid as header config in directory : " \
+                        + os.path.split(config_path)[0] + ". Should contain keys 'Number', 'Volume', both containing " \
+                                                          "hash with key 'path' with String value"
+                error_list.append(error)
+
+        # else generate error
+        else:
+            error = "Error: For issues in: " + issue_path + " Config file for Issue was not found from " + \
+                    "this path up to " + limit_path
+            error_list.append(error)
+
         return error_list
 
     @classmethod
