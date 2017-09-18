@@ -361,17 +361,17 @@
                 </line>
             </par>
 		</group>
-		<group type="fulltexts" l="105" t="240" r="140" b="500">
+		<group type="fulltexts" l="105" t="240" r="140" b="500" test_art_num="17,5">
 			<par type="fulltext" l="105" t="240" r="140" b="500">
                 <line baseline="156" l="105" t="240" r="140" b="500">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 11 clanok 17 zo strany 10</formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 11 clanok 17 zo strany 10, poradie 5</formatting>
                 </line>
             </par>
 		</group>
-		<group type="fulltexts" l="145" t="240" r="390" b="500">
+		<group type="fulltexts" l="145" t="240" r="390" b="500" test_art_num="17,6">
 			<par type="fulltext" l="145" t="240" r="390" b="500">
                 <line baseline="156" l="145" t="240" r="390" b="500">
-                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 11 clanok 17 zo strany 10</formatting>
+                    <formatting lang="Slovak" ff="Times New Roman" fs="6.">strana 11 clanok 17 zo strany 10, poradie 6</formatting>
                 </line>
             </par>
 		</group>

@@ -1,5 +1,6 @@
 import re
 import array
+from parser.xml.position_helper import PositionHelper
 
 ERROR = 3
 
@@ -16,7 +17,7 @@ class _Heading(object):
                 is_heading = True
                 for formatting \
                         in par.xpath('.//*[local-name() = \'formatting\']'):
-                    fs = _Heading._get_fs(formatting)
+                    fs = PositionHelper.get_fs(formatting)
                     if fs <= limit:
                         is_heading = False
                         break
@@ -30,7 +31,7 @@ class _Heading(object):
         number_fs = [0] * 1000
         for formatting \
                 in parsed_xml.xpath('.//*[local-name() = \'formatting\']'):
-            fs = _Heading._get_fs(formatting)
+            fs = PositionHelper.get_fs(formatting)
             number_fs[fs] += 1
 
         most_used = 0
@@ -39,36 +40,3 @@ class _Heading(object):
                 most_used = i
         return most_used
 
-    # get font size from element formatting
-    @classmethod
-    def _get_fs(cls, formatting):
-        fs_string = formatting.get("fs")
-        fs = int(re.match("\d+", fs_string).group(0))
-        return fs
-
-    # find median font size
-    @classmethod
-    def _get_median(cls, parsed_xml):
-        counter = 0
-        font_sizes = array.array('f')
-        for block in parsed_xml.xpath('.//*[local-name() = \'block\']'):
-            # checking only font sizes of paragraphs of Text blocks
-            if block.get("blockType") == 'Text':
-                for paragraph in block.getchildren():
-                    for line in paragraph.getchildren():
-                        for element in line.getchildren():
-                            counter += 1
-                            font_sizes.append(float(element.get("fs")))
-
-        font_sizes = font_sizes.tolist()
-        font_sizes.sort()
-        median = 0
-        # calculating median
-        if counter != 0:
-            if counter % 2 == 0:
-                a = font_sizes[int(counter / 2)]
-                b = font_sizes[int(counter / 2) - 1]
-                median = (a + b) / 2
-            else:
-                median = font_sizes[int(counter / 2)]
-        return median

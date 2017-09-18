@@ -1,6 +1,6 @@
 import unittest
 import os
-from helper.image_extractor import ImageExtractor
+from helper.image_processor import ImageProcessor
 from PIL import Image
 import glob
 
@@ -36,6 +36,7 @@ class TestImageExport(unittest.TestCase):
                               "page": 2
                             }
                           ],
+                            "is_ignored": False,
                           "issue": {
                             "id": "AVtpuENYLK4gTCUnA1O0"
                           }
@@ -86,6 +87,7 @@ class TestImageExport(unittest.TestCase):
                               "page": 5
                             }
                           ],
+                            "is_ignored": False,
                           "issue": {
                             "id": "AVtpuENYLK4gTCUnA1O0"
                           }
@@ -118,6 +120,7 @@ class TestImageExport(unittest.TestCase):
                               "page": 7
                             }
                           ],
+                            "is_ignored": False,
                           "issue": {
                             "id": "AVtpuENYLK4gTCUnA1O0"
                           }
@@ -136,7 +139,7 @@ class TestImageExport(unittest.TestCase):
             for i, article in enumerate(articles):
                 abs_path = os.path.dirname(os.path.abspath(__file__)) + "/19430526/article" + str(i + 1)
                 article['_source']['source_dirname'] = abs_path
-                name = ImageExtractor.export_article_image(article, pages_paths)
+                name = ImageProcessor.export_article_image(article, pages_paths)
 
                 remove_paths.append(name)
 

@@ -103,6 +103,7 @@ class TestMarcExport(unittest.TestCase):
             ],
             "authors": ['Miro', 'Jano', 'Prdo'],
             "keywords": ['word1', 'anothorword1'],
+            "is_ignored": False,
             "issue": {
                 "id": 0
             }
@@ -116,6 +117,7 @@ class TestMarcExport(unittest.TestCase):
             ],
             "authors": ['Miro', 'Jano', 'Prdo'],
             "keywords": ['word2'],
+            "is_ignored": False,
             "issue": {
                 "id": 0
             }

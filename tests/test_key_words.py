@@ -1,8 +1,7 @@
 import unittest
 from semantic import Semantic
 from textblob import TextBlob as tB
-import elastic_updater
-import pytest
+import issue_facade
 import config
 from tests.helper.helper_test_methods import HelperTestMethods
 from elasticsearch import Elasticsearch
@@ -82,7 +81,8 @@ class TestKeyWords(unittest.TestCase):
             "keywords": [],
             "issue": {
                 "id": 0
-            }
+            },
+            'is_ignored': False
         }
 
         article2 = {
@@ -95,10 +95,11 @@ class TestKeyWords(unittest.TestCase):
             "keywords": [],
             "issue": {
                 "id": 0
-            }
+            },
+            'is_ignored': False
         }
         issue, articles = HelperTestMethods.create_custom_issue(articles=[article1, article2])
-        elastic_updater.main(issue['_id'], config.default_elastic_index)
+        issue_facade.main('update_issue', config.default_elastic_index, issue['_id'])
         es = Elasticsearch()
         articles = es.search(index='deep_search_test_python', doc_type="article",
                              body={'query': {'bool': {'must': {

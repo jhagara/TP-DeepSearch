@@ -1,0 +1,26 @@
+{
+  "Cost": {
+    "path": "/document/page[1]/block[1]//text()"
+  },
+  "Address": {
+    "path": "/document/page[1]/block[1]//text()"
+  },
+  "Date_Location": {
+    "path": "/document/page[1]/block[3]//text()"
+  },
+  "Annual_set": {
+    "path": "/document/page[1]/block[5]//text()"
+  },
+  "Subscriptions": {
+    "path": "/document/page[1]/block[5]//text()"
+  },
+  "Founder": {
+    "path": "/document/page[1]/block[4]//text()"
+  },
+  "Number": {
+    "path": "/document/page[1]/block[6]//text()"
+  },
+  "Volume": {
+    "path": "/document/page[1]/block[6]//text()"
+  }
+}

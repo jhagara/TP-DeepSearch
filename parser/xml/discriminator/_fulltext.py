@@ -1,6 +1,7 @@
 import array
 
 
+
 # class identifying which paragraphs are fulltexts
 class _Fulltext(object):
     @classmethod

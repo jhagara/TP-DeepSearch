@@ -21,8 +21,8 @@ for index in indices:
     print("indexing: " + index)
 
     # destroy index if already exists
-    if es.indices.exists(index=index):
-        es.indices.delete(index=index)
+    # if es.indices.exists(index=index):
+    es.indices.delete(index=index, ignore=[400, 404])
 
     # create index
     es.indices.create(
@@ -31,7 +31,8 @@ for index in indices:
             "mappings": {
                 "issue": {
                     "properties": {
-                        "name": { "type": "text" },
+                        "journal_name": {"type": "keyword"},
+                        "name": {"type": "text"},
                         "content": {"type": "text"},
                         "publisher": {"type": "text"},
                         "release_from": {"type": "text"},
@@ -39,12 +40,14 @@ for index in indices:
                         "number": {"type": "text"},
                         "pages_count": {"type": "short"},
                         "year": {"type": "text"},
-                        "source_dirname": {"type": "text"},
+                        "source_dirname": {"type": "keyword"},
                         "journal_marc21_path": {"type": "text"},
                         "issue_marc21_path": {"type": "text"},
                         "page_height": {"type": "short"},
                         "page_width": {"type": "short"},
                         "created_at": {"type": "date", 'format': "yyyy-MM-dd HH:mm:ss"},
+                        "is_tested": {"type": "boolean"},
+                        "was_exported": {"type": "boolean"}
                     }
                 },
                 "article": {
@@ -64,13 +67,14 @@ for index in indices:
                         "authors": {"type": "string"},
                         "keywords": {"type": "keyword"},
                         "article_marc21_path": {"type": "text"},
-                        "source_dirname": {"type": "text"},
+                        "source_dirname": {"type": "keyword"},
                         "issue": {
                             "type": "nested",
                             "properties": {
                                 "id": {"type": "keyword"}
                             }
-                        }
+                        },
+                        "is_ignored": {"type": "boolean"}
                     }
                 },
                 "history": {
@@ -81,6 +85,38 @@ for index in indices:
                         "updated_at": {"type": "date", 'format': "yyyy-MM-dd HH:mm:ss"},
                         "action": {'type': "keyword"},
                         "old_value": {'type': 'text'}
+                    }
+                },
+                "test": {
+                    "properties": {
+                        "journal_name": {"type": "keyword"},
+                        "tested_at": {"type": "date", 'format': "yyyy-MM-dd HH:mm:ss"},
+                        "version": {"type": "keyword"},
+                        "correct_blocks": {"type": "short"},
+                        "all_blocks": {"type": "short"},
+                        "correct_articles": {"type": "short"},
+                        "all_articles": {"type": "short"},
+                        "test_issues": {
+                            "type": "nested",
+                            "properties": {
+                                "id": {"type": "keyword"},
+                                "name": {"type": "text"},
+                                "correct_blocks": {"type": "short"},
+                                "all_blocks": {"type": "short"},
+                                "correct_articles": {"type": "short"},
+                                "all_articles": {"type": "short"},
+                                "incorrect_articles": {
+                                    "type": "nested",
+                                    "properties": {
+                                        "id": {"type": "keyword"},
+                                        "correct_blocks": {"type": "short"},
+                                        "all_blocks": {"type": "short"},
+                                        "page": {"type": "short"},
+                                        "title": {"type": "text"}
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }

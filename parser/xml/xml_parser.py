@@ -5,10 +5,10 @@ from lxml import etree
 from parser.xml.cleaner import Cleaner
 from parser.xml.source_header import SourceHeader
 from parser.xml.discriminator.heading import _Heading
-from parser.xml.discriminator._fulltext import _Fulltext
 from parser.xml.discriminator.separatorsid import SeparatorId
 from parser.xml.article.merger import Preprocessor
 from parser.xml.article.assembler import Assembler
+from parser.xml.schema_validator import SchemaValidator
 
 
 class XmlParser(object):
@@ -16,6 +16,11 @@ class XmlParser(object):
     def parse(cls, header_config_path, xml_path):
         # load xml file to init stage
         xml = etree.parse(xml_path)
+
+        # validate xml
+        schemavalidator = SchemaValidator()
+        schemavalidator.validate_inputxml(xml)
+
         # load header config json file
         header_config = cls.read_from_json(header_config_path)
 
@@ -27,9 +32,6 @@ class XmlParser(object):
 
         # discriminate headings
         xml = _Heading.discriminate_headings(xml)
-
-        # discriminate fulltexts
-        #xml = _Fulltext.discriminate_fulltexts(xml)
 
         # set all missing par with attrib type = None to fulltexts
         for par in xml.xpath('/document/page/block/par[not(@type)]'):
@@ -58,4 +60,4 @@ class XmlParser(object):
         with open(readfile, encoding='utf8') as f:
             cnfg = json.load(f)
             return cnfg
-                
+

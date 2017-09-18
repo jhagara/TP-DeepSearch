@@ -7,11 +7,11 @@ class SourceHeader(object):
     def get_source_header(cls, parsed_xml, header):
 
         # iterate through every item of list in marc21 key of input Dictionary
-        for attr in header["marc21"]:
-            found = parsed_xml.xpath(attr['path'])
+        for attr in header:
+            found = parsed_xml.xpath(header[attr]['path'])
 
             # assing value of attribute from found item
-            attr['value'] = cls.__clean_and_join_list(found)
+            header[attr]['value'] = cls.__clean_and_join_list(found)
 
         return parsed_xml, header
 

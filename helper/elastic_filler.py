@@ -1,9 +1,15 @@
 import copy
 import json
-from elasticsearch import Elasticsearch
+import logging
+from elasticsearch import Elasticsearch, ElasticsearchException
+from helper.infohandler import InfoHandler
 import config
 import re
+import datetime
+import os
 from time import gmtime, strftime
+from parser.xml.position_helper import PositionHelper
+import pymarc
 
 
 class Elastic(object):
@@ -30,6 +36,8 @@ class Elastic(object):
         empty_issue['name'] = issue_name
         # empty_issue_art['name'] = issue_name
 
+        empty_issue['journal_name'] = self.__get_journal_name(paths['journal_marc21'])
+
         empty_issue['pages_count'] = len(self.articles)
         empty_issue['created_at'] = strftime("%Y-%m-%d %H:%M:%S", gmtime())
 
@@ -42,21 +50,24 @@ class Elastic(object):
         empty_issue['page_width'] = int(page_zero.attrib['width'])
         # empty_issue_art['page_width'] = int(page_zero.attrib['width'])
 
-        for marcs in self.header['marc21']:
+        empty_issue['is_tested'] = False
+        empty_issue['was_exported'] = False
+
+        for attrs in self.header:
             """
-            if marcs['key'] == 'Annual_set':
-                empty_issue['release_from'] = marcs['value']
-            elif marcs['key'] == 'Date_Location':
-                empty_issue['release_date'] = marcs['value']
-            elif marcs['key'] == 'Founder':
-                empty_issue['publisher'] = marcs['value']
+            if attrs == 'Annual_set':
+                empty_issue['release_from'] = self.header[attrs]['value']
+            elif attrs == 'Date_Location':
+                empty_issue['release_date'] = self.header[attrs]['value']
+            elif attrs == 'Founder':
+                empty_issue['publisher'] = self.header[attrs]['value']
             """
-            if marcs['key'] == 'Number':
-                empty_issue['number'] = marcs['value']
-            elif marcs['key'] == 'Volume':
-                empty_issue['year'] = marcs['value']
-            elif marcs['key'] == 'Subscription':
-                empty_issue['content'] = marcs['value']
+            if attrs == 'Number':
+                empty_issue['number'] = self.header[attrs]['value']
+            elif attrs == 'Volume':
+                empty_issue['year'] = self.header[attrs]['value']
+            elif attrs == 'Subscription':
+                empty_issue['content'] = self.header[attrs]['value']
 
             xml_name = paths['xml'].split('/')[-1]
             empty_issue['release_date'] = re.search('[0-9]{8}', xml_name).group(0)
@@ -90,64 +101,95 @@ class Elastic(object):
                         for par in group.xpath('par'):
                             for line in par.xpath('line'):
                                 for formatting in line.xpath('formatting'):
-                                    heading_sizes.append(formatting.get("fs"))
-                max_font = max([int(head.split('.', 1)[0]) for head in heading_sizes] or [0])
+                                    heading_sizes.append(PositionHelper.get_fs(formatting))
+
+                max_font = max([int(head) for head in heading_sizes] or [0])
 
                 # MAIN PART
                 for group in article:
-                    if group.attrib['type'] == 'headings':
-                        new_heading = copy.deepcopy(empty_group)
-                        # print(new_heading)
-                        new_heading['type'] = 'subheadings'
-                        new_heading['l'] = group.attrib['l']
-                        new_heading['r'] = group.attrib['r']
-                        new_heading['t'] = group.attrib['t']
-                        new_heading['b'] = group.attrib['b']
-                        new_heading['page'] = group.attrib['page']
-                        all_text = ''
-                        pars = group.xpath('par')
-                        pars.sort(key=lambda x: x.attrib['t'])
-                        for par in pars:
-                            for line in par.xpath('line'):
-                                for formatting in line.xpath('formatting'):
-                                    if int(formatting.get("fs").split('.', 1)[0]) == max_font:
-                                        new_heading['type'] = 'headings'
-                                    all_text += formatting.text + '\n'
-                        new_heading['text'] = all_text
-                        # print(new_heading)
-                        groups.append(new_heading)
-                    elif group.attrib['type'] == 'fulltexts':
-                        new_fulltext = copy.deepcopy(empty_group)
-                        new_fulltext['type'] = 'fulltexts'
-                        new_fulltext['l'] = group.attrib['l']
-                        new_fulltext['r'] = group.attrib['r']
-                        new_fulltext['t'] = group.attrib['t']
-                        new_fulltext['b'] = group.attrib['b']
-                        new_fulltext['page'] = group.attrib['page']
-                        all_text = ''
-                        pars = group.xpath('par')
-                        pars.sort(key=lambda x: x.attrib['t'])
-                        for par in pars:
-                            for line in par.xpath('line'):
-                                for formatting in line.xpath('formatting'):
-                                    all_text += formatting.text + '\n'
-                        new_fulltext['text'] = all_text
-                        # print(new_fulltext)
-                        groups.append(new_fulltext)
+                    for additional_group in self.__clone_groups(group, max_font):
+                        groups.append(additional_group)
+
+                #every article is defaultly set to be not ignored
+                new_article['is_ignored'] = False
+
                 new_article['groups'] = groups
-                # print(groups)
                 new_article['issue'] = empty_issue_art
                 articles.append(new_article)
 
         ar_count = 0
+
+        error_name = config.get_full_path('logs', 'error.log')
+        formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+        error_logger = logging.getLogger()
+        error_logger.setLevel(logging.ERROR)
+
+        if not os.path.exists(error_name):
+            e_file = open(error_name, 'w')
+
+        error_handler = logging.FileHandler(error_name)
+        error_handler.setFormatter(formatter)
+        error_logger.addHandler(error_handler)
+
+        info_logger = logging.getLogger()
+        info_name = config.get_full_path('logs', 'info.log')
+
+        if not os.path.exists(info_name):
+            i_file = open(info_name, 'w')
+
+        info_handler = InfoHandler(info_name)
+        info_handler.setFormatter(formatter)
+        info_logger.addHandler(info_handler)
+
         for art in articles:
             # index | PUT into ES
-            some = es.index(index=elastic_index, doc_type='article', body=art)
-            ar_count += 1
+            try:
+                some = es.index(index=elastic_index, doc_type='article', body=art)
+                ar_count += 1
+            except ElasticsearchException:
+                pass
 
-        print("Article created " + str(ar_count) + ", index: " +
-              elastic_index + ", type: article")
+        number = str(xml_name)
+
+        info_logger.info(str(datetime.date.today()) + "Journal " + issue_name + ", issue num. " +
+                         number + " was parsed.")
+        info_logger.info(str(datetime.date.today()) + "Articles created: " + str(ar_count) +
+                         "/" + str(len(articles)) + ".")
 
         es.indices.refresh(index=elastic_index)
 
         return issue_id
+
+    def __clone_groups(self, group, max_font):
+        redundant_groups = []
+
+        for par in group.xpath('par'):
+            redundant_group = {'l': par.attrib['l'], 'r': par.attrib['r'],
+                               't': par.attrib['t'], 'b': par.attrib['b'],
+                               'page': group.attrib['page'], 'type': group.attrib['type']}
+
+            # get text and true type
+            all_text = ''
+            for line in par.xpath('line'):
+                for formatting in line.xpath('formatting'):
+                    if redundant_group['type'] == 'headings' and int(PositionHelper.get_fs(formatting)) != max_font:
+                        redundant_group['type'] = 'subheadings'
+                    all_text += formatting.text + '\n'
+
+            redundant_group['text'] = all_text
+            redundant_groups.append(redundant_group)
+
+        return redundant_groups
+
+    def __get_journal_name(self, marc_path):
+        #  get marc21 for jurnal
+        records = pymarc.parse_xml_to_array(marc_path)
+        journal_marc = records[0]
+
+        # get journal name from journal_marc
+        journal_name = ""
+        if journal_marc['245'] is not None and journal_marc['245']['a'] is not None:
+            journal_name = journal_marc['245']['a']
+
+        return journal_name
+
