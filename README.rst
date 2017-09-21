@@ -19,7 +19,7 @@ To activate newly created virtualenv, you can run
 
 Install all requirements
 ::
-        $ pip3 install -r misc/requirements.txt
+        $ python3 -m pip install -r misc/requirements.txt
 
 Install Python3 external dependency
 ::
