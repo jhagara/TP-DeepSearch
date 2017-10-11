@@ -23,6 +23,16 @@ class PathValidator(object):
 
         error_list = []
 
+        # check if limit path can be recursively reached from limit_path
+        # because of using /while True/ in check_config and check_journal_marc
+        relpath = os.path.relpath(issue_path, limit_path)
+        if '..' in relpath:
+            error = "Error before validating: Limit path: " + limit_path + "can't be recursively reached " \
+                                                                           "from validating path: " + limit_path
+            print(error)
+            error_list.append(error)
+            return error_list
+
         issue_path = os.path.abspath(issue_path)
         xml_dir_path = self.__find_dir_path(issue_path, "XML")
         xml_path = self.__find_file_path(xml_dir_path, ".xml")
@@ -49,7 +59,6 @@ class PathValidator(object):
         # check existence of journal_marc and validate it to schema
         function_error_list = self.__check_journal_marc(issue_path,limit_path)
         error_list = error_list + function_error_list
-
         # check existence of config file and validate it
         error_list = error_list + self.__check_config(issue_path, limit_path)
 
@@ -115,9 +124,10 @@ class PathValidator(object):
                     for file in os.listdir(issue_path):
                         if 'journal_marc' in file:
                             marc_path = os.path.join(issue_path, file)
-                            if self.__validate_marcxml(marc_path) is False:
+                            err = self.__validate_marcxml(marc_path)
+                            if err != "":
                                 error = "Error: MarcXML " + os.path.split(marc_path)[1] + " is not valid for " + \
-                                        "journal in directory : " + os.path.split(marc_path)[0]
+                                        "journal in directory : " + os.path.split(marc_path)[0] + " Detail:"
                                 error_list.append(error)
                             marc_found = True
                             break
@@ -228,7 +238,7 @@ class PathValidator(object):
         # for each path in list, search recursively for config.json in that path up to limit path
         current_path = issue_path
         config_path = None
-        while True:
+        while current_path!="/":
             for file in os.listdir(current_path):
                 if 'config.json' in file:
                     config_path = os.path.join(current_path, file)
@@ -265,7 +275,7 @@ class PathValidator(object):
         # for each path in list, search recursively for marc_journal in that path up to limit path
         current_path = issue_path
         marc_path = None
-        while True:
+        while current_path != "/":
             for file in os.listdir(current_path):
                 if 'journal_marc' in file:
                     marc_path = os.path.join(current_path, file)
@@ -275,10 +285,11 @@ class PathValidator(object):
 
         # if marc_path was founded, validate its xml to schema
         if marc_path is not None:
-            if cls.__validate_marcxml(marc_path) is False:
+            err = cls.__validate_marcxml(marc_path)
+            if err != "":
                 error = "Error: For issues in: " + issue_path + " founded MarcXML " + os.path.split(marc_path)[
                     1] + " is not valid for journal in directory : " \
-                        + os.path.split(marc_path)[0]
+                        + os.path.split(marc_path)[0] + " Detail: " + err
                 error_list.append(error)
 
         # else generate error
@@ -302,14 +313,16 @@ class PathValidator(object):
         # parse xml of marc journal
         try:
             marcxml = etree.parse(marcxml_path)
-        except:
-            return False
+        except etree.XMLSyntaxError as err:
+            return str(err)
 
         # validate xml to schema
-        if schema.validate(marcxml):
-            return True
-        else:
-            return False
+        try:
+            schema.assertValid(marcxml)
+        except etree.DocumentInvalid as err:
+            return str(err)
+
+        return ""
 
     @classmethod
     def __validate_issue_xml(cls, xml_path):
@@ -326,17 +339,21 @@ class PathValidator(object):
         # parse xml issue
         try:
             issue_xml = etree.parse(xml_path)
-        except:
-            error = "Error: Invalid xml of issue " + os.path.split(xml_path)[1] + " in " + os.path.split(xml_path)[0]
+        except etree.XMLSyntaxError as err:
+            error = "Error: Unparsable xml of issue " + os.path.split(xml_path)[1] + " in " + os.path.split(xml_path)[0]\
+                    + " Detail: " + str(err)
             error_list.append(error)
             return error_list
 
-        if schema.validate(issue_xml):
-            return error_list
-        else:
-            error = "Error: Invalid xml of issue " + os.path.split(xml_path)[1] + " in " + os.path.split(xml_path)[0]
+        # validate it to schema
+        try:
+            schema.assertValid(issue_xml)
+        except etree.DocumentInvalid as err:
+            error = "Error: Invalid xml of issue " + os.path.split(xml_path)[1] + " in " + os.path.split(xml_path)[0] \
+                    + " Detail: " + str(err)
             error_list.append(error)
-            return error_list
+
+        return error_list
 
     @classmethod
     def __validate_number_of_pages(cls, xml_path, images_path, issue_name):
