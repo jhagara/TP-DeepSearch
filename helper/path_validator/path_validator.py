@@ -127,7 +127,7 @@ class PathValidator(object):
                             err = self.__validate_marcxml(marc_path)
                             if err != "":
                                 error = "Error: MarcXML " + os.path.split(marc_path)[1] + " is not valid for " + \
-                                        "journal in directory : " + os.path.split(marc_path)[0] + " Detail:"
+                                        "journal in directory : " + os.path.split(marc_path)[0] + " Detail: " + err
                                 error_list.append(error)
                             marc_found = True
                             break
