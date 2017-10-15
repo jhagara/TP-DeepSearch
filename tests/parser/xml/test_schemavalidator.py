@@ -11,6 +11,10 @@ class MyTestCase(unittest.TestCase):
         valid_xml = etree.parse(valid_path)
         validator.validate_inputxml(valid_xml)
 
+        valid_path_v10 = os.path.dirname(os.path.abspath(__file__)) + "/../../narodna_jednota_v10.xml"  # xml v10
+        valid_xml_v10 = etree.parse(valid_path_v10)
+        validator.validate_inputxml(valid_xml_v10)
+
         invalid_path = os.path.dirname(os.path.abspath(__file__)) + "/invalid.xml"  # path to invalid xml
         invalid_xml = etree.parse(invalid_path)
         self.assertRaises(etree.DocumentInvalid, validator.validate_inputxml, invalid_xml)

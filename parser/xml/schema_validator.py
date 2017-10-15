@@ -3,7 +3,8 @@ import os
 
 
 class SchemaValidator(object):
-    INPUT_SCHEMA = "/schemas/input_schema.xsd"
+    INPUT_SCHEMA_V6 = "/schemas/input_schema_v6.xsd"
+    INPUT_SCHEMA_V10 = "/schemas/input_schema_v10.xsd"
 
     def validate(self, xml, schema):
         if xml is None or schema is None:
@@ -18,19 +19,25 @@ class SchemaValidator(object):
         schema_doc = etree.parse(schema_path)
         schema = etree.XMLSchema(schema_doc)
 
-        return self.validate(xml, schema)
+        self.validate(xml, schema)
 
     def validate_schema(self, xml, schema_path):
         # load schema from file
         schema_doc = etree.parse(schema_path)
         schema = etree.XMLSchema(schema_doc)
 
-        return self.validate(xml, schema)
+        self.validate(xml, schema)
 
     def validate_inputxml(self, xml):
+        document_tag = xml.getroot().tag
+
+        if "FineReader6".lower() in document_tag.lower():
+            schema_path = os.path.dirname(os.path.abspath(__file__)) + self.INPUT_SCHEMA_V6
+        elif "FineReader10".lower() in document_tag.lower():
+            schema_path = os.path.dirname(os.path.abspath(__file__)) + self.INPUT_SCHEMA_V10
+
         # load input schema from file
-        schema_path = os.path.dirname(os.path.abspath(__file__)) + self.INPUT_SCHEMA
         schema_doc = etree.parse(schema_path)
         schema = etree.XMLSchema(schema_doc)
 
-        return self.validate(xml, schema)
+        self.validate(xml, schema)
