@@ -14,7 +14,10 @@ class PathValidator(object):
     #    path to issue xml schema
     #    approximate time needed to validate one issue
     marc_schema_path = "/MARC21_journal_schema.xsd"
-    xml_issue_schema_path = "/issue_xml_schema.xsd"
+    xml_issue_schema_path_6 = "/FineReader6-schema-v1.xsd"
+    xml_issue_schema_path_8 = "/FineReader8-schema-v2.xsd"
+    xml_issue_schema_path_9 = "/FineReader9-schema-v1.xsd"
+    xml_issue_schema_path_10 = "/FineReader10-schema-v1.xsd"
     issue_validate_time = 1.6
 
     # this is method which will be called before parsing issue
@@ -325,16 +328,23 @@ class PathValidator(object):
         return ""
 
     @classmethod
+    def __get_appropriate_schema(cls,root_tag):
+        appropriate_schema = None
+        if "FineReader6".lower() in root_tag.lower():
+            appropriate_schema = cls.xml_issue_schema_path_6
+        elif "FineReader8".lower() in root_tag.lower():
+            appropriate_schema = cls.xml_issue_schema_path_8
+        elif "FineReader9".lower() in root_tag.lower():
+            appropriate_schema = cls.xml_issue_schema_path_9
+        elif "FineReader10".lower() in root_tag.lower():
+            appropriate_schema = cls.xml_issue_schema_path_10
+
+        return appropriate_schema
+
+    @classmethod
     def __validate_issue_xml(cls, xml_path):
 
         error_list = []
-
-        # get absolute path to schema of marc journal file
-        schema_abs_path = os.path.dirname(os.path.abspath(__file__)) + cls.xml_issue_schema_path
-
-        # parse schema of issue xml
-        schema_doc = etree.parse(schema_abs_path)
-        schema = etree.XMLSchema(schema_doc)
 
         # parse xml issue
         try:
@@ -344,6 +354,24 @@ class PathValidator(object):
                     + " Detail: " + str(err)
             error_list.append(error)
             return error_list
+
+        # find schema version
+        document_tag = issue_xml.getroot().tag
+        xml_issue_schema_path = cls.__get_appropriate_schema(document_tag)
+
+        # check if schema was found
+        if xml_issue_schema_path is None:
+            error = "Error: Not found XML Schema for issue " + os.path.split(xml_path)[1] + " in " \
+                    + os.path.split(xml_path)[0] + " Detail: " + document_tag
+            error_list.append(error)
+            return error_list
+
+        # get absolute path to schema of marc journal file
+        schema_abs_path = os.path.dirname(os.path.abspath(__file__)) + xml_issue_schema_path
+
+        # parse schema of issue xml
+        schema_doc = etree.parse(schema_abs_path)
+        schema = etree.XMLSchema(schema_doc)
 
         # validate it to schema
         try:
