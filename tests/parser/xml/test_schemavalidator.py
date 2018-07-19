@@ -19,5 +19,11 @@ class MyTestCase(unittest.TestCase):
         invalid_xml = etree.parse(invalid_path)
         self.assertRaises(etree.DocumentInvalid, validator.validate_inputxml, invalid_xml)
 
+    def test_alto_schema(self):
+        validator = SchemaValidator()
+        path = os.path.dirname(os.path.abspath(__file__)) + "/../../lidove_noviny/1943/19430203/XML/uuid_a7aaec20-6ae3-11dd-9a90-000d606f5dc6.xml"  # path to alto xml
+        xml = etree.parse(path)
+        validator.validate_inputxml(xml)
+
 if __name__ == '__main__':
     unittest.main()

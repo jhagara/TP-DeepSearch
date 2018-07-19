@@ -5,6 +5,7 @@ import os
 class SchemaValidator(object):
     INPUT_SCHEMA_V6 = "/schemas/input_schema_v6.xsd"
     INPUT_SCHEMA_V10 = "/schemas/input_schema_v10.xsd"
+    ALTO_SCHEMA_V2 = "/schemas/alto-v2.0.xsd"
 
     def validate(self, xml, schema):
         if xml is None or schema is None:
@@ -35,6 +36,8 @@ class SchemaValidator(object):
             schema_path = os.path.dirname(os.path.abspath(__file__)) + self.INPUT_SCHEMA_V6
         elif "FineReader10".lower() in document_tag.lower():
             schema_path = os.path.dirname(os.path.abspath(__file__)) + self.INPUT_SCHEMA_V10
+        elif "alto/ns-v2".lower() in document_tag.lower():
+            schema_path = os.path.dirname(os.path.abspath(__file__)) + self.ALTO_SCHEMA_V2
 
         # load input schema from file
         schema_doc = etree.parse(schema_path)
