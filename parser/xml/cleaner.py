@@ -19,6 +19,19 @@ class Cleaner(object):
     # main function for cleaning original input xml
     @classmethod
     def clean(cls, parsed_xml):
+        root_tag = parsed_xml.getroot().tag
+        if "abbyy".lower() in root_tag.lower():
+            return cls.__clean_abbyy(parsed_xml)
+        elif "alto".lower() in root_tag.lower():
+            return cls.__clean_alto(parsed_xml)
+        else:
+            return -1
+
+    # PRIVATE methods
+
+    @classmethod
+    # function for cleaning abbyy input xml
+    def __clean_abbyy(cls, parsed_xml):
         for node in parsed_xml.iter():
             # remove namespaces
             node = cls.__strip_ns_prefix(node)
@@ -47,10 +60,13 @@ class Cleaner(object):
             PositionHelper.add_coordinates_from_child(par)
 
         cls.__remove_page_header(parsed_xml)
-
         return parsed_xml
 
-    # PRIVATE methods
+    @classmethod
+    # function for cleaning alto input xml
+    def __clean_alto(cls, parsed_xml):
+        # TODO
+        return parsed_xml
 
     # remove namespaces from node
     @classmethod
