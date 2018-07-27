@@ -407,7 +407,7 @@ class TestCleaner(unittest.TestCase):
                     <TopMargin HEIGHT="357" WIDTH="3924" VPOS="0" HPOS="0">
                     <ComposedBlock ID="Page1_Block1" HEIGHT="66" WIDTH="3495" VPOS="277" HPOS="293" TYPE="container">
                     <TextBlock ID="Page1_Block2" HEIGHT="47" WIDTH="190" VPOS="277" HPOS="293" language="sk" STYLEREFS="StyleId-52FA022A-701E-44A2-B344-54320DB8388F- font3">
-                    <TextLine BASELINE="316" HEIGHT="35" WIDTH="178" VPOS="283" HPOS="299"><String STYLE="bold">Strana ?</String</TextLine>
+                    <TextLine BASELINE="316" HEIGHT="35" WIDTH="178" VPOS="283" HPOS="299"><String STYLE="bold">Strana ?</String></TextLine>
                     </TextBlock>
                     </ComposedBlock>
                     <GraphicalElement ID="Page1_Block5" HEIGHT="48" WIDTH="2111" VPOS="0" HPOS="0"/>
@@ -431,11 +431,11 @@ class TestCleaner(unittest.TestCase):
 
         root = etree.XML(original_xml)
         tree = etree.ElementTree(root)
-        # actual_xml = Cleaner.clean(etree.ElementTree(root))
-        #
-        # desired_xml = etree.fromstring(desired_xml)
-        # self.assertEqual(
-        #     re.sub("[\a\f\n\r\t\v ]", '', etree.tostring(desired_xml)
-        #            .decode('utf-8')),
-        #     re.sub("[\a\f\n\r\t\v ]", '', etree.tostring(actual_xml)
-        #            .decode('utf-8')))
+        actual_xml = Cleaner.clean(etree.ElementTree(root))
+
+        desired_xml = etree.fromstring(desired_xml)
+        self.assertEqual(
+            re.sub("[\a\f\n\r\t\v ]", '', etree.tostring(desired_xml)
+                   .decode('utf-8')),
+            re.sub("[\a\f\n\r\t\v ]", '', etree.tostring(actual_xml)
+                   .decode('utf-8')))
