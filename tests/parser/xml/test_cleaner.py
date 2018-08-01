@@ -394,7 +394,7 @@ class TestCleaner(unittest.TestCase):
                     """  # NOQA
 
         desired_xml = """
-                    <alto xmlns="http://www.loc.gov/standards/alto/ns-v2#" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                    <alto xmlns="http://www.loc.gov/standards/alto/ns-v2#" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/standards/alto/ns-v2# http://www.loc.gov/standards/alto/alto-v2.0.xsd">
                     <Description>
                     <MeasurementUnit>pixel</MeasurementUnit>
                     <OCRProcessing ID="IdOcr"><ocrProcessingStep><processingDateTime>2015-09-15</processingDateTime><processingSoftware><softwareCreator>ABBYY</softwareCreator><softwareName>ABBYY Recognition Server</softwareName><softwareVersion>4.0</softwareVersion></processingSoftware></ocrProcessingStep></OCRProcessing>
@@ -406,7 +406,7 @@ class TestCleaner(unittest.TestCase):
                     <Page ID="Page1" PHYSICAL_IMG_NR="1" HEIGHT="6159" WIDTH="3924">
                     <TopMargin HEIGHT="357" WIDTH="3924" VPOS="0" HPOS="0">
                     <ComposedBlock ID="Page1_Block1" HEIGHT="66" WIDTH="3495" VPOS="277" HPOS="293" TYPE="container">
-                    <TextBlock ID="Page1_Block2" HEIGHT="47" WIDTH="190" VPOS="277" HPOS="293" language="sk" STYLEREFS="StyleId-52FA022A-701E-44A2-B344-54320DB8388F- font3">
+                    <TextBlock HEIGHT="47" WIDTH="190" VPOS="277" HPOS="293" language="sk" STYLEREFS="StyleId-52FA022A-701E-44A2-B344-54320DB8388F- font3">
                     <TextLine BASELINE="316" HEIGHT="35" WIDTH="178" VPOS="283" HPOS="299"><String STYLE="bold">Strana ?</String></TextLine>
                     </TextBlock>
                     </ComposedBlock>
@@ -419,9 +419,9 @@ class TestCleaner(unittest.TestCase):
                     <BottomMargin HEIGHT="78" WIDTH="3924" VPOS="6081" HPOS="0">
                     </BottomMargin>
                     <PrintSpace HEIGHT="5724" WIDTH="3598" VPOS="357" HPOS="239">
-                    <TextBlock ID="Page1_Block8" HEIGHT="5461" WIDTH="905" VPOS="357" HPOS="239" STYLEREFS="StyleId-52FA022A-701E-44A2-B344-54320DB8388F- font3">
+                    <TextBlock HEIGHT="5461" WIDTH="905" VPOS="357" HPOS="239" STYLEREFS="StyleId-52FA022A-701E-44A2-B344-54320DB8388F- font3">
                     <TextLine BASELINE="398" HEIGHT="42" WIDTH="860" VPOS="363" HPOS="277" STYLEREFS="StyleId-1E99D8DA-7651-4BFA-A8F9-829F83281F28- font3"><String>AA BB</String></TextLine>
-                    <TextLine BASELINE="831" HEIGHT="39" WIDTH="819" VPOS="799" HPOS="316"><String CONTENT="CC">CC DD</String></TextLine>
+                    <TextLine BASELINE="831" HEIGHT="39" WIDTH="819" VPOS="799" HPOS="316"><String>CC DD</String></TextLine>
                     </TextBlock>
                     </PrintSpace>
                     </Page>
@@ -435,7 +435,7 @@ class TestCleaner(unittest.TestCase):
 
         desired_xml = etree.fromstring(desired_xml)
         self.assertEqual(
-            re.sub("[\a\f\n\r\t\v ]", '', etree.tostring(desired_xml)
+            re.sub("[\a\f\n\r\t\v ]", ' ', etree.tostring(desired_xml)
                    .decode('utf-8')),
-            re.sub("[\a\f\n\r\t\v ]", '', etree.tostring(actual_xml)
+            re.sub("[\a\f\n\r\t\v ]", ' ', etree.tostring(actual_xml)
                    .decode('utf-8')))

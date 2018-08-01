@@ -144,19 +144,20 @@ class Cleaner(object):
         for child in textline.getchildren():
             if child.tag == 'String':
                 if act_string is None:
-                    child.text = child.get('CONTENT')
-                    child.pop('CONTENT')
+                    child.text = child.attrib.get('CONTENT')
+                    child.attrib.pop('CONTENT')
                     act_string = child
                     continue
-                act_style = act_string.get('STYLE')
-                child_style = child.get('STYLE')
+                act_style = act_string.attrib.get('STYLE')
+                child_style = child.attrib.get('STYLE')
                 if act_style == child_style:
-                    act_string.text = act_string.text + child.get('CONTENT')
+                    act_string.text = act_string.text + child.attrib.get('CONTENT')
                     textline.remove(child)
                 else:
                     act_string = child
             elif child.tag == 'SP' and act_string is not None:
                 act_string.text = act_string.text + ' '
+                textline.remove(child)
 
         return textline
 
