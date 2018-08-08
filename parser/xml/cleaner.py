@@ -23,7 +23,7 @@ class Cleaner(object):
     @classmethod
     def clean(cls, parsed_xml):
         root_tag = parsed_xml.getroot().tag
-        if "abbyy".lower() in root_tag.lower():
+        if "document".lower() in root_tag.lower():
             return cls.__clean_abbyy(parsed_xml)
         elif "alto".lower() in root_tag.lower():
             return cls.__clean_alto(parsed_xml)

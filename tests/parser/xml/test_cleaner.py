@@ -430,7 +430,6 @@ class TestCleaner(unittest.TestCase):
                     """  # NOQA  # NOQA
 
         root = etree.XML(original_xml)
-        tree = etree.ElementTree(root)
         actual_xml = Cleaner.clean(etree.ElementTree(root))
 
         desired_xml = etree.fromstring(desired_xml)
