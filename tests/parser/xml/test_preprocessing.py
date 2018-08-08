@@ -564,7 +564,8 @@ class TestPreprocess(unittest.TestCase):
 	</page>
 </document>"""  # NOQA
         desired_xml = etree.fromstring(desired_xml)
-        actual_xml = Cleaner.clean(etree.fromstring(original_xml))
+        root = etree.XML(original_xml)
+        actual_xml = Cleaner.clean(etree.ElementTree(root))
         actual_xml = _Heading.discriminate_headings(actual_xml)
         # set all missing par with attrib type = None to fulltexts
         for par in actual_xml.xpath('/document/page/block/par[not(@type)]'):

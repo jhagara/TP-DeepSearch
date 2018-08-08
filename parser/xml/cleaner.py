@@ -9,21 +9,37 @@ HEADER_PER = 5  # percentage for calculating where is page header
 # xml is used in further steps of collecting and assembling articles
 # from headings, fulltexts and separators
 class Cleaner(object):
-    DOC_ATTRS = ['producer', 'version', 'pagesCount',
+    ABBYY_DOC_ATTRS = ['producer', 'version', 'pagesCount',
                  'mainLanguage', 'languages']
-    PAGE_ATTRS = ['resolution', 'width', 'height']
-    BLOCK_ATTRS = ['blockType', 'l', 't', 'r', 'b']
-    LINE_ATTRS = ['baseline', 'l', 't', 'r', 'b']
-    FORMATTING_ATTRS = ['lang', 'ff', 'fs', 'spacing']
+    ABBYY_PAGE_ATTRS = ['resolution', 'width', 'height']
+    ABBYY_BLOCK_ATTRS = ['blockType', 'l', 't', 'r', 'b']
+    ABBYY_LINE_ATTRS = ['baseline', 'l', 't', 'r', 'b']
+    ABBYY_FORMATTING_ATTRS = ['lang', 'ff', 'fs', 'spacing']
+    ALTO_TEXTBLOCK = ['HEIGHT', 'WIDTH', 'VPOS', 'HPOS', 'language', 'STYLEREFS', 'STYLE']
+    ALTO_TEXTLINE = ['BASELINE', 'HEIGHT', 'WIDTH', 'VPOS', 'HPOS', 'STYLEREFS', 'STYLE']
+    ALTO_STRING = ['STYLE', 'CONTENT']
 
     # main function for cleaning original input xml
     @classmethod
     def clean(cls, parsed_xml):
+        root_tag = parsed_xml.getroot().tag
+        if "document".lower() in root_tag.lower():
+            return cls.__clean_abbyy(parsed_xml)
+        elif "alto".lower() in root_tag.lower():
+            return cls.__clean_alto(parsed_xml)
+        else:
+            return -1
+
+    # PRIVATE methods
+
+    @classmethod
+    # function for cleaning abbyy input xml
+    def __clean_abbyy(cls, parsed_xml):
         for node in parsed_xml.iter():
             # remove namespaces
             node = cls.__strip_ns_prefix(node)
             # keep only desired attributes
-            node = cls.__remove_unwanted_attrs(node)
+            node = cls.__abbyy_remove_unwanted_attrs(node)
 
         # put text from charParams into text of formatting
         # remove all charParams from formatting
@@ -47,10 +63,21 @@ class Cleaner(object):
             PositionHelper.add_coordinates_from_child(par)
 
         cls.__remove_page_header(parsed_xml)
-
         return parsed_xml
 
-    # PRIVATE methods
+    @classmethod
+    # function for cleaning alto input xml
+    def __clean_alto(cls, parsed_xml):
+        for node in parsed_xml.iter():
+            # remove namespaces
+            node = cls.__strip_ns_prefix(node)
+            # keep only desired attributes
+            node = cls.__alto_remove_unwanted_attrs(node)
+
+        for textline in parsed_xml.xpath('//TextLine'):
+            textline = cls.__merge_string_elements(textline)
+
+        return parsed_xml
 
     # remove namespaces from node
     @classmethod
@@ -67,17 +94,30 @@ class Cleaner(object):
     # depending on node tag name, use corresponding desired attributes
     # and push them into method for removing unwanted attributes
     @classmethod
-    def __remove_unwanted_attrs(cls, node):
+    def __abbyy_remove_unwanted_attrs(cls, node):
         if node.tag == 'document':
-            node = cls.__clear_attrs(node, Cleaner.DOC_ATTRS)
+            node = cls.__clear_attrs(node, Cleaner.ABBYY_DOC_ATTRS)
         elif node.tag == 'page':
-            node = cls.__clear_attrs(node, Cleaner.PAGE_ATTRS)
+            node = cls.__clear_attrs(node, Cleaner.ABBYY_PAGE_ATTRS)
         elif node.tag == 'block':
-            node = cls.__clear_attrs(node, Cleaner.BLOCK_ATTRS)
+            node = cls.__clear_attrs(node, Cleaner.ABBYY_BLOCK_ATTRS)
         elif node.tag == 'line':
-            node = cls.__clear_attrs(node, Cleaner.LINE_ATTRS)
+            node = cls.__clear_attrs(node, Cleaner.ABBYY_LINE_ATTRS)
         elif node.tag == 'formatting':
-            node = cls.__clear_attrs(node, Cleaner.FORMATTING_ATTRS)
+            node = cls.__clear_attrs(node, Cleaner.ABBYY_FORMATTING_ATTRS)
+
+        return node
+
+    # depending on node tag name, use corresponding desired attributes
+    # and push them into method for removing unwanted attributes
+    @classmethod
+    def __alto_remove_unwanted_attrs(cls, node):
+        if node.tag == 'TextBlock':
+            node = cls.__clear_attrs(node, Cleaner.ALTO_TEXTBLOCK)
+        elif node.tag == 'TextLine':
+            node = cls.__clear_attrs(node, Cleaner.ALTO_TEXTLINE)
+        elif node.tag == 'String':
+            node = cls.__clear_attrs(node, Cleaner.ALTO_STRING)
 
         return node
 
@@ -97,6 +137,30 @@ class Cleaner(object):
         formatting.text = re.sub("[\a\f\n\r\t\v]", '', formatting.text)
 
         return formatting
+
+    @classmethod
+    def __merge_string_elements(cls, textline):
+        act_string = None
+        for child in textline.getchildren():
+            if child.tag == 'String':
+                if act_string is None:
+                    child.text = child.attrib.get('CONTENT')
+                    child.attrib.pop('CONTENT')
+                    act_string = child
+                    continue
+                act_style = act_string.attrib.get('STYLE')
+                child_style = child.attrib.get('STYLE')
+                if act_style == child_style:
+                    act_string.text = act_string.text + child.attrib.get('CONTENT')
+                    textline.remove(child)
+                else:
+                    act_string = child
+            elif child.tag == 'SP' and act_string is not None:
+                act_string.text = act_string.text + ' '
+                textline.remove(child)
+
+        return textline
+
 
     # remove page header
     # first it calculates height where page header should be
