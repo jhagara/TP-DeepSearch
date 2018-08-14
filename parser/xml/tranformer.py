@@ -1,18 +1,22 @@
 from lxml import etree
 
 class Transformer(object):
-    def tranform(cls, xml_pages, pages_info):
+
+    # transforms input alto pages into one abbyy xml
+    def transform(cls, xml_pages, pages_info):
         for alto_page in xml_pages:
-            pages = self.__transform_xml(alto_page)
-        parsed_xml = self.__merge_pages(xml_pages, pages_info)
+            pages = cls.__transform_xml(alto_page)
+        parsed_xml = cls.__merge_pages(xml_pages, pages_info)
 
         return parsed_xml
 
+    # merge alto pages
     @classmethod
     def __merge_pages(cls, xml_pages, pages_info):
         parsed_xml = None
         return parsed_xml
 
+    # transform single alto page
     @classmethod
     def __transform_xml(cls, alto_page):
         pages = []
@@ -30,6 +34,7 @@ class Transformer(object):
             pages.append(new_etree)
         return pages
 
+    # transform textblock into block
     @classmethod
     def __transform_textblock(cls, textblock, alto_page):
         new_block = etree.Element("block")
@@ -44,6 +49,7 @@ class Transformer(object):
         new_block.set("b", b)
         act_styleref = None
         new_par = None
+        # connect textlines with same styleref into par element
         for textline in textblock.xpath('//TextLine'):
             line = cls.__transform_textline(textline, textblock.get("STYLEREFS"), alto_page)
             if act_styleref == textblock.get("STYLEREFS"):
@@ -58,7 +64,7 @@ class Transformer(object):
         new_block.append(new_par)
         return new_block
 
-
+    # transform textline element into line element
     @classmethod
     def __transform_textline(cls, textline, styleref, alto_page):
         new_line = etree.Element("par")
@@ -79,6 +85,7 @@ class Transformer(object):
             new_line.append(formatting)
         return new_line
 
+    # transform string element into formatting element
     @classmethod
     def __transform_string(cls, string, styleref, alto_page):
         new_formatting = etree.Element("formatting")
