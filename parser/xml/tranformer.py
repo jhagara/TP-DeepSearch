@@ -42,10 +42,20 @@ class Transformer(object):
         new_block.set("t", t)
         new_block.set("r", r)
         new_block.set("b", b)
+        act_styleref = None
+        new_par = None
         for textline in textblock.xpath('//TextLine'):
-            # TODO spajat textlines s rovnakym styleref za sabou do jedneho par
-            par = cls.__transform_textline(textline, textblock.get("STYLEREFS"), alto_page)
-            new_block.append(par)
+            line = cls.__transform_textline(textline, textblock.get("STYLEREFS"), alto_page)
+            if act_styleref == textblock.get("STYLEREFS"):
+                if new_par is None:
+                    new_par = etree.Element("par")
+                new_par.append(line)
+            else:
+                if new_par is not None:
+                    new_block.append(new_par)
+                new_par = etree.Element("par")
+                new_par.append(line)
+        new_block.append(new_par)
         return new_block
 
 
@@ -72,4 +82,9 @@ class Transformer(object):
     @classmethod
     def __transform_string(cls, string, styleref, alto_page):
         new_formatting = etree.Element("formatting")
+        new_formatting.text = string.text
+        fontid = styleref.split()[1]
+        textstyle = alto_page.xpath("/alto/Styles/TextStyle[@ID='" + fontid + "']")
+        new_formatting.set("ff", textstyle.get("FONTFAMILY"))
+        new_formatting.set("fs", textstyle.get("FONTSIZE") + ".")
         return new_formatting
