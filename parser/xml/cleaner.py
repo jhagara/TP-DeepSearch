@@ -17,7 +17,7 @@ class Cleaner(object):
     ABBYY_FORMATTING_ATTRS = ['lang', 'ff', 'fs', 'spacing']
     ALTO_TEXTBLOCK = ['HEIGHT', 'WIDTH', 'VPOS', 'HPOS', 'language', 'STYLEREFS', 'STYLE']
     ALTO_TEXTLINE = ['BASELINE', 'HEIGHT', 'WIDTH', 'VPOS', 'HPOS', 'STYLEREFS', 'STYLE']
-    ALTO_STRING = ['STYLE', 'CONTENT']
+    ALTO_STRING = ['STYLE', 'CONTENT', 'STYLEREFS']
 
     # main function for cleaning original input xml
     @classmethod

@@ -4,9 +4,11 @@ class Transformer(object):
 
     # transforms input alto pages into one abbyy xml
     def transform(cls, xml_pages, pages_info):
+        abbyy_pages = []
         for alto_page in xml_pages:
             pages = cls.__transform_xml(alto_page)
-        parsed_xml = cls.__merge_pages(xml_pages, pages_info)
+            abbyy_pages.append(pages)
+        parsed_xml = cls.__merge_pages(abbyy_pages, pages_info)
 
         return parsed_xml
 
@@ -16,7 +18,8 @@ class Transformer(object):
         parsed_xml = None
         return parsed_xml
 
-    # transform single alto page
+    # transform single alto xml
+    # returns list of transformed pages
     @classmethod
     def __transform_xml(cls, alto_page):
         pages = []
@@ -25,9 +28,17 @@ class Transformer(object):
             page_atrib = page.attrib
             new_page.set("width", page_atrib.get("WIDTH"))
             new_page.set("height", page_atrib.get("HEIGHT"))
-            print_space = page.xpath('//PrintSpace')
-            for textblock in print_space.xpath('//TextBlock'):
+            # transform all textblock on page
+            for textblock in page.xpath('//TextBlock'):
                 block = cls.__transform_textblock(textblock, alto_page)
+                new_page.append(block)
+            # transform all graphicalElements
+            for graphicalElement in page.xpath('//GraphicalElement'):
+                block = cls.__transform_graphicalelement(graphicalElement)
+                new_page.append(block)
+            # transform all illustrations
+            for illustration in page.xpath('//Illustration'):
+                block = cls.__transform_illustration(illustration)
                 new_page.append(block)
             new_etree = etree.ElementTree(new_page)
             new_etree.docinfo.URL = alto_page.docinfo.get("URL")
@@ -94,4 +105,36 @@ class Transformer(object):
         textstyle = alto_page.xpath("/alto/Styles/TextStyle[@ID='" + fontid + "']")
         new_formatting.set("ff", textstyle.get("FONTFAMILY"))
         new_formatting.set("fs", textstyle.get("FONTSIZE") + ".")
+        # TODO pridat info do formatting zo STYLE atributu - zatial nie je potrabne
+        # TODO su to: bold, italics, subscript, superscript, smallcaps, underline
         return new_formatting
+
+    # transform GraphicalElement element into block element with type="picture"
+    @classmethod
+    def __transform_graphicalelement(cls, graphicalelement):
+        new_block = etree.Element("block")
+        new_block.set("blockType", "Picture")
+        l = graphicalelement.get("HPOS")
+        t = graphicalelement.get("VPOS")
+        r = str(int(graphicalelement.get("HPOS")) + int(graphicalelement.get("WIDTH")))
+        b = str(int(graphicalelement.get("VPOS")) + int(graphicalelement.get("HEIGHT")))
+        new_block.set("l", l)
+        new_block.set("t", t)
+        new_block.set("r", r)
+        new_block.set("b", b)
+        return new_block
+
+    # transform Illustration element into block element with type="picture"
+    @classmethod
+    def __transform_illustration(cls, illustration):
+        new_block = etree.Element("block")
+        new_block.set("blockType", "Picture")
+        l = illustration.get("HPOS")
+        t = illustration.get("VPOS")
+        r = str(int(illustration.get("HPOS")) + int(illustration.get("WIDTH")))
+        b = str(int(illustration.get("VPOS")) + int(illustration.get("HEIGHT")))
+        new_block.set("l", l)
+        new_block.set("t", t)
+        new_block.set("r", r)
+        new_block.set("b", b)
+        return new_block
