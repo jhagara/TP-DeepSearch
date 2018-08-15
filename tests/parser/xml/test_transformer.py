@@ -17,7 +17,7 @@ class TestTransformer(unittest.TestCase):
         pages_info = self.read_from_json(os.path.dirname(os.path.abspath(__file__)) +
                                          "/../../lidove_noviny/1943/19430203/children.json")
         transformer = Transformer()
-        parsed_xml = transformer.tranform(xml_pages, pages_info)
+        parsed_xml = transformer.transform(xml_pages, pages_info)
 
     # reading of JSON configuration file which defines paths
     def read_from_json(self, readfile):

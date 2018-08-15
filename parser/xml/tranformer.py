@@ -15,8 +15,25 @@ class Transformer(object):
     # merge alto pages
     @classmethod
     def __merge_pages(cls, xml_pages, pages_info):
-        parsed_xml = None
-        return parsed_xml
+        document = etree.Element("document")
+        page_count = 0
+        for pages in xml_pages:
+            page_count += pages.len()
+        document.set("pagesCount", str(page_count))
+        ordered_pages = []
+        for info in pages_info:
+            pid = info.get("pid").split(':')[1]
+            for pages in xml_pages:
+                url = pages[0].docinfo.URL
+                pid2 = url.split("uuid_")
+                if pid == pid2:
+                    # TODO kontrola poradia
+                    ordered_pages.append(pages)
+        for pages in ordered_pages:
+            for page in pages:
+                document.append(page.root)
+        new_etree = etree.ElementTree(document)
+        return new_etree
 
     # transform single alto xml
     # returns list of transformed pages
