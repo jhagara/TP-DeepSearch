@@ -1,4 +1,5 @@
 from lxml import etree
+import re
 
 class Transformer(object):
 
@@ -18,7 +19,7 @@ class Transformer(object):
         document = etree.Element("document")
         page_count = 0
         for pages in xml_pages:
-            page_count += pages.len()
+            page_count += len(pages)
         document.set("pagesCount", str(page_count))
         ordered_pages = []
         for info in pages_info:
@@ -27,8 +28,8 @@ class Transformer(object):
                 url = pages[0].docinfo.URL
                 pid2 = url.split("uuid_")
                 if pid == pid2:
-                    # TODO kontrola poradia
-                    ordered_pages.append(pages)
+                    page_number = re.findall('\d+', info.get("details").get("pagenumber"))[0]
+                    ordered_pages[page_number] = pages
         for pages in ordered_pages:
             for page in pages:
                 document.append(page.root)
@@ -118,8 +119,12 @@ class Transformer(object):
     def __transform_string(cls, string, styleref, alto_page):
         new_formatting = etree.Element("formatting")
         new_formatting.text = string.text
-        fontid = styleref.split()[1]
-        textstyle = alto_page.xpath("/alto/Styles/TextStyle[@ID='" + fontid + "']")
+        fontid = None
+        if "StyleId" in styleref:
+            fontid = styleref.split()[1]
+        else:
+            fontid = styleref
+        textstyle = alto_page.xpath("/alto/Styles/TextStyle[@ID='" + fontid + "']")[0]
         new_formatting.set("ff", textstyle.get("FONTFAMILY"))
         new_formatting.set("fs", textstyle.get("FONTSIZE") + ".")
         # TODO pridat info do formatting zo STYLE atributu - zatial nie je potrabne

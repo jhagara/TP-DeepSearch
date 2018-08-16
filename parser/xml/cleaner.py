@@ -154,6 +154,8 @@ class Cleaner(object):
                     act_string.text = act_string.text + child.attrib.get('CONTENT')
                     textline.remove(child)
                 else:
+                    child.text = child.attrib.get('CONTENT')
+                    child.attrib.pop('CONTENT')
                     act_string = child
             elif child.tag == 'SP' and act_string is not None:
                 act_string.text = act_string.text + ' '
