@@ -41,7 +41,7 @@ class Transformer(object):
     @classmethod
     def __transform_xml(cls, alto_page):
         pages = []
-        for page in alto_page.xpath('//Page'):
+        for page in alto_page.xpath('/alto/Layout/Page'):
             new_page = etree.Element("page")
             page_atrib = page.attrib
             new_page.set("width", page_atrib.get("WIDTH"))
@@ -59,7 +59,7 @@ class Transformer(object):
                 block = cls.__transform_illustration(illustration)
                 new_page.append(block)
             new_etree = etree.ElementTree(new_page)
-            new_etree.docinfo.URL = alto_page.docinfo.get("URL")
+            new_etree.docinfo.URL = alto_page.docinfo.URL
             pages.append(new_etree)
         return pages
 
@@ -79,7 +79,7 @@ class Transformer(object):
         act_styleref = None
         new_par = None
         # connect textlines with same styleref into par element
-        for textline in textblock.xpath('//TextLine'):
+        for textline in textblock.xpath('./TextLine'):
             line = cls.__transform_textline(textline, textblock.get("STYLEREFS"), alto_page)
             if act_styleref == textblock.get("STYLEREFS"):
                 if new_par is None:
@@ -106,7 +106,7 @@ class Transformer(object):
         new_line.set("t", t)
         new_line.set("r", r)
         new_line.set("b", b)
-        for string in textline.xpath('//String'):
+        for string in textline.xpath('./String'):
             string_styleref = styleref
             if string.get("STYLEREFS") is not None:
                 string_styleref = string.get("STYLEREFS")
