@@ -4,6 +4,7 @@ import os
 from lxml import etree
 from parser.xml.tranformer import Transformer
 from parser.xml.cleaner import Cleaner
+from parser.xml.schema_validator import SchemaValidator
 
 
 class TestTransformer(unittest.TestCase):
@@ -21,9 +22,8 @@ class TestTransformer(unittest.TestCase):
                                          "/../../lidove_noviny/1943/19430203/children.json")
         transformer = Transformer()
         parsed_xml = transformer.transform(xml_pages, pages_info)
-        print(etree.tostring(parsed_xml).decode('utf-8'))
-        # TODO kontrola obsahu stran pred a po
-        # TODO vytvorenie schemy a testu
+        validator = SchemaValidator()
+        validator.validate_abbyy_cleaner(parsed_xml)
 
     # reading of JSON configuration file which defines paths
     def read_from_json(self, readfile):
