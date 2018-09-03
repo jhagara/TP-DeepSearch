@@ -21,6 +21,9 @@ class TestTransformer(unittest.TestCase):
                                          "/../../lidove_noviny/1943/19430203/children.json")
         transformer = Transformer()
         parsed_xml = transformer.transform(xml_pages, pages_info)
+        print(etree.tostring(parsed_xml).decode('utf-8'))
+        # TODO kontrola obsahu stran pred a po
+        # TODO vytvorenie schemy a testu
 
     # reading of JSON configuration file which defines paths
     def read_from_json(self, readfile):

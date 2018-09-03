@@ -26,13 +26,13 @@ class Transformer(object):
             pid = info.get("pid").split(':')[1]
             for pages in xml_pages:
                 url = pages[0].docinfo.URL
-                pid2 = url.split("uuid_")
+                pid2 = re.search('uuid_(.*).xml', url).group(1)
                 if pid == pid2:
                     page_number = re.findall('\d+', info.get("details").get("pagenumber"))[0]
-                    ordered_pages[page_number] = pages
+                    ordered_pages.insert(int(page_number) - 1, pages)
         for pages in ordered_pages:
             for page in pages:
-                document.append(page.root)
+                document.append(page.getroot())
         new_etree = etree.ElementTree(document)
         return new_etree
 
@@ -81,14 +81,16 @@ class Transformer(object):
         # connect textlines with same styleref into par element
         for textline in textblock.xpath('./TextLine'):
             line = cls.__transform_textline(textline, textblock.get("STYLEREFS"), alto_page)
-            if act_styleref == textblock.get("STYLEREFS"):
+            if act_styleref == textline.get("STYLEREFS"):
                 if new_par is None:
                     new_par = etree.Element("par")
+                    act_styleref = textline.get("STYLEREFS")
                 new_par.append(line)
             else:
                 if new_par is not None:
                     new_block.append(new_par)
                 new_par = etree.Element("par")
+                act_styleref = textline.get("STYLEREFS")
                 new_par.append(line)
         new_block.append(new_par)
         return new_block
@@ -96,7 +98,7 @@ class Transformer(object):
     # transform textline element into line element
     @classmethod
     def __transform_textline(cls, textline, styleref, alto_page):
-        new_line = etree.Element("par")
+        new_line = etree.Element("line")
         new_line.set("baseline", textline.get("BASELINE"))
         l = textline.get("HPOS")
         t = textline.get("VPOS")
