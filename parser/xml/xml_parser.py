@@ -9,11 +9,13 @@ from parser.xml.discriminator.separatorsid import SeparatorId
 from parser.xml.article.merger import Preprocessor
 from parser.xml.article.assembler import Assembler
 from parser.xml.schema_validator import SchemaValidator
+from parser.xml.tranformer import Transformer
 
 
 class XmlParser(object):
     @classmethod
     def parse(cls, header_config_path, xml_path):
+        # TODO upravit pre alto
         # load xml file to init stage
         xml = etree.parse(xml_path)
 
@@ -29,6 +31,69 @@ class XmlParser(object):
 
         # parse header and remove used header blocks from cleaned xml
         xml, header = SourceHeader.get_source_header(xml, header_config)
+
+        # discriminate headings
+        xml = _Heading.discriminate_headings(xml)
+
+        # set all missing par with attrib type = None to fulltexts
+        for par in xml.xpath('/document/page/block/par[not(@type)]'):
+            par.attrib['type'] = 'fulltext'
+
+        # set all block with attrib blockType 'text' to contain attrib type='text'
+        for block in xml.xpath('/document/page/block[@blockType=\'Text\']'):
+            block.attrib['type'] = 'text'
+
+        # discriminate separators
+        xml = SeparatorId.discriminant_separators(xml)
+
+        # preprocess xml, merge into bigger groups
+        xml = Preprocessor.preprocess(xml)
+
+        # assemble article block
+        assembler = Assembler(xml)
+        assembler.assembly_articles()
+
+        # return parsed header and articles (arrays of groups)
+        return xml, header, assembler.articles
+
+    @classmethod
+    def parse_alto(cls, header_config_path, xml_path):
+        # find all xmls
+        # TODO najs vsetky xmlka
+        xml_pages_path = None
+
+        # load xml files to init stage
+        xml_pages = []
+        for path in xml_pages_path:
+            xml = etree.parse(path)
+            xml_pages.append(xml)
+
+        # validate xml files
+        schemavalidator = SchemaValidator()
+        for xml in xml_pages:
+            schemavalidator.validate_inputxml(xml)
+
+        # load header config json file
+        header_config = cls.read_from_json(header_config_path)
+
+        # first clean whole file
+        for xml in xml_pages:
+            xml = Cleaner.clean(xml)
+
+        # parse header and remove used header blocks from cleaned xml
+        # TODO najdi prvu stranu potom parsuj header
+        xml, header = SourceHeader.get_source_header(xml, header_config)
+
+        # delete top marging from all pages
+        for xml in xml_pages:
+            for topmarging in xml.xpath('/alto/Layout/Page/TopMargin'):
+                parent = topmarging.getparent()
+                parent.remove(topmarging)
+
+        # transform alto pages into abbyy xml
+        transformer = Transformer()
+        children_json = None # TODO nacitaj json pre children
+        xml = transformer.transform(xml_pages, children_json)
 
         # discriminate headings
         xml = _Heading.discriminate_headings(xml)
