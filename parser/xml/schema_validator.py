@@ -6,6 +6,7 @@ class SchemaValidator(object):
     INPUT_SCHEMA_V6 = "/schemas/input_schema_v6.xsd"
     INPUT_SCHEMA_V10 = "/schemas/input_schema_v10.xsd"
     ALTO_SCHEMA_V2 = "/schemas/alto-v2.0.xsd"
+    ABBYY_CLEANER = "/schemas/abbyy_after_cleaner.xsd"
 
     def validate(self, xml, schema):
         if xml is None or schema is None:
@@ -44,3 +45,10 @@ class SchemaValidator(object):
         schema = etree.XMLSchema(schema_doc)
 
         self.validate(xml, schema)
+
+    def validate_abbyy_cleaner(self, xml):
+        schema_path = os.path.dirname(os.path.abspath(__file__)) + self.ABBYY_CLEANER
+        schema_doc = etree.parse(schema_path)
+        schema = etree.XMLSchema(schema_doc)
+        self.validate(xml, schema)
+
