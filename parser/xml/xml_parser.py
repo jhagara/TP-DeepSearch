@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import json
+import os
+import re
 from lxml import etree
 from parser.xml.cleaner import Cleaner
 from parser.xml.source_header import SourceHeader
@@ -15,7 +17,19 @@ from parser.xml.tranformer import Transformer
 class XmlParser(object):
     @classmethod
     def parse(cls, header_config_path, xml_path):
-        # TODO upravit pre alto
+
+        parsed_xml = etree.parse(xml_path)
+
+        root_tag = parsed_xml.getroot().tag
+        if "document".lower() in root_tag.lower():
+            return cls.__parse_abbyy(header_config_path, xml_path)
+        elif "alto".lower() in root_tag.lower():
+            return cls.__parse_alto(header_config_path, xml_path)
+        else:
+            return -1
+
+    @classmethod
+    def __parse_abbyy(cls, header_config_path, xml_path):
         # load xml file to init stage
         xml = etree.parse(xml_path)
 
@@ -57,16 +71,15 @@ class XmlParser(object):
         return xml, header, assembler.articles
 
     @classmethod
-    def parse_alto(cls, header_config_path, xml_path):
+    def __parse_alto(cls, header_config_path, xml_path):
         # find all xmls
-        # TODO najs vsetky xmlka
-        xml_pages_path = None
-
-        # load xml files to init stage
+        dir = os.path.dirname(xml_path)
         xml_pages = []
-        for path in xml_pages_path:
-            xml = etree.parse(path)
-            xml_pages.append(xml)
+        for file in os.listdir(dir):
+            if file.endswith(".xml"):
+                path = os.path.join(dir, file)
+                xml = etree.parse(path)
+                xml_pages.append(xml)
 
         # validate xml files
         schemavalidator = SchemaValidator()
@@ -80,9 +93,23 @@ class XmlParser(object):
         for xml in xml_pages:
             xml = Cleaner.clean(xml)
 
+        # read json with info about children
+        children_path = dir + '/../children.json'
+        children_json = cls.read_from_json(children_path)
+
         # parse header and remove used header blocks from cleaned xml
-        # TODO najdi prvu stranu potom parsuj header
-        xml, header = SourceHeader.get_source_header(xml, header_config)
+        header = None
+        for info in children_json:
+            page_number = re.findall('\d+', info.get("details").get("pagenumber"))[0]
+            if page_number == 1:
+                pid = info.get("pid").split(':')[1]
+                for xml in xml_pages:
+                    url = xml[0].docinfo.URL
+                    pid2 = re.search('uuid_(.*).xml', url).group(1)
+                    if pid == pid2:
+                        xml, header = SourceHeader.get_source_header(xml, header_config)
+
+
 
         # delete top marging from all pages
         for xml in xml_pages:
@@ -92,7 +119,7 @@ class XmlParser(object):
 
         # transform alto pages into abbyy xml
         transformer = Transformer()
-        children_json = None # TODO nacitaj json pre children
+
         xml = transformer.transform(xml_pages, children_json)
 
         # discriminate headings
