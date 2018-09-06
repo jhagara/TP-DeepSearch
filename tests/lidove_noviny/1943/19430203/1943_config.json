@@ -1,0 +1,8 @@
+{
+  "Number": {
+    "path": "substring-before(substring-after(string(/alto/Layout/Page/PrintSpace//TextLine[position() <= 10]/String[starts-with(.,'ROC.')][1]/..),'CIS. '),' ')"
+  },
+  "Volume": {
+    "path": "substring-before(substring-after(string(/alto/Layout/Page/PrintSpace//TextLine[position() <= 10]/String[starts-with(.,'ROC.')][1]/..),'ROC. '),' CIS.')"
+  }
+}
