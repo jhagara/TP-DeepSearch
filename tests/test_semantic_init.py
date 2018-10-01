@@ -23,6 +23,12 @@ class TestSemanticInit(unittest.TestCase):
         xml_path = abs_path + "/slovak_1939_05_26_full.xml"
         semantic = Semantic(xml=xml_path, header_config=header_conf_path)
 
+    def test_alto_init(self):
+        abs_path = os.path.dirname(os.path.abspath(__file__))
+        header_conf_path = abs_path + "/lidove_noviny/1943/19430203/1943_config.json"
+        xml_path = abs_path + "/lidove_noviny/1943/19430203/XML/uuid_a7aaec20-6ae3-11dd-9a90-000d606f5dc6.xml"
+        semantic = Semantic(xml=xml_path, header_config=header_conf_path)
+
     def test_preprocess_xml(self):
         abs_path = os.path.dirname(os.path.abspath(__file__))
         # just cleaned part

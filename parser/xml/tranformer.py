@@ -88,12 +88,40 @@ class Transformer(object):
                 new_par.append(line)
             else:
                 if new_par is not None:
+                    cls.__add_par_position(new_par)
                     new_block.append(new_par)
                 new_par = etree.Element("par")
                 act_styleref = textline.get("STYLEREFS")
                 new_par.append(line)
         new_block.append(new_par)
+        cls.__add_par_position(new_par)
         return new_block
+
+    # add positional attributes for par
+    @classmethod
+    def __add_par_position(cls, par):
+        min_t = 10000000
+        min_l = 10000000
+        max_r = 0
+        max_b = 0
+        for line in par.xpath('./line'):
+            line_t = int(line.get("t"))
+            line_l = int(line.get("l"))
+            line_r = int(line.get("r"))
+            line_b = int(line.get("b"))
+            if line_t < min_t:
+                min_t = line_t
+            if line_l < min_l:
+                min_l = line_l
+            if line_r > max_r:
+                max_r = line_r
+            if line_b > max_b:
+                max_b = line_b
+        par.set("t", str(min_t))
+        par.set("l", str(min_l))
+        par.set("r", str(max_r))
+        par.set("b", str(max_b))
+
 
     # transform textline element into line element
     @classmethod
