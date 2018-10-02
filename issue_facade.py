@@ -24,8 +24,8 @@ class IssueFacade(object):
 
     @classmethod
     def insert_by_fullpath(cls, parser_dir, target_fullpath, name):
-        xml = re.sub("[\n]", '', os.popen("find '" + target_fullpath + "/XML' -maxdepth 1 -type f -name '*.xml'").read())
-        config_path = cls.__find_file(copy.copy(target_fullpath), parser_dir, "*.json")
+        xml = re.sub("[\n]", '', os.popen("find '" + target_fullpath + "/XML' -maxdepth 1 -type f -name '*.xml' | head -n 1").read())
+        config_path = cls.__find_file(copy.copy(target_fullpath), parser_dir, "*.json") # TODO mozno bude treba zmenit aby sa nenasiel json s info o childrenoch
         journal_marc21_path = cls.__find_file(copy.copy(target_fullpath), parser_dir, "*journal_marc21.xml")
         file = {'dir': target_fullpath, 'xml': xml, 'json': config_path, 'journal_marc21': journal_marc21_path}
         print("Parsing: " + str(file))
@@ -51,10 +51,10 @@ class IssueFacade(object):
             if current_dir == '':
                 break
 
-            xml = re.sub("[\n]", '', os.popen("find " + current_dir + " -maxdepth 1 -type f -name '*.xml'").read())
+            xml = re.sub("[\n]", '', os.popen("find " + current_dir + " -maxdepth 1 -type f -name '*.xml' | head -n 1").read())
 
             current_dir = re.sub("[\n]", '', os.popen("dirname '" + re.sub("[\n]", '', current_dir) + "' | xargs readlink -f").read())
-            config_path = cls.__find_file(copy.copy(current_dir), parser_dir, "*.json")
+            config_path = cls.__find_file(copy.copy(current_dir), parser_dir, "*.json") # TODO mozno bude treba zmenit aby sa nenasiel json s info o childrenoch
             journal_marc21_path = cls.__find_file(copy.copy(current_dir), parser_dir, "*journal_marc21.xml")
 
             # return bad exit code if any xml did not search
