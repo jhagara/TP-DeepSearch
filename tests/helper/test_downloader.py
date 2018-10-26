@@ -11,7 +11,7 @@ class TestDownloader(unittest.TestCase):
     def test_downloader(self):
         path = os.path.dirname(os.path.abspath(__file__)) + "/.."
         downloader = Downloader()
-        #downloader.download_item(self.TEST_URL, self.TEST_UUID, path)
+        downloader.download_item(self.TEST_URL, self.TEST_UUID, path)
         expected_files = ["/kremarius/Lidové noviny_uuid:bdc405b0-e5f9-11dc-bfb2-000d606f5dc6/51_uuid:047b0c30-6b0e-11dd-b545-000d606f5dc6/32***_uuid:06a34a20-7042-11dd-b8d0-000d606f5dc6/XML/1_uuid:f3dee9b0-6ada-11dd-9c52-000d606f5dc6.xml",
                           "/kremarius/Lidové noviny_uuid:bdc405b0-e5f9-11dc-bfb2-000d606f5dc6/51_uuid:047b0c30-6b0e-11dd-b545-000d606f5dc6/32***_uuid:06a34a20-7042-11dd-b8d0-000d606f5dc6/XML/2_uuid:a7aaec20-6ae3-11dd-9a90-000d606f5dc6.xml",
                           "/kremarius/Lidové noviny_uuid:bdc405b0-e5f9-11dc-bfb2-000d606f5dc6/51_uuid:047b0c30-6b0e-11dd-b545-000d606f5dc6/32***_uuid:06a34a20-7042-11dd-b8d0-000d606f5dc6/XML/3_uuid:f3e5ee90-6ada-11dd-96e5-000d606f5dc6.xml",
