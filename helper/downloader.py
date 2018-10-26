@@ -1,5 +1,7 @@
 import requests
 import re
+import os
+import errno
 
 
 class Downloader:
@@ -22,9 +24,60 @@ class Downloader:
         response.encoding = encoding
         return response.text
 
-    def get_jpeg(cls, url, uuid):
+    def get_image(cls, url, uuid):
         response = cls.__get_response(url + "/search/api/v5.0/item/" + uuid + "/streams/IMG_FULL")
         return response
+
+    def download_xml(cls, url, uuid, dir):
+        info = cls.get_info(url, uuid)
+        if info['datanode'] is False:
+            return -1# TODO raise exeption
+        # TODO kontrola ci existuje xml
+        if info['details']['type'] == "NormalPage":
+            name = info['title']
+        else:
+            name = "1"
+        xml = cls.get_alto(url, uuid)
+        with open(dir + "/" + name + "_" + uuid + ".xml", 'w') as file:
+            file.write(xml)
+
+    def download_image(cls, url, uuid, dir):
+        info = cls.get_info(url, uuid)
+        if info['datanode'] is False:
+            return -1# TODO raise exeption
+        # TODO kontrola ci existuje obrazok
+        if info['details']['type'] == "NormalPage":
+            name = info['title']
+        else:
+            name = "1"
+        image = cls.get_image(url, uuid)
+        suffix = image.headers['Content-Type'].split('/')[1]
+        with open(dir + "/" + name + "_" + uuid + "." + suffix, 'wb') as file:
+            file.write(image.content)
+
+    def download_item(cls, url, uuid, dir):
+        item_info = cls.get_info(url, uuid)
+        path = "/kremarius"
+        for node in item_info['context'][0]:
+            if node['pid'] == uuid:
+                break
+            node_info = cls.get_info(url, node['pid'])
+            path += "/" + node_info['title'] + "_" + node['pid']
+        path += "/" + item_info['title'] + "_" + item_info['pid']
+        cls.__create_directory(dir + path + "/XML")
+        cls.__create_directory(dir + path + "/STR")
+        children = cls.get_children(url, uuid)
+        for child in children:
+            cls.download_xml(url, child['pid'], dir + path + "/XML")
+            cls.download_image(url, child['pid'], dir + path + "/STR")
+
+    @classmethod
+    def __create_directory(cls, dir):
+        try:
+            os.makedirs(dir)
+        except OSError as e:
+            if e.errno != errno.EEXIST:
+                raise
 
     @classmethod
     def __get_response(cls, url):
@@ -39,16 +92,3 @@ class Downloader:
                 count += 1
         response.raise_for_status()
 
-
-#r = requests.get('https://kramerius.mzk.cz/search/api/v5.0/item/uuid:f3dee9b0-6ada-11dd-9c52-000d606f5dc6/streams/')
-#print(r.text)
-downloader = Downloader()
-# save alto
-#alto = downloader.get_alto("https://kramerius.mzk.cz", "uuid:f3dee9b0-6ada-11dd-9c52-000d606f5dc6")
-#with open('alto.xml', 'w') as file:
-#    file.write(alto)
-# save image
-image = downloader.get_jpeg("https://kramerius.mzk.cz", "uuid:f3dee9b0-6ada-11dd-9c52-000d606f5dc6")
-suffix = image.headers['Content-Type'].split('/')[1]
-with open("img." + suffix, 'wb') as file:
-    file.write(image.content)
