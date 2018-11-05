@@ -31,8 +31,7 @@ class Downloader:
     def download_xml(cls, url, uuid, dir):
         info = cls.get_info(url, uuid)
         if info['datanode'] is False:
-            return -1# TODO raise exeption
-        # TODO kontrola ci existuje xml
+            raise ValueError(uuid + " on url " + url + " is not a data node")
         if info['details']['type'] == "NormalPage":
             name = info['title']
         else:
@@ -44,8 +43,7 @@ class Downloader:
     def download_image(cls, url, uuid, dir):
         info = cls.get_info(url, uuid)
         if info['datanode'] is False:
-            return -1# TODO raise exeption
-        # TODO kontrola ci existuje obrazok
+            raise ValueError(uuid + " on url " + url + " is not a data node")
         if info['details']['type'] == "NormalPage":
             name = info['title']
         else:
@@ -68,8 +66,14 @@ class Downloader:
         cls.__create_directory(dir + path + "/STR")
         children = cls.get_children(url, uuid)
         for child in children:
+            streams = cls.__get_response(url + "/search/api/v5.0/item/" + child['pid'] + "/streams").json()
+            if streams.get("ALTO") is None:
+                raise ValueError(uuid + " does not have ALTO xml")
+            if streams.get("IMG_FULL") is None:
+                raise ValueError(uuid + " does not have IMG_FULL image")
             cls.download_xml(url, child['pid'], dir + path + "/XML")
             cls.download_image(url, child['pid'], dir + path + "/STR")
+        # TODO stiahnutie marc zaznamu
 
     @classmethod
     def __create_directory(cls, dir):
