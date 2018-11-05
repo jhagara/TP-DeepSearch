@@ -32,10 +32,9 @@ class Downloader:
         info = cls.get_info(url, uuid)
         if info['datanode'] is False:
             raise ValueError(uuid + " on url " + url + " is not a data node")
-        if info['details']['type'] == "NormalPage":
-            name = info['title']
-        else:
-            name = "1"
+        name = info['title']
+        name = name.replace("[", "")
+        name = name.replace("]", "")
         xml = cls.get_alto(url, uuid)
         with open(dir + "/" + name + "_" + uuid + ".xml", 'w') as file:
             file.write(xml)
@@ -44,10 +43,9 @@ class Downloader:
         info = cls.get_info(url, uuid)
         if info['datanode'] is False:
             raise ValueError(uuid + " on url " + url + " is not a data node")
-        if info['details']['type'] == "NormalPage":
-            name = info['title']
-        else:
-            name = "1"
+        name = info['title']
+        name = name.replace("[", "")
+        name = name.replace("]", "")
         image = cls.get_image(url, uuid)
         suffix = image.headers['Content-Type'].split('/')[1]
         with open(dir + "/" + name + "_" + uuid + "." + suffix, 'wb') as file:
@@ -62,6 +60,8 @@ class Downloader:
             node_info = cls.get_info(url, node['pid'])
             path += "/" + node_info['title'] + "_" + node['pid']
         path += "/" + item_info['title'] + "_" + item_info['pid']
+        if os.path.isdir(dir + path):
+            return
         cls.__create_directory(dir + path + "/XML")
         cls.__create_directory(dir + path + "/STR")
         children = cls.get_children(url, uuid)
@@ -71,9 +71,18 @@ class Downloader:
                 raise ValueError(uuid + " does not have ALTO xml")
             if streams.get("IMG_FULL") is None:
                 raise ValueError(uuid + " does not have IMG_FULL image")
-            cls.download_xml(url, child['pid'], dir + path + "/XML")
-            cls.download_image(url, child['pid'], dir + path + "/STR")
+            cls.download_xml(url, child['pid'], dir + path + "/XML") # TODO zmenit aby sa nevolal get info znovu
+            cls.download_image(url, child['pid'], dir + path + "/STR") # TODO zmenit aby sa nevolal get info znovu
         # TODO stiahnutie marc zaznamu
+
+    def download_tree(cls, url, uuid, dir):
+        children = cls.get_children(url, uuid)
+        for child in children:
+            if child['datanode'] is True:
+                cls.download_item(url, uuid, dir)
+                return
+            else:
+                cls.download_tree(url, child['pid'], dir)
 
     @classmethod
     def __create_directory(cls, dir):

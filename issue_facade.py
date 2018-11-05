@@ -6,6 +6,7 @@ import config
 import copy
 import sys
 from elasticsearch import Elasticsearch
+from helper.downloader import Downloader
 
 
 class IssueFacade(object):
@@ -72,6 +73,24 @@ class IssueFacade(object):
             semantic.insert_key_words(issue_id)
 
         return 'Bulk insert was successful'
+
+    @classmethod
+    def download_tree(cls, url, uuid, dir):
+        print("Downloading " + uuid + " form url " + url)
+
+        downloader = Downloader()
+        downloader.download_tree(url, uuid, dir)
+
+        return "Download was successful"
+
+    @classmethod
+    def download_item(cls, url, uuid, dir):
+        print("Downloading " + uuid + " form url " + url)
+
+        downloader = Downloader()
+        downloader.download_item(url, uuid, dir)
+
+        return "Download was successful"
 
     @classmethod
     def update_issue(cls, issue_id):
