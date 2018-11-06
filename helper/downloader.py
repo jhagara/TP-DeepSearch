@@ -28,8 +28,9 @@ class Downloader:
         response = cls.__get_response(url + "/search/api/v5.0/item/" + uuid + "/streams/IMG_FULL")
         return response
 
-    def download_xml(cls, url, uuid, dir):
-        info = cls.get_info(url, uuid)
+    def download_xml(cls, url, uuid, dir, info = None):
+        if info is None:
+            info = cls.get_info(url, uuid)
         if info['datanode'] is False:
             raise ValueError(uuid + " on url " + url + " is not a data node")
         name = info['title']
@@ -39,8 +40,9 @@ class Downloader:
         with open(dir + "/" + name + "_" + uuid + ".xml", 'w') as file:
             file.write(xml)
 
-    def download_image(cls, url, uuid, dir):
-        info = cls.get_info(url, uuid)
+    def download_image(cls, url, uuid, dir, info=None):
+        if info is None:
+            info = cls.get_info(url, uuid)
         if info['datanode'] is False:
             raise ValueError(uuid + " on url " + url + " is not a data node")
         name = info['title']
@@ -71,8 +73,9 @@ class Downloader:
                 raise ValueError(uuid + " does not have ALTO xml")
             if streams.get("IMG_FULL") is None:
                 raise ValueError(uuid + " does not have IMG_FULL image")
-            cls.download_xml(url, child['pid'], dir + path + "/XML") # TODO zmenit aby sa nevolal get info znovu
-            cls.download_image(url, child['pid'], dir + path + "/STR") # TODO zmenit aby sa nevolal get info znovu
+            child_info =  cls.get_info(url, child['pid'])
+            cls.download_xml(url, child['pid'], dir + path + "/XML", child_info)
+            cls.download_image(url, child['pid'], dir + path + "/STR", child_info)
         # TODO stiahnutie marc zaznamu
 
     def download_tree(cls, url, uuid, dir):
