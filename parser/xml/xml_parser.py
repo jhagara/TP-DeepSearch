@@ -93,23 +93,14 @@ class XmlParser(object):
         for xml in xml_pages:
             xml = Cleaner.clean(xml)
 
-        # read json with info about children
-        children_path = dir + '/../children.json'
-        children_json = cls.read_from_json(children_path)
-
         # parse header and remove used header blocks from cleaned xml
         header = None
-        for info in children_json:
-            page_number = re.findall('\d+', info.get("details").get("pagenumber"))[0]
+        for xml in xml_pages:
+            url = xml.docinfo.URL
+            file_name = url.split('/')[-1]
+            page_number = int(file_name.split('_')[0])
             if page_number == 1:
-                pid = info.get("pid").split(':')[1]
-                for xml in xml_pages:
-                    url = xml[0].docinfo.URL
-                    pid2 = re.search('uuid_(.*).xml', url).group(1)
-                    if pid == pid2:
-                        xml, header = SourceHeader.get_source_header(xml, header_config)
-
-
+                xml, header = SourceHeader.get_source_header(xml, header_config)
 
         # delete top marging from all pages
         for xml in xml_pages:
@@ -120,7 +111,7 @@ class XmlParser(object):
         # transform alto pages into abbyy xml
         transformer = Transformer()
 
-        xml = transformer.transform(xml_pages, children_json)
+        xml = transformer.transform(xml_pages)
 
         # discriminate headings
         xml = _Heading.discriminate_headings(xml)
