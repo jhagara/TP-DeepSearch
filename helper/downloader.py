@@ -5,6 +5,7 @@ import errno
 
 
 class Downloader:
+    ROOT_KRAMERIUS = "/kramerius"
 
     def get_info(cls, url, uuid):
         response = cls.__get_response(url + "/search/api/v5.0/item/" + uuid)
@@ -53,15 +54,16 @@ class Downloader:
         with open(dir + "/" + name + "_" + uuid + "." + suffix, 'wb') as file:
             file.write(image.content)
 
-    def download_item(cls, url, uuid, dir):
+    def download_item(cls, url, uuid, dir, path=None):
         item_info = cls.get_info(url, uuid)
-        path = "/kremarius"
-        for node in item_info['context'][0]:
-            if node['pid'] == uuid:
-                break
-            node_info = cls.get_info(url, node['pid'])
-            path += "/" + node_info['title'] + "_" + node['pid']
-        path += "/" + item_info['title'] + "_" + item_info['pid']
+        if path is None:
+            path = cls.ROOT_KRAMERIUS
+            for node in item_info['context'][0]:
+                if node['pid'] == uuid:
+                    break
+                node_info = cls.get_info(url, node['pid'])
+                path += "/" + node_info['title'] + "_" + node['pid']
+            path += "/" + item_info['title'] + "_" + item_info['pid']
         if os.path.isdir(dir + path):
             return
         cls.__create_directory(dir + path + "/XML")
@@ -78,14 +80,18 @@ class Downloader:
             cls.download_image(url, child['pid'], dir + path + "/STR", child_info)
         # TODO stiahnutie marc zaznamu
 
-    def download_tree(cls, url, uuid, dir):
+    def download_tree(cls, url, uuid, dir, path=None):
+        if path is None:
+            path = cls.ROOT_KRAMERIUS
         children = cls.get_children(url, uuid)
+        info = cls.get_info(url, uuid)
+        path = path + info['title']
         for child in children:
             if child['datanode'] is True:
-                cls.download_item(url, uuid, dir)
+                cls.download_item(url, uuid, dir, path)
                 return
             else:
-                cls.download_tree(url, child['pid'], dir)
+                cls.download_tree(url, child['pid'], dir, path)
 
     @classmethod
     def __create_directory(cls, dir):
