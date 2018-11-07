@@ -100,7 +100,7 @@ class RulesTester(object):
     # find xml path
     def __find_xml(self, source_dir):
         xml_dir = source_dir + "/XML"
-        path = os.popen("find " + xml_dir + " -maxdepth 1 -type f -name '*.xml'").read()
+        path = os.popen("find " + xml_dir + " -maxdepth 1 -type f -name '*.xml' | head -n 1").read()
         path = re.sub("[\n]", '', path)
 
         return path
