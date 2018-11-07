@@ -4,32 +4,29 @@ import re
 class Transformer(object):
 
     # transforms input alto pages into one abbyy xml
-    def transform(cls, xml_pages, pages_info):
+    def transform(cls, xml_pages):
         abbyy_pages = []
         for alto_page in xml_pages:
             pages = cls.__transform_xml(alto_page)
             abbyy_pages.append(pages)
-        parsed_xml = cls.__merge_pages(abbyy_pages, pages_info)
+        parsed_xml = cls.__merge_pages(abbyy_pages)
 
         return parsed_xml
 
     # merge alto pages
     @classmethod
-    def __merge_pages(cls, xml_pages, pages_info):
+    def __merge_pages(cls, xml_pages):
         document = etree.Element("document")
         page_count = 0
         for pages in xml_pages:
             page_count += len(pages)
         document.set("pagesCount", str(page_count))
         ordered_pages = []
-        for info in pages_info:
-            pid = info.get("pid").split(':')[1]
-            for pages in xml_pages:
-                url = pages[0].docinfo.URL
-                pid2 = re.search('uuid_(.*).xml', url).group(1)
-                if pid == pid2:
-                    page_number = re.findall('\d+', info.get("details").get("pagenumber"))[0]
-                    ordered_pages.insert(int(page_number) - 1, pages)
+        for pages in xml_pages:
+            url = pages[0].docinfo.URL
+            file_name = url.split('/')[-1]
+            page_number = int(file_name.split('_')[0])
+            ordered_pages.insert(int(page_number) - 1, pages)
         for pages in ordered_pages:
             for page in pages:
                 document.append(page.getroot())

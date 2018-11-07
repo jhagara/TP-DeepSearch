@@ -18,10 +18,9 @@ class TestTransformer(unittest.TestCase):
                 xml = etree.parse(path)
                 xml = cleaner.clean(xml)
                 xml_pages.append(xml)
-        pages_info = self.read_from_json(os.path.dirname(os.path.abspath(__file__)) +
-                                         "/../../lidove_noviny/1943/19430203/children.json")
+
         transformer = Transformer()
-        parsed_xml = transformer.transform(xml_pages, pages_info)
+        parsed_xml = transformer.transform(xml_pages)
         validator = SchemaValidator()
         validator.validate_abbyy_cleaner(parsed_xml)
 
