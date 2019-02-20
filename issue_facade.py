@@ -13,7 +13,7 @@ class IssueFacade(object):
     @staticmethod
     def validate_issue_before_parsing(issue_path, limit_path):
         path_validator = PathValidator()
-        error_list = path_validator.validate_issue(issue_path,limit_path)
+        error_list = ""
         result = ""
         if len(error_list) == 0:
             result = "Validation was successful for " + issue_path
@@ -125,7 +125,6 @@ class IssueFacade(object):
                 current_dir = re.sub("[\n]", '', os.popen("dirname '" + current_dir + "'").read())
 
         return path
-
 
 def main(*attrs):
     action = attrs[0]

@@ -2,7 +2,7 @@ import os
 from elasticsearch import Elasticsearch
 
 
-default_elastic_index = 'deep_search_test_python'
+default_elastic_index = 'deep_search_dev'
 
 
 def root_path():

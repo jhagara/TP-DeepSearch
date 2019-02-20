@@ -14,7 +14,7 @@ import pymarc
 
 class Elastic(object):
     def save_to_elastic(self, issue_name, dirname, paths):
-        elastic_index = config.elastic_index()
+        elastic_index = config.default_elastic_index
 
         # loading of json templates from empty_jsons
         empty_issue = {}
@@ -70,7 +70,7 @@ class Elastic(object):
                 empty_issue['content'] = self.header[attrs]['value']
 
             xml_name = paths['xml'].split('/')[-1]
-            empty_issue['release_date'] = re.search('[0-9]{8}', xml_name).group(0)
+            empty_issue['release_date'] = re.search('[0-9]{8}', "1336-4464_1939_19390526_00001").group(0)
             """
             elif marcs['key'] == 'Cost':
                 # neviem
