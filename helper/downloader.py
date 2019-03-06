@@ -62,8 +62,8 @@ class Downloader:
                 if node['pid'] == uuid:
                     break
                 node_info = cls.get_info(url, node['pid'])
-                path += "/" + node_info['title'] + "_" + node['pid']
-            path += "/" + item_info['title'] + "_" + item_info['pid']
+                path += "/" + node_info['title']
+            path += "/" + item_info['title']
         if os.path.isdir(dir + path):
             return
         cls.__create_directory(dir + path + "/XML")
