@@ -18,6 +18,7 @@ class PathValidator(object):
     xml_issue_schema_path_8 = "/FineReader8-schema-v2.xsd"
     xml_issue_schema_path_9 = "/FineReader9-schema-v1.xsd"
     xml_issue_schema_path_10 = "/FineReader10-schema-v1.xsd"
+    xml_issue_schema_alto = "/alto-v2.0.xsd"
     issue_validate_time = 1.6
 
     # this is method which will be called before parsing issue
@@ -45,8 +46,17 @@ class PathValidator(object):
         issue_name = (os.path.splitext(issue_name)[0])
 
         # check if name of xml contains date in the same format as is searched for
-        function_error_list = self.__validate_issue_name(issue_name, xml_dir_path)
-        error_list = error_list + function_error_list
+        # parse xml issue
+        try:
+            issue_xml = etree.parse(xml_path)
+        except etree.XMLSyntaxError as err:
+            error = "Error: Unparsable xml of issue " + os.path.split(xml_path)[1] + " in " + os.path.split(xml_path)[0] \
+                    + " Detail: " + str(err)
+            error_list.append(error)
+        document_tag = issue_xml.getroot().tag
+        if "alto/ns-v2".lower() not in document_tag.lower():
+            function_error_list = self.__validate_issue_name(issue_name, xml_dir_path)
+            error_list = error_list + function_error_list
 
         # check validity of .xml issue in path
         invalid_issue_xml = False
@@ -338,6 +348,8 @@ class PathValidator(object):
             appropriate_schema = cls.xml_issue_schema_path_9
         elif "FineReader10".lower() in root_tag.lower():
             appropriate_schema = cls.xml_issue_schema_path_10
+        elif "alto/ns-v2".lower() in root_tag.lower():
+            appropriate_schema = cls.xml_issue_schema_alto
 
         return appropriate_schema
 

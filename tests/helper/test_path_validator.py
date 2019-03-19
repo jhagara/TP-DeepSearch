@@ -70,3 +70,9 @@ class TestPathValidator(unittest.TestCase):
         result = path_validator.validate_issue(issue_path, test_path + '/elastic_filler/slovak/1939')
         print(result)
         self.assertEquals(len(result), 2)
+
+    def test_path_validator_alto(self):
+        abs_path = os.path.dirname(os.path.abspath(__file__))
+        path_validator = PathValidator()
+        result = path_validator.validate_issue(abs_path + '/../lidove_noviny/1943/19430203', abs_path + '/../lidove_noviny')
+        print(result)
