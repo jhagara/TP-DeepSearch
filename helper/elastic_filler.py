@@ -70,7 +70,11 @@ class Elastic(object):
                 empty_issue['content'] = self.header[attrs]['value']
 
             xml_name = paths['xml'].split('/')[-1]
-            empty_issue['release_date'] = re.search('[0-9]{8}', xml_name).group(0)
+            search = re.search('[0-9]{8}', xml_name) # TODO zatial docasne riesenie
+            if search is not None:
+                empty_issue['release_date'] = search.group(0)
+            else:
+                empty_issue['release_date'] = ""
             """
             elif marcs['key'] == 'Cost':
                 # neviem
