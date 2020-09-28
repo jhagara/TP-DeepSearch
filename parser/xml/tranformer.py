@@ -21,12 +21,12 @@ class Transformer(object):
         for pages in xml_pages:
             page_count += len(pages)
         document.set("pagesCount", str(page_count))
-        ordered_pages = []
+        ordered_pages = [[]] * len(xml_pages)
         for pages in xml_pages:
             url = pages[0].docinfo.URL
             file_name = url.split('/')[-1]
             page_number = int(file_name.split('_')[0])
-            ordered_pages.insert(int(page_number) - 1, pages)
+            ordered_pages[int(page_number) - 1] = pages
         for pages in ordered_pages:
             for page in pages:
                 document.append(page.getroot())
